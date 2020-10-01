@@ -1,0 +1,675 @@
+login_admin : مدير النظام
+login_ajatech : أچاتك
+login_logout : خروج
+login_login : الدخول
+login_password : كلمة المرور
+login_username : إسم المستخدم
+login_remember : تذكرني
+login_textalign : right
+login_direction : rtl
+login_language : ENG
+login_pic : css/Images/logo2.jpg
+logIn_invalid_login_toast_title : بيانات الدخول غير صحيحة
+logIn_invalid_login_toast_content : لا يمكن تسجيل الدخول بالبيانات الحالية . تم تسجيل المحاولة في السجل
+login_forget_btn : نسيت بيانات الدخول
+forget_header : لإسترجاع بيانات الدخول
+forget_emai : البريد الإلكتروني
+sent : إرسال
+cancel : إلغاء
+Edit : تعديل
+Save : حفظ
+Clear : مسح
+Add : إضافة
+Delete : حذف
+
+Def_Enabled : مفعل
+Def_Archived : مؤرشف
+Def_Deleted : محذوف
+Def_Notes : ملاحظات
+Def_Image : الصورة
+Def_Description : الوصف
+Def_Title_Ar : الإسم-عربي
+Def_Title_En : الإسم-إنجليزي
+
+read_more : المزيد
+sales : المبيعات
+inventories: المخازن
+accounts : الحسابات
+account : الحساب
+manufacturing : التصنيع
+treasury : الصناديق
+maintenance_and_warranty : الصيانة والضمان
+reports : التقارير
+inventory: المخزن
+Settings : الإعدادات
+index_Control_Panel_Card : css/Images/Logo_Print_Big.png
+index_Card_summery : ملخص لمهام الموديول
+menu_page_Title : القائمة الرئيسية
+help_support : التعليمات و الدعم
+Text_Align : text-right p-2
+Text_Direction : rtl
+Style_Text_Align : right
+
+Company_Address : العنوان
+Company_HeadOffice_AR : المركز الرئيسي
+Company_HeadOffice_EN : المركز الرئيسي-إنجليزي
+Company_Factory_AR : المصنع-عربي
+Company_Factory_EN : المصنع-إنجليزي
+Company_Inventory_AR : المخزن-عربي
+Company_Inventory_EN : المخزن-إنجليزي
+
+Company_Contact : بيانات التواصل
+Company_Mail_Box : صندوق البريد
+Company_WebSite_Url : الموقع الإلكتروني
+Company_Facebook : الفيسبوك
+Company_Tweeter : تويتر
+Company_Email : البريد الإلكتروني
+Company_Mobile_A : الجوال-أ
+Company_Mobile_B : الجوال-ب
+Company_Mobile_C : الجوال-ج
+Company_Mobile_D : الجوال-د
+Company_Phone_A : التليفون-أ
+Company_Phone_B : التليفون-ب
+Company_Phone_C : التليفون-ج
+Company_Phone_D : التليفون-د
+Company_Suggestions_Complains_Phone : للشكاوي والمقترحات
+
+
+Company_Owners : المُلاّك
+Company_Owner_Main : المالك الرئيسي
+Company_Owner_A : الشريك-أ
+Company_Owner_B : الشريك-ب
+Company_Owner_C : الشريك-ج
+Company_Owner_D : الشريك-د
+
+Company_Managers : المديرين
+Company_Executive_Manager_Name_Ar : إسم المدير التنفيذي-عربي
+Company_Executive_Manager_Name_En : إسم المدير التنفيذي-إنجليزي
+Company_Executive_Manager_Phone : موبايل المدير التنفيذي
+Company_Executive_Manager_Signature : إمضاء المدير التنفيذي
+Company_Accountancy_Manager_Name_Ar : إسم مدير الحسابات-عربي
+Company_Accountancy_Manager_Name_En : إسم المدير الحسابات-إنجليزي
+Company_Accountancy_Manager_Phone : موبايل مدير الحسابات
+Company_Accountancy_Manager_Signature : إمضاء مدير الحسابات
+Company_HR_Manager_Name_Ar : إسم مدير الموارد البشرية-عربي 
+Company_HR_Manager_Name_En : إسم امدير الموارد البشرية-إنجليزي
+Company_HR_Manager_Phone : موبايل مدير الموارد البشرية
+Company_HR_Manager_Signature : إمضاء مدير الموارد البشرية
+Company_Sales_Manager_Name_Ar : إسم مدير المبيعات-عربي 
+Company_Sales_Manager_Name_En : إسم المدير المبيعات-إنجليزي
+Company_Sales_Manager_Phone : موبايل مدير المبيعات
+Company_Sales_Manager_Name_Signature : إمضاء مدير المبيعات
+Title : الإسم
+Company_Operating_Licences : تراخيص التشغيل
+Company_Licence_Title_Ar : الرخصة-عربي
+Company_Licence_Title_En : الرخصة-إنجليزي
+Company_Licence_Issuer_Ar : جهة الإصدار-عربي
+Company_Licence_Issuer_En : جهة الإصدار-إنجليزي
+Company_Licence_Renewal_Fees : رسوم التجديد
+Company_Licence_From : من تاريخ
+Company_Licence_To : إلي تاريخ
+Company_Licence_Renew_Date : تاريخ التجديد
+Company_Licence_Renew_Fine : غرامة التجديد
+
+Company_Class_And_Tax : الفئة والرقم الضريبي
+Company_Class : فئة المؤسسة
+Company_Tax_Registration_Number : رقم التسجيل الضريبي
+Company_Notes_Ar : الملاحظات-عربي
+Company_Notes_En : الملاحظات-إنجليزي
+
+Company_Logos_And_Banners : الشعار والخلفية
+Company_Logo_Color_Big : الشعار ألوان-كبير
+Company_Logo_Color_Small : الشعار ألوان-صغير
+Company_Logo_Print_Big : الشعار طباعة-كبير
+Company_Logo_Print_Small : الشعار طباعة-صغير
+Company_Banner_Big : صورة الخلفية-كبير
+Company_Banner_small : صورة الخلفية-صغير
+
+Print_Technical : صورة الخلفية-كبير-القسم الفني
+Print_Financial : صورة الخلفية-كبير-القسم المالي
+Print_Managing : صورة الخلفية-كبير-القسم الإداري
+Print_Inventory : صورة الخلفية-كبير-قسم المخازن
+Print_Purchases : صورة الخلفية-كبير-قسم المشتريات
+Print_Sales : صورة الخلفية-كبير-قسم المبيعات 
+
+Company_Corporation_Definition : تعريف المؤسسة
+Company_Title_Ar : إسم المؤسسة-عربي
+Company_Title_En : إسم المؤسسة-إنجليزي
+Company_Slogan_A_Ar : شعار المؤسسة-أ-عربي
+Company_Slogan_A_En : شعار المؤسسة-أ-إنجليزي
+Company_Slogan_B_Ar : شعار المؤسسة-ب-عربي
+Company_Slogan_B_En : شعار المؤسسة-ب-إنجليزي
+Company_Activities_Ar : نشاط المؤسسة-عربي
+Company_Activities_En : نشاط المؤسسة-إنجليزي
+
+Company_Branches_Grid : جدول الفروع
+Company_Branches_Name_Ar : إسم الفرع-عربي
+Company_Branches_Name_En : إسم الفرع-إنجليزي
+Company_Branches_Address_Ar : عنوان الفرع-عربي
+Company_Branches_Address_En : عنوان الفرع-إنجليزي
+Company_Branches_Manager_Ar : مدير الفرع-عربي
+Company_Branches_Manager_En : مدير الفرع-إنجليزي
+
+Company_Department_Grid : جدول الأقسام
+Company_Corporation_Name : إسم المؤسسة
+Company_Corporation_Branch : فرع المؤسسة
+Company_Department_Name_Ar : إسم القسم-عربي
+Company_Department_Name_En : إسم القسم-إنجليزي
+Company_Department_Address_Ar : عنوان القسم-عربي
+Company_Department_Address_En : عنوان القسم-إنجليزي
+Company_Department_Manager_Ar : مدير القسم-عربي
+Company_Department_Manager_En : مدير القسم-إنجليزي
+Company_Department_Manager_Mobile : رقم مدير القسم 
+
+Jobs_Grid : جدول الوظائف
+Job_Type_Ar : نوع الوظيفة-عربي
+Job_Type_En : نوع الوظيفة-إنجليزي
+Job_Title_Ar : إسم الوظيفة-عربي
+Job_Title_En : إسم الوظيفة-إنجليزي
+Job_Description_Ar : وصف الوظيفة-عربي
+Job_Description_En : وصف الوظيفة-إنجليزي
+Employees_Note_Ar : ملاحظات-عربي
+Employees_Note_En : ملاحظات-إنجليزي
+Job_Department : القسم
+
+
+Employees_Grid : جدول الموظفين
+Employees_Details_Grid : جدول تفاصيل الموظفين
+Employees_Parent_ID : كود الأب
+Employees_Name_Ar : الإسم-عربي
+Employees_Name_En : الإسم-إنجليزي
+Employees_Tree_Code : كود الشجرة
+Employees_Boss_Name : مدير الموظف
+Employees_Boss_Code : كود المدير
+Employees_Peer_Name : إسم البديل
+Employees_Peer_Code : كود البديل
+Employees_Alias : الشهرة
+Employees_Sex : الجنس
+Employees_User_Name : إسم المستخدم
+Employees_Password : كلمة المرور
+Employees_Is_Super_Admin : سوبر أدمن
+Job : الوظيفة
+Job_Description : وصف الوظيفة
+Employees_Department : القسم
+Employees_Branch : الفرع
+Job_Number : رقم الوظيفة
+Employees_Social_Status : الحالة الإجتماعية
+Employees_Image_Path : صورة الموظف
+Employees_Evaluation : التقييم
+Employees_Evaluation_Icon_Path : صورة التقييم
+Employees_BirthDate : تاريخ الميلاد
+Employees_Religon : الديانة
+Employees_Language : اللغة
+Employees_ID_Type : نوع الهوية
+Employees_ID_Number : رقم الهوية
+Employees_Country : الدولة
+Employees_City : المدينة
+Employees_Address : العنوان
+Employees_EMail : البريد الإلكتروني
+Employees_Phones : الجوال
+Job_Address : عنوان العمل
+Job_From : يعمل من تاريخ
+Job_Sallary : المرتب
+
+Toast_Title_Success : نجحت !
+Toast_Title_Failed : فشل !
+Toast_Content_Success : تمت العملية بنجاح
+Toast_Content_Add_Failed : فشلت العملية لتكرار نفس العنصر
+Toast_Content_Delete_Failed : فشلت العملية لإرتباط العنصر بمهمة أخري
+Toast_Content_Permission_Failed : فشلت العملية لعدم وجود صلاحية للمستخدم
+Toast_Failed_Little_Letters_Length : فشلت العملية لقصر طول الحروف
+Toast_Failed_Reload : فشلت العملية برجاء إعادة تحميل الصفحة وإعادة المحاولة
+Toast_Failed_SelectRow : برجاء تحديد الصف 
+
+Items_Grid : قائمة الأصناف
+Items_Item_Title_Ar : الإسم-عربي 
+Items_Item_Title_En : الإسم-إنجليزي
+Items_Item_Group : المجموعة
+Def_Activity : النشاط
+Unit : الوحدة
+Items_Item_Code : الكود
+Items_VAT : الضريبة
+Items_URL : الرابط
+Items_Description : الوصف
+Items_Length : الطول/سم
+Items_Width : العرض/سم
+Items_Height : الإرتفاع/سم
+Items_Weight : الوزن/ك
+Items_Thickness : السماكة/سم
+Items_Volume : الحجم/سم³
+Items_Validation_Period : فترة الصلاحية/سنة
+Items_Preparation_Period : فترة الإعداد/يوم
+Items_Garantee_Period : فترة الضمان/سنة
+Items_Packaging : التغليف
+Items_Material : المواد
+Items_Preservation : التخزين
+Items_To_Inventory_allow_Buy : إمكانية الشراء-للمخزن
+Items_To_Inventory_allow_Fractions : يسمح بالكسور-للمخزن
+Items_To_Inventory_allow_Frabrications : إمكانية التصنيع-للمخزن
+Items_To_Inventory_allow_Rebounds : إمكانية الإسترداد-للمخزن
+Items_To_Inventory_allow_Free_Samples : يسمح بعينات مجانية-للمخزن
+Items_To_Inventory_Maximum_Stock : الحد اللأقصي للمخزون-للمخزن
+Items_To_Inventory_Inventory : إيداع-للمخزن
+Items_To_Inventory_Supplier : المورد-للمخزن
+Items_To_Inventory_Buy_Price : سعر الشراء-للمخزن
+Items_To_Inventory_BOP : مخزن بداية المدة
+Items_From_Inventory_allow_Sell : إمكانية البيع-من المخزن
+Items_From_Inventory_allow_Fractions : يسمح بالكسور-من لمخزن
+Items_From_Inventory_allow_term_sales : إمكانية بيع التجزئة-من المخزن
+Items_From_Inventory_allow_Frabrications : إمكانية التصنيع-من المخزن
+Items_From_Inventory_allow_Rebounds : إمكانية الإسترداد-من المخزن
+Items_From_Inventory_allow_Free_Samples : يسمح بعينات مجانية-من المخزن
+Items_From_Inventory_Sell_Price : سعر البيع-من المخزن
+Items_From_Inventory_SemiWholeSales_Price : سعر البيع شبه الكامل-من المخزن
+Items_From_Inventory_WholeSales_Price : سعر البيع الكامل-من المخزن
+Items_From_Inventory_Term_Sell_Price : سعر بيع التجزئة-من الخزن
+Items_From_Inventory_Inventory : سحب-من المخزن
+Items_From_Inventory_Customer : من المخزن للعميل
+Items_From_Inventory_Sales_Representative : مندوب البيع-من المخزن
+Items_From_Inventory_Sales_Representative_Commession : عمولة مندوب المبيعات-من المخزن
+Items_From_Inventory_allow_Discount : إمكانية الخصم-من المخزن
+Items_Code_At_Supplier : الكود لدي المورد
+Items_Supplier_Country : بلد المورد
+Items_Ampere : الأمبير
+Items_Volt : الجهد
+Items_Power : التيار
+Items_Persons : عدد الأفراد
+Items_Color_r : اللون-أر
+Items_Color_g : اللون-جي
+Items_Color_b : اللون-بي
+Items_Touch : الملمس
+Items_Transperancy : الشفافية
+Items_Shining : اللمعان
+Items_Diameter : القطر/سم
+Items_Nature : الطبيعة
+Items_Main_Property : الملكية الرئيسية
+Items_Class : الفئة
+Items_Parent_Group : الأب-للمجموعة 
+Items_Pre_Validation_End_Warning_Period : فترة تحذير قبل انتهاء الصلاحية/شهر
+Items_First_Balance : رصيد بداية المدة
+Debit_Balance : مدين
+Credit_Balance : دائن
+Items_Current_Balance : الرصيد الحالي
+Items_Certificate : الشهادة
+
+Items_Certificates_Grid : شهادة الأصناف
+Items_Certificates_Title_Ar : إسم الشهادة-عربي
+Items_Certificates_Title_En : إسم الشهادة-إنجليزي
+Items_Certificates_Issuer_Ar : جهة الإصدار-عربي 
+Items_Certificates_Issuer_En : جهة الإصدار-إنجليزي
+Items_Certificates_Issuer_Country_Ar : دولة الإصدار-عربي
+Items_Certificates_Issuer_Country_En : دولة الإصدار-إنجليزي
+Items_Certificates_Description_Ar : الوصف-عربي
+Items_Certificates_Description_En : الوصف-إنجليزي
+Items_Certificates_Image : صورة الشهادة
+
+Items_Descriptions_Grid : وصف الأصناف
+Items_Descriptions_Title_Ar : الإسم-عربي 
+Items_Descriptions_Title_En : الإسم-إنجليزي 
+Items_Descriptions_Issuer_Ar : الوصف-عربي 
+Items_Descriptions_Issuer_En : الوصف-إنجليزي
+
+Items_Units_Grid : وحدة الأصناف 
+Items_Unit_Title_Ar : الإسم-عربي 
+Items_Unit_Title_En : الإسم-إنجليزي 
+Items_Unit_Abbreviation_Ar : الإختصار-عربي
+Items_Unit_Abbreviation_En : الإختصار-إنجليزي
+Items_Unit_Type : نوع الوحدة
+
+Items_Groups_Grid : مجموعة الأصناف 
+Items_Groups_Prefix : بداية الكلمة 
+Items_Groups_Parents : الأب 
+
+Items_Images_Grid : جدول الصور
+Items_Print_Item : طباعة الصنف
+Print : طباعة
+
+purchases : المشتريات
+purchases_Shortfalls : أصناف قاربت علي النفاذ
+Purchase_Purchases_Order : طلب شراء
+Purchase_Purchases_Orders : طلبات الشراء
+
+purchases_Supply_Order : أمر توريد
+purchases_Receipt_Order : أمر استلام
+Done_Purchase_Invoice : فواتير الشراء 
+purchases_Purchase_Invoice_Items : عناصر فاتورة الشراء 
+purchases_Creat_Purchase_Order : إنشاء طلب شراء
+HardCopyCode : مسلسل القيد
+Date : التاريخ
+Supplier : المورد
+Expected_Buy_Date : تاريخ الشراء المتوقع
+Item : الصنف
+Quantity : الكمية
+Unit_Price : سعر الوحدة
+Value : القيمة
+Items_Count : عدد الأصناف
+Issuance_By : أُصدر بواسطة
+Issuance_Date : تاريخ الإصدار 
+Last_At : تاريخ الإصدار الفعلي
+Approval : إعتماد
+The_Approvals : الإعتمادات
+Purchases_Requests : طلبات الشراء 
+Purchases_Order_Items : عناصر طلب الشراء
+Code : الكود
+Statement : البيان
+Summary : الملخص
+Purchases_Save_ParchasesOrder : حفظ أمر شراء
+Purchases_Save_PricesOffer : حفظ عرض أسعار
+Purchases_Save_Req_Order : حفظ طلب شراء
+Approval_Date : تاريخ الإعتماد
+Cancel_Date : تاريخ الإلغاء
+purchases_Request_Approvals : إعتمادات الطلب
+ID : م
+Last_In_Date : تاريخ آخر توريد
+Last_In_Quantity : كمية آخر توريد
+Last_In_Unit_Price : سعر الوحدة لآخر توريد
+Current_Quantity : الرصيد الحالي
+Seeked_Quantity : عجز المخزون
+To_Inventory_Minimum_Stock : الحد الأدنى للمخزون
+To_Inventory_Maximum_Stock : الحد الأقصى للمخزون
+Offers_Prices : عروض الأسعار
+Offers_Approvals : إعتمادات العروض
+OffersPrices_Approval : إعتماد عروض الأسعار
+Create_PriceOffer : إنشاء عرض سعر
+PriceOffer_Items : عناصر عرض السعر
+PriceOffer_Value : قيمة عرض السعر
+Expected_Supplierd_Date : تاريخ التوريد المتوقع
+Pre_Value : دفعة مقدمة
+Statment_IS_Empty : لم يتم إدخال البيان
+Balance : الرصيد 
+Cant_Do_this_Operation : لا يمكن إجراء العملية علي هذا العنصر
+Cant_Delete_All_Grid_Items : لا يمكن مسح كافة عناصر الجدول
+Offer_HardCopyCode : كود العرض
+Buy : شراء
+Offer_Approved : إعتمد العرض
+Buy_Invoice : شراء فاتورة
+Not_Found_Elements : لا يوجد عناصر
+NOt_Found_Date : لا يوجد تاريخ
+NOt_Found_ExpectedBuyDate : لا يوجد تاريخ الشراء المتوقع
+NOt_Found_Supplier : لا يوجد مورد
+NOt_Found_Inventory : لا يوجد مخزن
+NOt_Found_Prices : لا يوجد أسعار
+Order_Approved : إعتمد الأمر
+Purchases_Save_PurchaseInvoice : حفظ فاتورة شراء
+Purchased_Approved : إعتمد الشراء
+Print_All_Requests : طباعة كل الطلبيات
+purchaseInvoice_No : فاتورة شراء رقم
+purchaseRequest_No : طلب شراء رقم
+Total : الإجمالي
+purchaseInvoice_ApprovedBy : اعتمد فاتورة الشراء
+Suppling_Date : تاريخ التوريد
+Item_Code : كود الصنف
+Customers : العملاء
+Customer_Name : اسم العميل
+Type : النوع
+Debit : مدين
+Credit : دائن
+First_Debit : مدين أول مدة
+First_Credit : دائن أول مدة
+Currency : العملة
+Financial_Center : المركز المالي
+Level : المستوي
+Users : المستخدمين
+Sales_Representative : مندوب المبيعات
+Diasbled_By : ألغيَ التفعيل
+Disabled_At : ألغيَ التفعيل في 
+Deleted_By : حُذف بواسطة
+Deleted_At : حُذف في
+Rating : التقييم
+Image : الصورة
+RegDate : تاريخ التسجيل
+The_Group : المجموعة
+Dealing_Worning : تحذير التعامل
+Allow_Discount : يسمح بخصومات
+Allow_Term_Selling : يسمح بيع التجزئة
+Debit_Limit : حد الإدانة
+Pricing_Policy : سياسة البيع
+language : اللغة
+Religion : الديانة
+Nationality : الجنسية
+Country : الدولة
+City : المدينة
+address : العنوان
+MailBox : البريد
+LandLines : الخط الأرضي
+Phones : الموبايل
+EMail : البريد الإلكتروني
+FaceBook : فيس بوك
+WhatsApp : واتس أب
+Contact_From : تواصل من
+Contact_To : تواصل إلي
+Sex : الجنس
+Social_Status : الحالة الإجتماعية
+Car_ID : رقم الهوية
+Qualification : المؤهل
+Tax_Number : الرقم الضريبي
+Notes : الملاحظات
+Parent_Code : كود الأب
+Suppliers : الموردين
+Tab_DirectBuing : شراء مباشر
+Tab_PurchaseRequest : طلب شراء >
+Tab_RequestApproval : إعتماد الطلب >
+Tab_OffersPrices : عروض الأسعار >
+Tab_OfferApproval : إعتماد العروض >
+Tab_PurchaseOrder : أمر شراء >
+Tab_BuyInvoice : شراء فاتورة >
+Tab_PurchaseInvoices : فواتير الشراء
+Creat_DirectBuing : إنشاء فاتورة شراء مباشر
+Purchases_Orders : أوامر الشراء
+PurchasesOrder_Items : عناصر أمر الشراء
+TheContracting : التعاقدات
+Contracting : تعاقد
+TechnicalOffer : العرض الفني
+TechnicalOffer_Approval : إعتماد العرض الفني
+Create_TechnicalOffer : إنشاء عرض فني
+ElvTrack : شوط المصعد
+OutGatesCount : عدد الأبواب الخارجية
+CabinGatesCount : عدد أبواب الكابينة
+StoreyCount : عدد الأدوار
+SuspensionType : نوع التعليق
+CabinRod : سكة الكابينة
+CounterWeightRod : سكة الثقل
+SensorType : نوع الحساس
+DoorType : نوع الباب
+EmergencyCircle : دائرة الطوارئ
+Dupplicated_Item_Not_Allowed : لا يمكن إختيارنفس الصنف أكثر من مرة
+EditApproval_TechnicalOffer : تعديل واعتماد العرض الفني
+TechnicalOffers : العروض الفنية
+TechnicalOfferDetails : تفاصيل العرض الفني
+EditApproval_FinancialOffer : تعديل واعتماد العرض المالي
+FinancialOffers : العروض المالية
+FinancialOfferDetails : تفاصيل العرض المالي
+Elevator_Type : نوع المصعد
+WiresCount : عدد الحبال
+Persons : الأفراد
+Archive : أرشفة
+Description : الوصف	
+Component_Cost : تكلفة المكونات
+Extra_Cost : تكلفة إضافية
+Total_Contracting : إجمالي التعاقد
+Expire_Period : مدة الصلاحية
+Profit : الربح
+Empty : (فارغ)
+Wires_Count : عدد الأحبال
+Persons_Count : عدد الافراد
+Units_Count : عدد الوحدات
+Missing_Quantity : لم يتم تحديد الكمية
+Missing_Group : لم يتم تحديد المجموعة
+Missing_Code : لم يتم تحديد الكود
+Missing_Item : لم يتم تحديد الصنف
+Dupplicated_Item_Not_Allowed : لا يمكن تكرار نفس الصنف
+Grid_Is_Empty : لا توجد عناصر بالجدول
+Missing_Elevator_Type : لم يتم تحديد نوع المصعد
+Missing_Elevator_Path_length : لم يتم تحديد شوط المصعد
+Missing_Suspension_Type : لم يتم تحديد نوع التعليق
+Missing_Wires_Count : لم يتم تحديد عدد الأحبال
+Missing_Doors_Types : لم يتم تحديد نوع الأبواب
+Missing_Doors_Sensors : لم يتم تحديد نوع حساسات الأبواب
+Missing_Exterior_Doors_Count : لم يتم تحديد عدد الأبواب الخارجية
+Missing_Cabin_Doors_Count : لم يتم تحديد عدد أبواب الكابينة
+Missing_Levels_Count : لم يتم تحديد عدد الأدوار
+Missing_Persons_Count : لم يتم تحديد عدد الأفراد
+Missing_Units_Count : لم يتم تحديد عدد الوحدات
+Reset : إعادة ضبط
+FinancialOffer_Data : بيانات العرض المالي
+TechnicalOffer_Code : كود العرض الفني
+FinancialOffer_Code : كود العرض المالي
+validTo : صالح حتي
+TechnicalOffer_Total : إجمالي العرض الفني
+GranteeIncluded : شامل الضمان
+Garantee_Cost : تكلفة الضمان
+Garantee_Month : مدة الضمان/شهر
+Maintanance_Visit_Includedncluded : شامل الصيانة
+Maintanance_Visit_Included_Cost : تكلفة الصيانة
+Maintanance_Visit_Included_Month : مدة الصيانة/شهر
+Shipping_Chargest : تكلفة شحن
+Lefting_Charges : تكلفة أعمال رفع
+Transportation_Charges : تكلفة نقل
+Preparation_Charges : تكلفة تجهيزات
+Subcontractor_Cost : تكلفة مقاول الباطن
+Subcontractor_Statment : بيان مقاول الباطن
+OtherCharges_Cost : تكلفة أعمال أخري
+OtherCharges_Statment : بيان أعمال أخري
+TotalCost : التكلفة الإجمالية
+PaymentsAndInstallments : دُفعات وأقساط
+DoneDate : تاريخ التعاقد
+RequireDate : تاريخ الإستحقاق
+LegalTerms : الحقوق القانونية
+AllLegalTerms_Corporation : جميع الحقوق القانونية بالمؤسسة
+LegalTerms_Contracting : الحقوق القانونية بالعقد
+Missing : لم يتم تحديد.
+Date_NotValid : التاريخ غير صالح
+AddAll : اضافة الكل
+PaymentsAndInstallments_FinancialOffer : دُفعات وأقساط العرض المالي
+Create_FinancialOffer : إنشاء عرض مالي
+Last_Purchase_Price : اخر سعر شراء
+Default_Price : السعر الافتراضي
+Average_Purchase_Price : متوسط سعر الشراء
+Vat_Includedncluded : شامل الضريبة  15  %
+FinancialOffer_VAT : الضريبة   15 %
+Taxable : يخضع للضريبة
+ContractCode : كود التعاقد
+Contracting_By : المتعاقد
+Contracting_Job : وظيفة المتعاقد
+Garantee_End : نهاية الضمان
+Maintanance_End : نهاية الصيانة
+NotApproved : لم يتم الإعتماد بعد
+AlradyContracted : تم التعاقد لهذا العرض من قبل
+SupplyingAndInstallation : التوريد والتركيب
+ComponentsSupplying : توريد مكونات المصعد
+ComponentsRecovey : استرداد مكونات المصعد
+Location : الموقع
+ContractingQuentity : كمية التعاقد
+TotalSupplied : اجمالي المُنصَرف
+TotalRecovery : اجمالي المسترد
+SupplyingPercent : نسبة التوريد - %
+SuppliedBy : صُرِفَ بواسطة
+SuppliedTo : صُرِفَ إلي
+Work_Tasks : مهام العمل
+Work_Tasks_ApprovalEdit : تعديل وإعتماد مهام العمل
+Task : المهمة
+Employees : العمال
+Employees_Boss : مشرف العمال
+Employees_Phone : موبايل المشرف
+Transportation_Nature : طبيعة الانتقال
+Transportation_Cost : تكلفة الانتقال
+Car_No : رقم السيارة
+Time_Start : تاريخ البداية
+Time_End : تاريخ النهاية
+Create_SupplyingOrder : إنشاء أمر توريد
+SupplyingOrder_Component : أمر توريد مكونات
+SupplyingOrder_Code : كود الإذن
+SupplyingOrder_Items : عناصر إذن الصرف
+Create_RecoveryOreder : إنشاء أمر إسترداد مكونات
+SupplyingRecovery_Code : كود أمر إسترداد
+SupplyingRecovery_Items : عناصر أمر إسترداد مكونات
+RecoveryBy : استرد بواسطة
+RecoveryTo : استرد إلي
+TaskCode : كود المهمة
+Create_Missions : إنشاء مهام العمل
+Items_Missions : عناصر مهام العمل
+Power : القوة /حصان
+Well_type : نوع البئر
+ELevator_Title : اسم المصعد
+Create_SupplyingRecovery_Order : إنشاء إذن صرف / إسترجاع مكونات
+SupplyingRecovery_Items : عناصر الإذن 
+OrderType : نوع الإذن
+Inventory_Employee : مسئول المخزن
+Contract_Repository : مستودع موقع
+Contract_Employee : مسئول الموقع
+Stage : المرحلة
+Remaining_Quantity : الكمية المتبقية للموقع
+Achievement_Avarege_Befor : معدل الإنجاز قبل المهمة - %
+Achievement_Avarege_After : معدل الإنجاز بعد المهمة - %
+Achievement_Avarege_Statment : بيان معدل الإنجاز 
+Boss_Notes : ملاحظات المشرف
+Customer_Note : ملاحظات العميل
+Department_Note : ملاحظات القسم
+Financial_Note : ملاحظات الماليات
+Management_Notes : ملاحظات الإدارة
+Installation : تركيبات
+Maintanance : صيانة
+Preview : معاينة
+MissionType : نوع المهمة
+Contract_MaintananceCode : كود التعاقد/الصيانة
+Contract_Code : كود التعاقد
+Contract_Type : نوع التعاقد
+EditApproval_SupplyRecovery : تعديل وإعتماد إذن الصرف والإسترجاع
+Supplyin_And_Recovery_Orders : أُذونات الصرف والإسترجاع
+order_Details : تفاصيل الإذن 
+Because_It_Approved : لانه معتَمد
+Add_Items : إضافة الأصناف
+Add_Descriptions : إضافة الأوصاف
+TechnicalOffer_Items : عناصر العرض الفني
+All_DescriptionItems : جميع أوصاف الأصناف
+DescriptionItems_InContract : وصف الأصناف بالعقد
+Box : الصندوق
+Create_PayReceive_Entry_Cash : انشاء قيد  دفع/قبض نقدي
+Monetary_Entry : القيود النقدية
+Entry_Code : كود القيد
+Entry_Type : نوع القيد
+Pay : دفع
+Receive : قبض
+Operations_PayReceive_Entry_Cash : تعديل واعتماد قيد  دفع/قبض نقدي 
+Create_PayReceive_Entry_Receipt : انشاء قيد  دفع/قبض ورقي
+Operations_PayReceive_Entry_Receipt : تعديل واعتماد قيد  دفع/قبض ورقي 
+Receipt_Entry : القيود الورقية
+Issued_Date : تاريخ الإصدار
+BankAccount : حساب بنك
+Check_Number : رقم الشيك
+ChekStatment : حالة الشيك
+Visit : لم يتم زيارة تبويب
+View : عرض
+From_Date : من تاريخ
+To_Date : إلي تاريخ
+account_Type : نوع الحساب
+Account_Statement : نشاط حساب
+Account_Statement_Items :  عناصر نشاط الحساب 
+Account_Statement_Address :  عنوان نشاط الحساب 
+Statement_Includ : البيان يتضمن
+Visible_Iem : ظهور الصنف
+Not_Found_Result_Search : لا يوجد نتائج للبحث
+purchases_ItemCard : كارتة الصنف
+Change_Item : اختر صنف
+Error_Page : نأسف ! لا يوجد صفحة بهذا الإسم
+ContractingValue_WithoutVat : قيمة التعاقدات بدون ضرائب
+SAR : ريال سعودي
+Contract : عقد
+Order : إذن
+ContracsVatValue : قيمة ضرائب التعاقدات
+TotalContractsValue : إجمالي قيمة التعاقدات
+TotalProfitValue : إجمالي قيمة الربح
+TotalBoxValue : إجمالي رصيد الصندوق
+TotalReceiveEntries : إجمالي قيود القبض
+TotalPayEnteries : إجـمـالي قيود  الدفع
+TotalBuyingOperations : اجمالي عمليات الشراء
+New_Supplying : صرف جديد
+Extra_Supplying : صرف زيادة على العرض الفني
+SupplyingToEditContract : صرف بسبب تعديلات التعاقد
+ReceiveExtra : إستلام فائض العرض الفني
+ReceiveToEditContract : إستلام بسبب تعديلات التعاقد
+ReceiveToDepreciations : إستلام هوالك
+ReceiveManufacturingDefects : إستلام عيوب تصنيع
+AddAccount : إضافة حساب
+account_Name : إسم الحساب
+TotalBuyingVat : إجمالي ضرائب الشراء

@@ -1,0 +1,19 @@
+﻿@page "/DashBoardModule"
+@layout MainLayout_DashBoard
+@inject NavigationManager UriHelper
+
+@code
+{
+    [CascadingParameter]
+    protected Task<AuthenticationState>
+    AuthStat
+    { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await AuthStat).User;
+        if (user.Identity.Name != "admin")
+        {
+            UriHelper.NavigateTo("/");
+        }
+    }
+}

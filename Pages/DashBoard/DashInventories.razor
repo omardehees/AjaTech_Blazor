@@ -1,0 +1,88 @@
+﻿@page "/DashInventories"
+@layout MainLayout_DashBoard
+@inject NavigationManager NavigationManager
+@inject NavigationManager UriHelper
+@inject HttpClient httpClient
+@inject IConfiguration Configuration
+@using Microsoft.Extensions.Configuration;
+@using AjaTech_Blazor.Data.ViewModels;
+
+<div class="control-section">
+    <SfAccumulationChart Title="صادرات المخازن" EnableRtl="true" EnableSmartLabels="true" >
+        <AccumulationChartEvents Load="BeforeRender" />
+        <AccumulationChartLegendSettings Visible="true" Position="LegendPosition.Top">
+        </AccumulationChartLegendSettings>
+        <AccumulationChartTooltipSettings Enable="true" Format="${point.x} : <b> ${point.y} Unit</b>"></AccumulationChartTooltipSettings>
+        <AccumulationChartSeriesCollection>
+            <AccumulationChartSeries DataSource="@Credit_DataSource" XName="Credit_Inventory" YName="Credit_quantity" Radius="70%" InnerRadius="40%"  Explode="true" ExplodeOffset="10%" ExplodeIndex="3">
+                <AccumulationDataLabelSettings Visible="true" Name="Credit_quantity">
+                    <AccumulationChartDataLabelFont FontWeight="600" Color="white"></AccumulationChartDataLabelFont>
+                </AccumulationDataLabelSettings>
+            </AccumulationChartSeries>
+        </AccumulationChartSeriesCollection>
+    </SfAccumulationChart>
+</div>
+
+<hr />
+
+<div class="control-section">
+    <SfAccumulationChart Title="واردات المخازن" EnableRtl="true" EnableSmartLabels="true">
+        <AccumulationChartEvents Load="BeforeRender" />
+        <AccumulationChartLegendSettings Visible="true" Position="LegendPosition.Top">
+        </AccumulationChartLegendSettings>
+        <AccumulationChartTooltipSettings Enable="true" Format="${point.x} : <b> ${point.y} Unit</b>"></AccumulationChartTooltipSettings>
+        <AccumulationChartSeriesCollection>
+            <AccumulationChartSeries DataSource="@Debit_DataSource" XName="Debit_Inventory" YName="Debit_quantity" Radius="70%" InnerRadius="40%" Explode="true" ExplodeOffset="10%" ExplodeIndex="3">
+                <AccumulationDataLabelSettings Visible="true" Name="Debit_quantity">
+                    <AccumulationChartDataLabelFont FontWeight="600" Color="white"></AccumulationChartDataLabelFont>
+                </AccumulationDataLabelSettings>
+            </AccumulationChartSeries>
+        </AccumulationChartSeriesCollection>
+    </SfAccumulationChart>
+</div>
+
+@code{
+
+    public List<VM_Inv_GL> Credit_DataSource = new List<VM_Inv_GL>();
+    public List<VM_Inv_GL> Debit_DataSource = new List<VM_Inv_GL>();
+
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await AuthStat).User;
+        if (user.Identity.Name != "admin")
+        {
+            UriHelper.NavigateTo("/");
+        }
+
+        Credit_DataSource = await httpClient.GetJsonAsync<List<VM_Inv_GL>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString= select CreditAccount as 'Credit_Inventory' ,sum(Quantity) as 'Credit_quantity' from Inv_GL where CreditAccount like'%مخزن%' and CreditAccount !='مخزن التسليم'  group by CreditAccount");
+        Debit_DataSource = await httpClient.GetJsonAsync<List<VM_Inv_GL>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString= select DebitAccount as 'Debit_Inventory' ,sum(Quantity) as 'Debit_quantity' from Inv_GL where DebitAccount like'%مخزن%' group by DebitAccount");
+    }
+
+    string CurrentUri;
+    void BeforeRender(IAccLoadedEventArgs Args)
+    {
+        CurrentUri = NavigationManager.Uri;
+        if (CurrentUri.IndexOf("material") > -1)
+        {
+            Args.Theme = AccumulationTheme.Material;
+        }
+        else if (CurrentUri.IndexOf("fabric") > -1)
+        {
+            Args.Theme = AccumulationTheme.Fabric;
+        }
+        else if (CurrentUri.IndexOf("bootstrap") > -1)
+        {
+            Args.Theme = AccumulationTheme.Bootstrap;
+        }
+        else if (CurrentUri.IndexOf("highcontrast") > -1)
+        {
+            Args.Theme = AccumulationTheme.HighContrast;
+        }
+        else
+        {
+            Args.Theme = AccumulationTheme.Bootstrap4;
+        }
+    }
+}

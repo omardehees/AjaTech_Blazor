@@ -1,0 +1,243 @@
+﻿@page "/"
+@layout EmptyLayout
+@inherits LayoutComponentBase
+@inject NavigationManager UriHelper
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject Icb_database_Service icb_database_Service
+@inject ITbl_Log_Activities_yService iTbl_Log_Activities_yService
+
+@using Microsoft.AspNetCore.WebUtilities
+@using AjaTech_Blazor.Data.Tables_Models;
+@using AjaTech_Blazor.Data.IServices;
+
+@code{
+    //ان لم يتم تسجيل الدخول .. إذهب لصفحة الدخول
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+    protected async override Task OnInitializedAsync()
+    {
+        //base.OnInitialized();
+        var user = (await AuthStat).User;
+        if (!user.Identity.IsAuthenticated)
+        {
+            UriHelper.NavigateTo("login");
+        }
+    }
+}
+
+<Title>@languageContainer.Keys["menu_page_Title"]</Title>
+<br />
+<br />
+<br />
+<br />
+<br />
+<div class="control-section text-center">
+    <div class="row" style="text-align:@languageContainer.Keys["index_textalign"]">
+        <div class="card-deck">
+
+            <a @onclick="@(() => GoToPage("/SupplyingAndInstallation"))" class="pt-2">
+                <div class="card onhover" style="width: 14rem;">
+                    <img class="card-img-top p-1" style="" src="/css/CardImages/Supplying.png">
+                    <div class="card-body text-secondary p-0">
+                        <h5 class="card-title">@languageContainer.Keys["SupplyingAndInstallation"]</h5>
+                    </div>
+                </div>
+            </a>
+
+
+            <a @onclick="@(() => GoToPage("/Contracting"))" class="pt-2">
+                <div class="card onhover" style="width: 14rem;">
+                    <img class="card-img-top p-1" style="" src="/css/CardImages/Contracting.png">
+                    <div class="card-body text-secondary p-0">
+                        <h5 class="card-title">@languageContainer.Keys["TheContracting"]</h5>
+                    </div>
+                </div>
+            </a>
+
+            <a @onclick="@(() => GoToPage("/Purchases"))" class="pt-2">
+                <div class="card onhover" style="width: 14rem;">
+                    <img class="card-img-top p-1" style="" src="/css/CardImages/Purchases.png">
+                    <div class="card-body text-secondary p-0">
+                        <h5 class="card-title">@languageContainer.Keys["purchases"]</h5>
+                    </div>
+                </div>
+            </a>
+
+            <a @onclick="@(() => GoToPage("/settings"))" class="pt-2">
+                <div class="card onhover" style="width: 14rem;">
+                    <img class="card-img-top p-1" style="" src="/css/CardImages/Settings.png">
+                    <div class="card-body text-secondary p-0">
+                        <h5 class="card-title">@languageContainer.Keys["Settings"]</h5>
+                    </div>
+                </div>
+            </a>
+
+            <a @onclick="@(() => GoToPage("/Inventories"))" class="pt-2">
+                <div class="card onhover" style="width: 14rem;">
+                    <img class="card-img-top p-1" style="" src="/css/CardImages/Inventories.png">
+                    <div class="card-body text-secondary p-0">
+                        <h5 class="card-title">@languageContainer.Keys["inventories"]</h5>
+                    </div>
+                </div>
+            </a>
+
+            <a @onclick="@(() => GoToPage("/AccountsModule"))" class="pt-2">
+                <div class="card onhover" style="width: 14rem;">
+                    <img class="card-img-top p-1" style="" src="/css/CardImages/Box.png">
+                    <div class="card-body text-secondary p-0">
+                        <h5 class="card-title">@languageContainer.Keys["accounts"]</h5>
+                    </div>
+                </div>
+            </a>
+
+            <a @onclick="@(() => GoToPage("/DashBoardModule"))" class="pt-2">
+                <div class="card onhover" style="width: 14rem;">
+                    <img class="card-img-top p-1" style="" src="/css/CardImages/DashBoard.png">
+                    <div class="card-body text-secondary p-0">
+                        <h5 class="card-title">@languageContainer.Keys["DashBoard"]</h5>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .onhover:hover {
+        opacity: 0.5;
+        transition: 0.3s;
+        background-color: rgba(117, 117, 255, 0.51);
+    }
+
+    #BasicCard, #NewIconCard {
+        height: 210px;
+        margin: 16px;
+    }
+
+    #SideCard {
+        /*height: 376px;*/
+        height: 200px;
+        margin: 16px;
+    }
+
+    .e-card > .e-card-image {
+        background-repeat: no-repeat;
+        min-height: 205px;
+    }
+
+    .newIcon {
+        background: #2CC000;
+        border-radius: 12px;
+        border-radius: 12px;
+        font-family: HelveticaNeue-Medium, 'Segoe UI';
+        font-weight: 500;
+        color: #ffffff;
+        margin-left: 16px;
+        font-size: 14px;
+        width: 58px;
+        height: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        letter-spacing: 0.4px;
+    }
+
+    .row {
+        width: 80%;
+        margin: auto;
+    }
+
+    .e-btn {
+        margin-left: 4px;
+    }
+
+    .e-card .e-card-content {
+        padding-top: 0px;
+    }
+</style>
+
+@code{
+    //// إعلان المتغيرات
+    #region
+    string Language = "";
+    string Language_Session;
+    //string Dir = "";
+    //string QueryString = "";
+    //string User_Name = "";
+    //Tbl_Log_Activities_y Tbl_Log_Activities_y = new Tbl_Log_Activities_y();
+    #endregion
+
+    // -- التهيئة --
+    protected override void OnInitialized()
+    {
+        var uri = UriHelper.ToAbsoluteUri(UriHelper.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("Language", out var Laguage))
+        {
+            Language_Session = Laguage;
+        }
+        if (Language_Session == "En")
+        {
+            languageContainer.SetLanguage(System.Globalization.CultureInfo.GetCultureInfo("en-US"));
+            sessionStorage.SetItemAsync("language", "en-US");
+        }
+        if (Language_Session == "Ar")
+        {
+            languageContainer.SetLanguage(System.Globalization.CultureInfo.GetCultureInfo("ar-EG"));
+            sessionStorage.SetItemAsync("language", "ar-EG");
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        ////Check login ///////////////////////////////////////////////////////
+        //User_Name = await sessionStorage.GetItemAsync<string>("User_Name");
+        //Tbl_Log_Activities_y.Action = "فشل فتح القائمة الرئيسية";
+        //Tbl_Log_Activities_y.Action_Code = "Invalid_User_001";
+        //Tbl_Log_Activities_y.Action_description = "محاولة فتح فاشلة لصفحة القائمة الرئيسية بسبب عدم توفر معلومات عن المستخدم";
+        //Tbl_Log_Activities_y.Action_QueryString = "";
+        //Tbl_Log_Activities_y.Affected_tables = "";
+        //Tbl_Log_Activities_y.Device = "";
+        //Tbl_Log_Activities_y.HRDW = "";
+        //Tbl_Log_Activities_y.IP = "";
+        //Tbl_Log_Activities_y.Notes = "";
+        //Tbl_Log_Activities_y.Page_Name = "/menu";
+        //Tbl_Log_Activities_y.Page_Title = "";
+        //Tbl_Log_Activities_y.ProccessID = "";
+        //Tbl_Log_Activities_y.TimeStamp = DateTime.Now;
+        //Tbl_Log_Activities_y.User_Can_Navigate = false;
+        //Tbl_Log_Activities_y.User_Department = "";
+        //Tbl_Log_Activities_y.User_ID = "";
+        //Tbl_Log_Activities_y.User_Job = "";
+        //Tbl_Log_Activities_y.User_Name = User_Name;
+        //QueryString = "Select * from Tbl_def_Users_y where User_Name='" + User_Name + "'";
+        //Language = icb_database_Service.ReadField(QueryString, "Language");
+        ////Check login ///////////////////////////////////////////////////////
+
+        //if (Language == "ar-EG")
+        //{
+        //    Tbl_Log_Activities_y.Action = "فتح القائمة الرئيسية";
+        //    Tbl_Log_Activities_y.Action_Code = "Open_Manu";
+        //    Tbl_Log_Activities_y.Action_description = "فتح صفحة القائمة الرئيسية ";
+
+        //    await iTbl_Log_Activities_yService.Tbl_Log_Activities_yInsert(Tbl_Log_Activities_y);
+        //    languageContainer.SetLanguage(System.Globalization.CultureInfo.GetCultureInfo("ar-EG"));
+        //    Dir = "rtl";
+        //}
+        //else
+        //{
+        //    await iTbl_Log_Activities_yService.Tbl_Log_Activities_yInsert(Tbl_Log_Activities_y);
+        //    Language = "en-US";
+        //    languageContainer.SetLanguage(System.Globalization.CultureInfo.GetCultureInfo("en-US"));
+        //    Dir = "ltr";
+        //}
+
+        //string language0 = await sessionStorage.GetItemAsync<string>("language0");
+    }
+
+    //الإنتقال إلى الصفحة المطلوبة
+    private void GoToPage(String Page)
+    {
+        UriHelper.NavigateTo(Page);
+    }
+
+}

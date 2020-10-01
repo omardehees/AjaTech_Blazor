@@ -1,0 +1,983 @@
+﻿@page "/TechnicalOffer"
+@layout MainLayout_Contracting
+
+@using AjaTech_Blazor.Data.ViewModels;
+
+@using Microsoft.Extensions.Configuration;
+@inject HttpClient httpClient
+@inject NavigationManager UriHelper
+@inject IJSRuntime jsRuntime
+@inject IConfiguration Configuration
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@*---------------------------------------------------------------------------------------------------------------------------*@
+@*--------------------------------------------------  Page Container --------------------------------------------------*@
+<div class="container card-container">
+    <div class="row">
+
+        @*---------------------------------------------------------------------------------------------------------------------------*@
+        @*--------------------------------------------------  Page Header --------------------------------------------------*@
+        <div class="col-lg-12 text-center font-weight-bold" style="border:#e8e11f 1px solid;background-color:#868218;color:white;margin-top:20px;font-size:x-large;border-radius:5px">@languageContainer.Keys["Create_TechnicalOffer"]</div>
+
+        @*---------------------------------------------------------------------------------------------------------------------------*@
+        @*--------------------------------------------------  Technical Offer Section --------------------------------------------------*@
+        <div class="col-lg-12 control-section">
+            <div class="content-wrapper">
+                <div class="row" style="direction:@languageContainer.Keys["Text_Direction"]">
+                    @*---------------------------------------------------------------------------------------------------------------------------*@
+                    @*----------------------------------------------------------   بيانات عامة  ------------------------------------------------*@
+                    @*---------------------------------------------------------------------------------------------------------------------------*@
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @bind-Value="Get_HardCopyCode" Placeholder='@languageContainer.Keys["TechnicalOffer_Code"]' Enabled="false" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" @bind-Value="cmbElevatorType" AllowFiltering="true" DataSource="DataSource_Elevator_Types" TValue="string" CssClass="pr-1 pl-1"
+                                        TItem="Elevator_Types" Placeholder='@languageContainer.Keys["Type"]' FloatLabelType="@FloatLabelType.Always">
+                            <DropDownListFieldSettings Text="The_type" Value="The_type"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" @bind-Value="cmbElvTrack" AllowFiltering="true" DataSource="DataSource_Elevator_Track" TValue="string" CssClass="pr-1 pl-1"
+                                        TItem="Elevator_Track" Placeholder='@languageContainer.Keys["ElvTrack"]' FloatLabelType="@FloatLabelType.Always">
+                            <DropDownListFieldSettings Text="ElvTrack" Value="ElvTrack"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" @bind-Value="cmbSuspensionType" AllowFiltering="true" DataSource="DataSource_SuspensionType" TValue="string" CssClass="pr-1 pl-1"
+                                        TItem="SuspensionType_Class" Placeholder='@languageContainer.Keys["SuspensionType"]' FloatLabelType="@FloatLabelType.Always">
+                            <DropDownListFieldSettings Text="SuspensionType" Value="SuspensionType"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+                    @*عدد الأحبال*@
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfNumericTextBox @bind-Value="seWiresCount" TValue="int" Placeholder='@languageContainer.Keys["Wires_Count"]' Min="0" Max="1000000" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                    </div>
+                    @*عدد الأفراد*@
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfNumericTextBox @bind-Value="sePersonsCount" TValue="int" Placeholder='@languageContainer.Keys["Persons_Count"]' Min="0" Max="1000000" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                    </div>
+                    @*عدد الوحدات*@
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfNumericTextBox @bind-Value="seUnitsCount" TValue="int" Placeholder='@languageContainer.Keys["Units_Count"]' Min="0" Max="1000000" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" @bind-Value="cmbDoorType" AllowFiltering="true" DataSource="DataSource_DoorType" TValue="string" CssClass="pr-1 pl-1"
+                                        TItem="DoorType_Class" Placeholder='@languageContainer.Keys["DoorType"]' FloatLabelType="@FloatLabelType.Always">
+                            <DropDownListFieldSettings Text="DoorType" Value="DoorType"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" @bind-Value="cmbSensorType" AllowFiltering="true" DataSource="DataSource_SensorType" TValue="string" CssClass="pr-1 pl-1"
+                                        TItem="SensorType_Class" Placeholder='@languageContainer.Keys["SensorType"]' FloatLabelType="@FloatLabelType.Always">
+                            <DropDownListFieldSettings Text="SensorType" Value="SensorType"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" @bind-Value="cmbEmergencyCircle" AllowFiltering="true" DataSource="DataSource_EmergencyCircle" TValue="string" CssClass="pr-1 pl-1"
+                                        TItem="EmergencyCircle_Class" Placeholder='@languageContainer.Keys["EmergencyCircle"]' FloatLabelType="@FloatLabelType.Always">
+                            <DropDownListFieldSettings Text="EmergencyCircle" Value="EmergencyCircle"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfNumericTextBox @bind-Value="seOutGatesCount" TValue="int" Placeholder='@languageContainer.Keys["OutGatesCount"]' Min="0" Max="1000000" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfNumericTextBox @bind-Value="seCabinGatesCount" TValue="int" Placeholder='@languageContainer.Keys["CabinGatesCount"]' Min="0" Max="1000000" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfNumericTextBox @bind-Value="seStoreyCount" TValue="int" Placeholder='@languageContainer.Keys["StoreyCount"]' Min="0" Max="1000000" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                    </div>
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfNumericTextBox @bind-Value="sePower" TValue="decimal"
+                                          Placeholder='@languageContainer.Keys["Power"]'
+                                          Min="0" Max="1000000" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                    </div>
+                    @*نوع البئر*@
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" ValueChanged="Well_Type_Changed" @ref="cmbWell_Type" AllowFiltering="true" CssClass="pr-1 pl-1"
+                                        DataSource="DataSource_Well_Types" TValue="string"
+                                        TItem="string" Placeholder='@languageContainer.Keys["Well_type"]'
+                                        FloatLabelType="@FloatLabelType.Always">
+                            @*<DropDownListFieldSettings Text="Item_Title_Ar" Value="Item_Title_Ar"></DropDownListFieldSettings>*@
+                        </SfDropDownList>
+                    </div>
+                    @*اسم المصعد*@
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @bind-Value="txtELevator_Title"
+                                   Placeholder='@languageContainer.Keys["ELevator_Title"]'
+                                   FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+                    @*----------------------------------------------------------الحفظ-------------------------------------------------*@
+                    <div class="col-lg-12 control-section form-group m-3">
+                        <div class="row">
+
+                            <div class="col-lg-4"></div>
+                            @* زر حفظ العرض *@
+                            <SfButton @ref="ref_btnSaveOffer" @onclick="btnSaveOffer" CssClass="col-lg-4 e-btn e-normal e-success form-control font-weight-bold" type="button">@languageContainer.Keys["Save"]</SfButton>
+                            <div class="col-lg-4"></div>
+
+                        </div>
+                    </div>
+                    @*---------------------------------------------------------------------------------------------------------------------------*@
+
+
+                    @*========================================= All Tabs   =======================================================================*@
+                <SfTab EnablePersistence="true" CssClass="text-center" EnableRtl="true">
+                    <TabItems>
+                        @*========================================= Tab   اضافة الاصناف =============================================================================*@
+                        <TabItem>
+                            <ChildContent> 
+                                <TabHeader Text="@languageContainer.Keys["Add_Items"]"></TabHeader>
+                            </ChildContent>
+                            <ContentTemplate>
+                                <div class="tab-content">
+                                    @*=========================================  Content Page   ====================================================*@
+
+                                    <div class="col-lg-12 control-section">
+                                        <div class="content-wrapper">
+                                            <div class="row">
+
+                                                @*قائمة المجموعات*@
+                                                <div class="col-lg-4 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                                    <SfDropDownList ShowClearButton="true" ValueChanged="GetItemsList" @ref="cmbGroup" AllowFiltering="true" DataSource="DataSource_Group" TValue="string" CssClass="pr-1 pl-1"
+                                                                    TItem="string" Placeholder='@languageContainer.Keys["Items_Item_Group"]' FloatLabelType="@FloatLabelType.Always">
+                                                        <DropDownListFieldSettings Text="Item_Title_Ar" Value="Item_Title_Ar"></DropDownListFieldSettings>
+                                                    </SfDropDownList>
+                                                </div>
+                                                @*قائمة الأصناف*@
+                                                <div class="col-lg-6 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                                    <SfDropDownList ShowClearButton="true" ValueChanged="GetItemsData" @ref="cmbItems" AllowFiltering="true" DataSource="DataSource_Items" TValue="string" CssClass="pr-1 pl-1"
+                                                                    TItem="string" Placeholder='@languageContainer.Keys["Item"]' FloatLabelType="@FloatLabelType.Always">
+                                                        <DropDownListFieldSettings Text="ElvTrack" Value="ElvTrack"></DropDownListFieldSettings>
+                                                    </SfDropDownList>
+                                                </div>
+                                                @*كود الصنف*@
+                                                <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                                    <SfTextBox Enabled="false" @bind-Value="txtItemCode" Placeholder='@languageContainer.Keys["Item_Code"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                                                </div>
+                                                @*الكمية*@
+                                                <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                                    <SfNumericTextBox @bind-Value="seItemQuantity" TValue="decimal" Placeholder='@languageContainer.Keys["Quantity"]' Min="0" Max="1000000" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                                                </div>
+
+                                                <div class="col-lg-2 font-weight-bold form-group" style="margin-top:auto">
+                                                    <SfButton @onclick="btnAddItem" type="button" CssClass="e-btn e-normal e-info form-control font-weight-bold">@languageContainer.Keys["Add"]</SfButton>
+                                                </div>
+                                                @*---------------------------------------------------------------------------------------------------------------------------*@
+                                                @*---------------------------------------------------------- تجميع الأصناف-------------------------------------------------*@
+                                                @*---------------------------------------------------------------------------------------------------------------------------*@
+                                                <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["TechnicalOffer_Items"]</div>
+                                                <SfGrid @ref="grdOffers" EnableRtl="true" DataSource="List_VM_Inv_Pre_Sales_Techical_Offer_Details" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] { "Search", "Delete" })">
+                                                    <GridEditSettings AllowAdding="true" ShowDeleteConfirmDialog="true" AllowEditing="true" AllowEditOnDblClick="true" ShowConfirmDialog="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Dialog"></GridEditSettings>
+                                                    <GridColumns>
+                                                        <GridColumn Field=@nameof(VM_Inv_Pre_Sales_Techical_Offer_Details.ID) Visible="true" IsPrimaryKey="true" IsIdentity="true" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                        <GridColumn Field=@nameof(VM_Inv_Pre_Sales_Techical_Offer_Details.The_Group) AllowEditing="false" HeaderText="@languageContainer.Keys["Items_Item_Group"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                        <GridColumn Field=@nameof(VM_Inv_Pre_Sales_Techical_Offer_Details.Item) AllowEditing="false" HeaderText="@languageContainer.Keys["Item"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                        <GridColumn Field=@nameof(VM_Inv_Pre_Sales_Techical_Offer_Details.Code) AllowEditing="false" HeaderText="@languageContainer.Keys["Item_Code"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                        <GridColumn Field=@nameof(VM_Inv_Pre_Sales_Techical_Offer_Details.Count) HeaderText="@languageContainer.Keys["Quantity"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                        <GridColumn Field=@nameof(VM_Inv_Pre_Sales_Techical_Offer_Details.Default_Price) HeaderText="@languageContainer.Keys["Default_Price"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                        <GridColumn Field=@nameof(VM_Inv_Pre_Sales_Techical_Offer_Details.Current_Balance) AllowEditing="false" HeaderText="@languageContainer.Keys["Balance"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                        @*<GridColumn Field=@nameof(VM_Inv_Pre_Sales_Techical_Offer_Details.Description) HeaderText="@languageContainer.Keys["Items_Description"]" TextAlign="TextAlign.Center"></GridColumn>*@
+                                                    </GridColumns>
+                                                </SfGrid>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @*---------------------------------------------------------------------------------------------------------------------------*@
+
+                                    @*========================================= / Content Page   ========================================================*@
+                                </div>
+                            </ContentTemplate>
+                        </TabItem>
+                        @*========================================= / Tab   =======================================================================*@
+
+                        @*========================================= Tab   إضافة وصف الاصناف =============================================================================*@
+                        <TabItem >
+                            <ChildContent>
+                                <TabHeader Text="@languageContainer.Keys["Add_Descriptions"]"></TabHeader>
+                            </ChildContent >
+                            <ContentTemplate>
+                                <div class="tab-content">
+                                    @*=========================================  Content Page   ====================================================*@
+
+                                    <div class="col-lg-12 control-section">
+                                        <div class="content-wrapper">
+                                            <div class="row">
+                                                @*---------------------------------------------------------------------------------------------------------------------------*@
+
+                                                @*--------------------------------------------------جميع وصف الاصناف  --------------------------------- -----------------*@
+
+                                                <div class="col-lg-12 control-section">
+                                                    <div class="content-wrapper">
+                                                        <div class="row">
+                                                            <div class="col-lg-12 text-center font-weight-bold" style="border:#808080 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["All_DescriptionItems"]</div>
+                                                            <SfGrid @ref="grdContract_ItemsDescription" EnableRtl="true" DataSource="DataSource_Contract_ItemsDescription" AllowResizing="true" AllowSelection="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] { "Search" , "Add" , "Delete" , "Edit" })">
+                                                                <GridEvents RowSelected="RowSelect_Description" OnActionBegin="ActionBegin_Contract_ItemsDescription" TValue="VM_Inv_Contracts_Items"></GridEvents>
+                                                                <GridEditSettings AllowAdding="true" AllowEditOnDblClick="true" ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowEditing="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Dialog"></GridEditSettings>
+                                                                <GridColumns>
+                                                                    <GridColumn Field=@nameof(VM_Inv_Contracts_Items.ID) Visible="true" IsPrimaryKey="true" IsIdentity="true" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center" Width="60px"></GridColumn>
+                                                                    <GridColumn Field=@nameof(VM_Inv_Contracts_Items.Title) HeaderText="@languageContainer.Keys["Title"]" TextAlign="TextAlign.Right"></GridColumn>
+                                                                    <GridColumn Field=@nameof(VM_Inv_Contracts_Items.Description) HeaderText="@languageContainer.Keys["Description"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                                    <GridColumn Field=@nameof(VM_Inv_Contracts_Items.Notes) EditType="EditType.DefaultEdit" HeaderText="@languageContainer.Keys["Notes"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                                </GridColumns>
+                                                            </SfGrid>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @*-----------------------------------------------------------------------------------------------------*@
+                                                <div class="col-lg-12 control-section form-group m-3">
+                                                    <div class="row">
+                                                        <div class="col-lg-2"></div>
+                                                        <div class="col-lg-3 font-weight-bold form-group" style="margin-top:auto">
+                                                            <SfButton @onclick="btnAdd_DescriptionItems" type="button" CssClass="e-btn e-normal e-info form-control font-weight-bold">@languageContainer.Keys["Add"]</SfButton>
+                                                        </div>
+                                                        <div class="col-lg-2"></div>
+
+                                                        <div class="col-lg-3 font-weight-bold form-group" style="margin-top:auto">
+                                                            <SfButton @ref="ref_btnAddAll_DescriptionItems" @onclick="btnAddAll_DescriptionItems" type="button" CssClass="e-btn e-normal e-info form-control font-weight-bold">@languageContainer.Keys["AddAll"]</SfButton>
+                                                        </div>
+                                                        <div class="col-lg-2"></div>
+                                                    </div>
+                                                </div>
+
+                                                @*--------------------------------------------------------     تجميع الاصناف  ---------------------------------*@
+                                                    <div class="col-lg-12 control-section">
+                                                        <div class="content-wrapper">
+                                                            <div class="row">
+                                                                <div class="col-lg-12 text-center font-weight-bold" style="border:#808080 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["DescriptionItems_InContract"]</div>
+                                                                <SfGrid @ref="grdContract_ItemsDescription_Details" EnableRtl="true" DataSource="DataSource_Contract_ItemsDescription_Details" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] { "Search" , "Delete"})">
+                                                                    <GridEditSettings AllowAdding="true" ShowDeleteConfirmDialog="true" AllowEditing="true" AllowEditOnDblClick="true" ShowConfirmDialog="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Dialog"></GridEditSettings>
+                                                                    <GridColumns>
+                                                                        <GridColumn Field=@nameof(vM_Inv_Contracts_Items.ID) Visible="false" IsPrimaryKey="true" IsIdentity="true" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center" Width="60px"></GridColumn>
+                                                                        <GridColumn Field=@nameof(vM_Inv_Contracts_Items.Title) HeaderText="@languageContainer.Keys["Title"]" TextAlign="TextAlign.Right"></GridColumn>
+                                                                        <GridColumn Field=@nameof(vM_Inv_Contracts_Items.Description) HeaderText="@languageContainer.Keys["Description"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                                        <GridColumn Field=@nameof(vM_Inv_Contracts_Items.Notes) EditType="EditType.DefaultEdit" HeaderText="@languageContainer.Keys["Notes"]" TextAlign="TextAlign.Center"></GridColumn>
+
+                                                                    </GridColumns>
+                                                                </SfGrid>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @*-----------------------------------------------------------------------------------------------------*@
+
+
+                                                    @*---------------------------------------------------------------------------------------------------------------------------*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*========================================= / Content Page   ========================================================*@
+                                </div>
+                            </ContentTemplate>
+                        </TabItem>
+                        @*========================================= / Tab   =======================================================================*@
+
+                    </TabItems>
+                </SfTab>
+                    @*========================================= All Tabs   =========================================================================*@
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*========================================= Toast Custom   Code ============================================================*@
+@*========================================= Toast Custom   Code ============================================================*@
+
+<SfToast ID="Failed_Id_Custom" @ref="Toast_Custom_Failed"
+         TimeOut="5000" Icon="e-error toast-icons" CssClass="e-toast-danger"
+         Title="@languageContainer.Keys["Toast_Title_Failed"]"
+         Content="@ToastContent">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= / Toast  Success =================================================================*@
+
+<SfToast ID="Success_Id" @ref="Toast_Success" TimeOut="4000" CssClass="e-toast-success" Icon="e-success toast-icons" Title="@languageContainer.Keys["Toast_Title_Success"]" Content="@languageContainer.Keys["Toast_Content_Success"]">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= / Toast  Success ==================================================================*@
+@*========================================= / Toast Custom   Code =============================================================*@
+@*---------------------------------------------------------------------------------------------------------------------------*@
+@*-------------------------------------------------- Code  Technical Offer --------------------------------------------------*@
+@code {
+    @*---------------------------------------------------------------------------------------------------------------------------*@
+    @*----------------------------------------------------------المتغيرات-------------------------------------------------*@
+    @*-----------------------------------------cmbCabinRod----------------------------------------------------------------------------------*@
+    #region Variables
+
+    //Permissions Permissions_Obj = new Permissions();
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+
+    SfToast Toast_Success;
+    SfToast Toast_Custom_Failed;
+    SfButton ref_btnSaveOffer, ref_btnAddAll_DescriptionItems;
+    SfGrid<VM_Inv_Contracts_Items> grdContract_ItemsDescription, grdContract_ItemsDescription_Details;
+    //SfGrid<VM_Inv_Contracts_Items> ;
+
+
+    string txtELevator_Title;
+    string ToastContent;
+    string User_Name;
+    string Get_HardCopyCode;
+    string cmbElevatorType;
+    string cmbElvTrack;
+    string cmbSuspensionType;
+    string cmbCabinRod;
+    string cmbCounterWeightRod;
+    string txtItems;
+    string cmbDoorType;
+    string cmbSensorType;
+    string ItemName,Description,Title;
+    //string ItemDescription;
+    string cmbEmergencyCircle;
+    decimal seItemQuantity;
+    int seOutGatesCount;
+    int seWiresCount;
+    int seCabinGatesCount;
+    int seStoreyCount, RowId_Description;
+    decimal sePower;
+    int sePersonsCount;
+    int seUnitsCount;
+    int id;
+    string txtItemCode;
+    List<string>  List_Contract_DrscriptionItems = new List<string>();
+    List<string> DataSource_Well_Types = new List<string>();
+    VM_Inv_Contracts xxxx = new VM_Inv_Contracts();
+    //********************************
+    SfGrid<VM_Inv_Pre_Sales_Techical_Offer_Details> grdOffers;
+    SfDropDownList<string, string> cmbGroup;
+    SfDropDownList<string, string> cmbWell_Type;
+    SfDropDownList<string, string> cmbItems;
+    VM_ItemBasicData vM_ItemBasicData = new VM_ItemBasicData();
+    private List<string> DataSource_Group = new List<string>();
+    private List<VM_Def_Items> DataSource_grdItems = new List<VM_Def_Items>();
+    VM_Inv_Pre_Sales_Techical_Offer_Details vM_Inv_Pre_Sales_Techical_Offer_Details = new VM_Inv_Pre_Sales_Techical_Offer_Details();
+    private List<VM_Inv_Pre_Sales_Techical_Offer_Details> DataSource_grdOffers = new List<VM_Inv_Pre_Sales_Techical_Offer_Details>();
+    private List<VM_Inv_Pre_Sales_Techical_Offer_Details> List_VM_Inv_Pre_Sales_Techical_Offer_Details = new List<VM_Inv_Pre_Sales_Techical_Offer_Details>();
+    VM_Inv_Pre_Sales_Techical_Offer vM_Inv_Pre_Sales_Techical_Offer = new VM_Inv_Pre_Sales_Techical_Offer();
+    VM_Inv_Contracts_Items vM_Inv_Contracts_Items = new VM_Inv_Contracts_Items();
+    VM_Inv_Contracts_Items vM_Inv_Contracts_Items2 = new VM_Inv_Contracts_Items();
+
+    public List<Elevator_Types> DataSource_Elevator_Types = new List<Elevator_Types>();
+    public List<VM_Inv_Contracts_Items> DataSource_Contract_ItemsDescription = new List<VM_Inv_Contracts_Items>();
+    public List<VM_Inv_Contracts_Items> DataSource_Contract_ItemsDescription_Details = new List<VM_Inv_Contracts_Items>();
+    public class Elevator_Types
+    {
+        public string The_type { get; set; }
+    }
+    public List<Elevator_Track> DataSource_Elevator_Track = new List<Elevator_Track>();
+    public class Elevator_Track
+    {
+        public string ElvTrack { get; set; }
+    }
+    public List<SuspensionType_Class> DataSource_SuspensionType = new List<SuspensionType_Class>();
+    public class SuspensionType_Class
+    {
+        public string SuspensionType { get; set; }
+    }
+    public List<CabinRod_Class> DataSource_CabinRod = new List<CabinRod_Class>();
+    public class CabinRod_Class
+    {
+        public string CabinRod { get; set; }
+    }
+    public List<string> DataSource_Items = new List<string>();
+    public List<CounterWeightRod_Class> DataSource_CounterWeightRod = new List<CounterWeightRod_Class>();
+    public class CounterWeightRod_Class
+    {
+        public string CounterWeightRod { get; set; }
+    }
+    public List<DoorType_Class> DataSource_DoorType = new List<DoorType_Class>();
+    public class DoorType_Class
+    {
+        public string DoorType { get; set; }
+    }
+    public List<SensorType_Class> DataSource_SensorType = new List<SensorType_Class>();
+    public class SensorType_Class
+    {
+        public string SensorType { get; set; }
+    }
+    public List<WellType_Class> wellType_Class = new List<WellType_Class>();
+    public class WellType_Class
+    {
+        public string The_Type { get; set; }
+    }
+
+    public List<EmergencyCircle_Class> DataSource_EmergencyCircle = new List<EmergencyCircle_Class>();
+    public class EmergencyCircle_Class
+    {
+        public string EmergencyCircle { get; set; }
+    }
+    enum wellTypes
+    {
+        مقفل_بالخرسانة,
+        مقفل_بالخرسانة_
+    }
+
+    #endregion
+    @*----------------------------------------------------------------------------------------EmergencyCircle-----------------------------------*@
+    @*----------------------------------------------------------التهيئة---------------------------------------------------------*@
+    @*---------------------------------------------------------------------------------------------------------------------------*@
+protected override async Task OnInitializedAsync()
+{
+
+
+    DataSource_Elevator_Types = new List<Elevator_Types>
+{
+                        new Elevator_Types{ The_type = "AC1" },
+                        new Elevator_Types{ The_type = "AC2" },
+                        new Elevator_Types{ The_type = "GL" },
+                };
+
+    DataSource_Elevator_Track = new List<Elevator_Track>
+{
+                        new Elevator_Track{ ElvTrack = "9" },
+                        new Elevator_Track{ ElvTrack = "12" },
+                        new Elevator_Track{ ElvTrack = "16" },
+                        new Elevator_Track{ ElvTrack = "20" },
+                        new Elevator_Track{ ElvTrack = "23" },
+                        };
+
+    DataSource_SuspensionType = new List<SuspensionType_Class>
+{
+                        new SuspensionType_Class{ SuspensionType = "1" },
+                        new SuspensionType_Class{ SuspensionType = "0.5" },
+                        };
+
+
+    DataSource_DoorType = new List<DoorType_Class>
+{
+                        new DoorType_Class{ DoorType = "A" },
+                        new DoorType_Class{ DoorType = "M" },
+                           new DoorType_Class{ DoorType = "MA" },
+                        new DoorType_Class{ DoorType = "ME" },
+                        };
+    wellType_Class = new List<WellType_Class>
+{
+                        new WellType_Class{ The_Type = "مقفل بالخرسانة" }};
+    DataSource_SensorType = new List<SensorType_Class>
+{
+                           new SensorType_Class{ SensorType = "E" },
+                        new SensorType_Class{ SensorType = "L" },
+                        };
+
+    DataSource_EmergencyCircle = new List<EmergencyCircle_Class>
+{
+                           new EmergencyCircle_Class{ EmergencyCircle = "E" },
+                        };
+
+    DataSource_Group = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select * From Def_Items_Groups_api &Required_Field=Title_Ar");
+    // Get Max HardCopyCode +1
+    Get_HardCopyCode = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/GetNextHardCopyCode?tbl=Inv_Pre_Sales_Techical_Offer&Form=Technical_Offers");
+    DataSource_Contract_ItemsDescription = await httpClient.GetJsonAsync<List<VM_Inv_Contracts_Items>>(Configuration.GetValue<string>("Api") + "/api/Contracts_Items");
+
+    DataSource_Well_Types.Add("بئر خرساني");
+    DataSource_Well_Types.Add("بئر غير خرساني");
+}
+
+protected override async Task OnAfterRenderAsync(bool firstRender)
+{
+    //Permissions_Obj = await sessionStorage.GetItemAsync<Permissions>("Permissions");
+    //User_Name = Permissions_Obj.UserName;
+    /////////////////////////////////////////
+    var user = (await AuthStat).User;
+    User_Name = user.Identity.Name;
+    /////////////////////////////////////////
+
+}
+    @*---------------------------------------------------------------------------------------------------------------------------*@
+    @*--------------------------------------------------------- جلب قائمة الاصناف ---------------------------------------*@
+    @*---------------------------------------------------------------------------------------------------------------------------*@
+protected async void GetItemsList()
+{
+    if (string.IsNullOrWhiteSpace(cmbGroup.Text) == false)
+    {
+        DataSource_Items = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>
+    ("Api") + "/api/Services/ReadColumn?QueryString=" + "select Item_Title_Ar From Def_Items_api Where Item_Group='" + cmbGroup.Text + "' Order By Item_Title_Ar&Required_Field=Item_Title_Ar");
+        txtItemCode = "";
+        seItemQuantity = 0;
+        StateHasChanged();
+    }
+}
+protected async void Well_Type_Changed()
+{
+    return;
+}
+
+
+protected async void GetItemsData()
+{
+    if (string.IsNullOrWhiteSpace(cmbItems.Text) == false)
+    {
+        string _txtItemCode = await httpClient.GetStringAsync(Configuration.GetValue<string>
+            ("Api") + "/api/Services/ReadField?QueryString=" + "select Item_Code from Def_Items_api where Item_Title_Ar = '" + cmbItems.Text + "'&Required_Field=Item_Code");
+        txtItemCode = _txtItemCode.Replace("\"", "");
+        seItemQuantity = 0;
+        StateHasChanged();
+    }
+}
+    @*---------------------------------------------------------------------------------------------------------------------------*@
+    @*----------------------------------------------------------  تحديد و إضافةالصنف----------------------------------------------------*@
+    @*---------------------------------------------------------------------------------------------------------------------------*@
+protected void RowSelect_Item(RowSelectEventArgs<VM_Def_Items>args)
+{
+    ItemName = args.Data.Item_Title_Ar;
+    //ItemDescription = args.Data.Description;
+
+    StateHasChanged();
+}
+
+protected async void btnAddItem()
+{
+    //validating
+
+    if (string.IsNullOrEmpty(cmbElevatorType) == true)
+    {
+        // لم يتم تحديد نوع المصعد
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Elevator_Type"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (string.IsNullOrEmpty(cmbElvTrack) == true)
+    {
+        // لم يتم تحديد شوط المصعد
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Elevator_Path_length"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (string.IsNullOrEmpty(cmbSuspensionType) == true)
+    {
+        // لم يتم تحديد نوع التعليق
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Suspension_Type"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (seWiresCount == 0)
+    {
+        // لم يتم تحديد عدد الحبال
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Wires_Count"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (sePersonsCount == 0)
+    {
+        // لم يتم تحديد عدد الافراد
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Persons_Count"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (seUnitsCount == 0)
+    {
+        // لم يتم تحديد عدد الوحدات
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Units_Count"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (string.IsNullOrEmpty(cmbDoorType) == true)
+    {
+        // لم يتم تحديد نوع الابواب
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Doors_Types"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (string.IsNullOrEmpty(cmbSensorType) == true)
+    {
+        // لم يتم تحديد نوع حساس الابواب
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Doors_Sensors"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (string.IsNullOrWhiteSpace(cmbEmergencyCircle) == true)
+    {
+        // لم يتم تحديد الطوارئ
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["EmergencyCircle"] + languageContainer.Keys["Empty"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (seOutGatesCount == 0)
+    {
+        // لم يتم تحديد عدد الابواب الخارجية
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Exterior_Doors_Count"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (seCabinGatesCount == 0)
+    {
+        // لم يتم تحديد عدد ابواب الكابينة
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Cabin_Doors_Count"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (seStoreyCount == 0)
+    {
+        // لم يتم تحديد عدد الأدوار
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Levels_Count"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (sePower == 0)
+    {
+        // لم يتم تحديد  كم حصان
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Power"] + languageContainer.Keys["Empty"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (string.IsNullOrWhiteSpace(cmbWell_Type.Text) == true)
+    {
+        // لم يتم تحديد نوع البئر
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Well_type"] + languageContainer.Keys["Empty"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (string.IsNullOrWhiteSpace(txtELevator_Title) == true)
+    {
+        // لم يتم تحديد اسم المصعد
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["ELevator_Title"] + languageContainer.Keys["Empty"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+
+    if (string.IsNullOrWhiteSpace(cmbItems.Text) == true)
+    {
+        // لم يتم تحديد الصنف
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Item"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+
+    if (seItemQuantity == 0)
+    {
+        // لم يتم تحديد الكمية
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Quantity"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+
+    //Does not accept dupplicated items
+    foreach (var item in grdOffers.DataSource.ToList())
+    {
+        if (item.Item == cmbItems.Text)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Dupplicated_Item_Not_Allowed"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+    }
+    vM_ItemBasicData = await httpClient.GetJsonAsync<VM_ItemBasicData>(Configuration.GetValue<string>("Api") + "/api/Services/ReadItemBasicData?Item_Title_Ar=" + cmbItems.Text);
+    id = id++;
+    //vM_Inv_Pre_Sales_Offer.ID = id;
+    vM_Inv_Pre_Sales_Techical_Offer_Details.ID = grdOffers.TotalItemCount + 1;
+    vM_Inv_Pre_Sales_Techical_Offer_Details.Item = cmbItems.Text;
+    //vM_Inv_Pre_Sales_Techical_Offer_Details.Description = ItemDescription;
+    vM_Inv_Pre_Sales_Techical_Offer_Details.Count = Convert.ToInt32(seItemQuantity);
+    vM_Inv_Pre_Sales_Techical_Offer_Details.The_Group = cmbGroup.Text;
+    vM_Inv_Pre_Sales_Techical_Offer_Details.Code = txtItemCode;
+    vM_Inv_Pre_Sales_Techical_Offer_Details.Current_Balance = Convert.ToDecimal(vM_ItemBasicData.Current_Quantity);
+    if (vM_ItemBasicData.Quantity_In != 0)
+    {
+        vM_Inv_Pre_Sales_Techical_Offer_Details.Average_Purchase_Price = Convert.ToDecimal(vM_ItemBasicData.Value_In / vM_ItemBasicData.Quantity_In);
+    }
+    else
+    {
+        vM_Inv_Pre_Sales_Techical_Offer_Details.Average_Purchase_Price = 0;
+    }
+    vM_Inv_Pre_Sales_Techical_Offer_Details.Last_Purchase_Price = Convert.ToDecimal(vM_ItemBasicData.Last_In_Unit_Price);
+    string Default_Price = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select To_Inventory_Buy_Price from Def_Items_api where Item_Title_Ar = '" + cmbItems.Text + "'&Required_Field=To_Inventory_Buy_Price");
+    vM_Inv_Pre_Sales_Techical_Offer_Details.Default_Price = Convert.ToDecimal(Default_Price.ToString().Replace("\"", ""));
+    await grdOffers.AddRecord(vM_Inv_Pre_Sales_Techical_Offer_Details);
+    StateHasChanged();
+}
+    @*---------------------------------------------------------------------------------------------------------------------------*@
+    @*---------------------------------------------------------- الحفظ ---------------------------------------------------------*@
+    @*---------------------------------------------------------------------------------------------------------------------------*@
+protected async void btnSaveOffer()
+{
+    decimal Total_Cost = 0;
+    //---------------------------
+    //validating
+
+    if (grdOffers.TotalItemCount == 0)
+    {
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Grid_Is_Empty"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (grdContract_ItemsDescription_Details== null || grdContract_ItemsDescription_Details.TotalItemCount == 0)
+    {
+        this.Toast_Custom_Failed.Content =languageContainer.Keys["Empty"] + " " + languageContainer.Keys["DescriptionItems_InContract"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    //if (grdContract_ItemsDescription_Details.TotalItemCount == 0)
+    //{
+    //    this.Toast_Custom_Failed.Content = languageContainer.Keys["Grid_Is_Empty"] + " " + languageContainer.Keys["DescriptionItems_InContract"];
+    //    await this.Toast_Custom_Failed.Show();
+    //    return;
+    //}
+    if (string.IsNullOrEmpty(cmbElevatorType) == true)
+    {
+        // لم يتم تحديد نوع المصعد
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Elevator_Type"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (string.IsNullOrEmpty(cmbElvTrack) == true)
+    {
+        // لم يتم تحديد شوط المصعد
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Elevator_Path_length"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (string.IsNullOrEmpty(cmbSuspensionType) == true)
+    {
+        // لم يتم تحديد نوع التعليق
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Suspension_Type"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (seWiresCount == 0)
+    {
+        // لم يتم تحديد عددالاحبال 
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Wires_Count"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (string.IsNullOrEmpty(cmbDoorType) == true)
+    {
+        // لم يتم تحديد نوع الابواب
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Doors_Types"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (string.IsNullOrEmpty(cmbSensorType) == true)
+    {
+        // لم يتم تحديد نوع حساس الابواب
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Doors_Sensors"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (seOutGatesCount == 0)
+    {
+        // لم يتم تحديد عدد الابواب الخارجية
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Exterior_Doors_Count"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (seCabinGatesCount == 0)
+    {
+        // لم يتم تحديد عدد ابواب الكابينة
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Cabin_Doors_Count"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (seStoreyCount == 0)
+    {
+        // لم يتم تحديد عدد الأدوار
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Levels_Count"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (sePersonsCount == 0)
+    {
+        // لم يتم تحديد عدد الافراد
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Persons_Count"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (seUnitsCount == 0)
+    {
+        // لم يتم تحديد عدد الوحدات
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Units_Count"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (string.IsNullOrWhiteSpace(txtELevator_Title) == true)
+    {
+        // لم يتم تحديد اسم المصعد
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Elevator_Title"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+    if (string.IsNullOrWhiteSpace(cmbWell_Type.Text) == true)
+    {
+        // لم يتم تحديد نوع البئر
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Well_Type"];
+        await this.Toast_Custom_Failed.Show();
+        return;
+    }
+
+
+
+    ref_btnSaveOffer.Disabled = true;
+
+
+    Total_Cost = 0;
+    foreach (VM_Inv_Pre_Sales_Techical_Offer_Details vM_Inv_Pre_Sales_Techical_Offer_Details in grdOffers.DataSource.ToList())
+    {
+        vM_Inv_Pre_Sales_Techical_Offer_Details.HardCopyCode = Get_HardCopyCode ;
+        await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Pre_Sales_Techical_Offer_Details", vM_Inv_Pre_Sales_Techical_Offer_Details);
+        Total_Cost = Total_Cost + Convert.ToDecimal(vM_Inv_Pre_Sales_Techical_Offer_Details.Default_Price * vM_Inv_Pre_Sales_Techical_Offer_Details.Count);
+    }
+
+    ////    إضافة الاوصاف
+
+    if (grdContract_ItemsDescription_Details.TotalItemCount > 0)
+    {
+
+        foreach (var item in grdContract_ItemsDescription_Details.DataSource.ToList())
+        {
+            List_Contract_DrscriptionItems.Add( item.Title + "|" + item.Description);
+        }
+    }
+    //Ok We Can Save
+
+    vM_Inv_Pre_Sales_Techical_Offer.Box_Entrance_Count = seCabinGatesCount;
+    vM_Inv_Pre_Sales_Techical_Offer.DoorType = cmbDoorType;
+    vM_Inv_Pre_Sales_Techical_Offer.Door_Sensor = cmbSensorType;
+    vM_Inv_Pre_Sales_Techical_Offer.Exterior_Entrance_Count = seOutGatesCount;
+    vM_Inv_Pre_Sales_Techical_Offer.HardCopyCode = long.Parse(Get_HardCopyCode);
+    vM_Inv_Pre_Sales_Techical_Offer.Issuied_At = DateTime.Now.ToString("dd-MM-yyyy");
+    vM_Inv_Pre_Sales_Techical_Offer.Issuied_By = User_Name;
+    vM_Inv_Pre_Sales_Techical_Offer.Levels = seStoreyCount;
+    vM_Inv_Pre_Sales_Techical_Offer.Machine_Type = cmbElevatorType;
+    vM_Inv_Pre_Sales_Techical_Offer.Path_Length = Convert.ToDecimal(cmbElvTrack);
+    vM_Inv_Pre_Sales_Techical_Offer.Persons = sePersonsCount;
+    vM_Inv_Pre_Sales_Techical_Offer.Suspension_Type = cmbSuspensionType;
+    vM_Inv_Pre_Sales_Techical_Offer.Units_Count = seUnitsCount;
+    vM_Inv_Pre_Sales_Techical_Offer.Wires_Count = seWiresCount;
+    vM_Inv_Pre_Sales_Techical_Offer.Items_Count = grdOffers.TotalItemCount;
+    vM_Inv_Pre_Sales_Techical_Offer.Total_Items_Cost = Total_Cost;
+    vM_Inv_Pre_Sales_Techical_Offer.ELevator_Title = txtELevator_Title;
+    vM_Inv_Pre_Sales_Techical_Offer.Power = sePower.ToString();
+    vM_Inv_Pre_Sales_Techical_Offer.Enabled = true;
+    vM_Inv_Pre_Sales_Techical_Offer.Emergency_Circuit = cmbEmergencyCircle;
+    vM_Inv_Pre_Sales_Techical_Offer.Contract_Items= string.Join("^", List_Contract_DrscriptionItems);
+
+    //---------------------------------------------------------------
+    await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Pre_Sales_Techical_Offer", vM_Inv_Pre_Sales_Techical_Offer);//new { ID = 19, DoorType = "world" });//
+    await this.Toast_Success.Show();
+}
+
+// عمليات علي الوصف  
+public async void ActionBegin_Contract_ItemsDescription(ActionEventArgs<VM_Inv_Contracts_Items> args)
+{
+    try
+    {
+        if (args.RequestType.ToString() == "Delete")
+        {
+            await httpClient.DeleteAsync(Configuration.GetValue<string>("Api") + "/api/Contracts_Items/" + args.Data.ID);
+            await this.Toast_Success.Show();
+        }
+        if (args.RequestType.ToString() == "Save")
+        {
+            if (args.Action == "add")
+            {
+                // (Add) Post Api
+
+                vM_Inv_Contracts_Items.Title = args.Data.Title;
+                vM_Inv_Contracts_Items.Description = args.Data.Description;
+                vM_Inv_Contracts_Items.Notes = args.Data.Notes;
+
+                await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Contracts_Items", vM_Inv_Contracts_Items);
+                await this.Toast_Success.Show();
+
+            }
+            else//editing
+            {
+                // (Edit) Put Api
+
+                vM_Inv_Contracts_Items2.ID = args.Data.ID;
+                vM_Inv_Contracts_Items2.Title = args.Data.Title;
+                vM_Inv_Contracts_Items2.Description = args.Data.Description;
+                vM_Inv_Contracts_Items2.Notes = args.Data.Notes;
+
+                await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Contracts_Items?id=" + args.Data.ID.ToString(), vM_Inv_Contracts_Items);
+                await this.Toast_Success.Show();
+            }
+
+        }
+    }
+    catch (Exception ex)
+    {
+        System.Diagnostics.Debug.WriteLine(ex.Message);
+    }
+}
+// تحديد صف الحقوق
+public void RowSelect_Description(RowSelectEventArgs<VM_Inv_Contracts_Items> Args)
+{
+    RowId_Description = Args.Data.ID;
+    Title = Args.Data.Title;
+    Description = Args.Data.Description;
+    vM_Inv_Contracts_Items.ID = RowId_Description;
+    vM_Inv_Contracts_Items.Title = Title;
+    vM_Inv_Contracts_Items.Description = Description;
+
+    StateHasChanged();
+}
+
+// إضافة كل العناصر من وصف الاصناف الي العقد
+protected async void btnAddAll_DescriptionItems()
+{
+    DataSource_Contract_ItemsDescription_Details.Clear();
+    foreach (var item in grdContract_ItemsDescription.DataSource.ToList())
+    {
+        if (item.ID == RowId_Description)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Toast_Content_Add_Failed"];
+            this.Toast_Custom_Failed.Show();
+            return;
+        }
+        await grdContract_ItemsDescription_Details.AddRecord(item);
+
+
+
+    }
+
+    ref_btnAddAll_DescriptionItems.Disabled = true;
+
+    StateHasChanged();
+
+    //await jsRuntime.InvokeAsync<string>("console.log", "TotalItemCount >> " + grdContract_ItemsDescription.TotalItemCount.ToString());
+    //await jsRuntime.InvokeAsync<string>("console.log", "TotalItemCount2 >> " + grdContract_ItemsDescription_Details.TotalItemCount.ToString());
+}
+
+// إضافة عنصر من وصف الاصناف الي العقد
+protected async void btnAdd_DescriptionItems()
+{
+    if (RowId_Description == 0)
+    {
+        this.Toast_Custom_Failed.Content = languageContainer.Keys["Toast_Failed_SelectRow"];
+        this.Toast_Custom_Failed.Show();
+        return;
+    }
+    foreach (var item in grdContract_ItemsDescription_Details.DataSource.ToList())
+    {
+        if (item.ID == RowId_Description)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Toast_Content_Add_Failed"];
+            this.Toast_Custom_Failed.Show();
+            return;
+        }
+    }
+
+    await grdContract_ItemsDescription_Details.AddRecord(vM_Inv_Contracts_Items);
+    RowId_Description = 0;
+    StateHasChanged();
+
+}
+
+}
+
+
+

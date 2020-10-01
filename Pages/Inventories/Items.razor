@@ -1,0 +1,1367 @@
+﻿@page "/Items"
+@layout MainLayout_Inventory
+
+@using AjaTech_Blazor.Data.ViewModels;
+@using System.Threading.Tasks;
+@using Microsoft.Extensions.Configuration;
+@using AjaTech_Blazor.Data.IServices;
+
+@inject HttpClient httpClient;
+@inject NavigationManager UriHelper
+@inject IJSRuntime jsRuntime
+@inject IConfiguration Configuration
+@*@inject Blazored.SessionStorage.ISessionStorageService sessionStorage*@
+@inject IFileUpload fileupload
+
+<div class="container card-container p-1">
+    <div class="row">
+
+        <SfTab ShowCloseButton="true">
+            <TabItems>
+
+                @*=========================================  Start  Items Basic Tab   ========================================================*@
+
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["Items_Grid"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*=========================================  Start Basic Items     ========================================================*@
+                            @*----------------------------------- Grid    Items   -----------------------------*@
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#7575ff;margin-top:20px;font-size:x-large;border-radius:5px">@languageContainer.Keys["Items_Grid"]</div>
+                                        @*----------------   Print Button --------------------------*@
+                                        <div class="button-container" style="text-align:center">
+                                            <SfButton CssClass="e-btn font-weight-bold e-normal e-primary" IconCss="e-icons e-print-icon" @onclick="@Item_Url">. @languageContainer.Keys["Items_Print_Item"]</SfButton>
+                                        </div>
+                                        @*----------------  / Print Button --------------------------*@
+                                        <SfGrid ID="Grid" @ref="Grid1" AllowFiltering="true" DataSource="@DataSource_Items" Width="100%" ShowColumnChooser="true" AllowPaging="true" AllowResizing="true" AllowReordering="true" AllowRowDragAndDrop="true" AllowExcelExport="true" Toolbar="@(new List<object>() { "Add", "Edit", "Delete", "ExcelExport", "ColumnChooser", "Search" })">
+                                            <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                                            <GridEvents Created="CreatedHundler" OnActionComplete="FilterdData" RowSelected="RowSelecthandler" OnActionBegin="ActionBegin_Items" OnToolbarClick="ToolbarClick" TValue="VM_Def_Items"></GridEvents>
+                                            <GridEditSettings AllowAdding="true" AllowEditOnDblClick="true" ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowEditing="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Dialog" Dialog="DialogParams"></GridEditSettings>
+                                            <GridColumns>
+
+                                                <GridColumn Field=@nameof(VM_Def_Items.ID) IsIdentity="true" HeaderText="ID" IsPrimaryKey="true" ValidationRules="@(new { required = true, number = true })" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Item_Title_Ar) HeaderText="@languageContainer.Keys["Items_Item_Title_Ar"]" ValidationRules="@(new { required = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Item_Title_En) HeaderText="@languageContainer.Keys["Items_Item_Title_En"]" ValidationRules="@(new { required = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Item_Group) HeaderText="@languageContainer.Keys["Items_Item_Group"]" TextAlign="TextAlign.Center" Width="150">
+                                                    <EditTemplate>
+                                                        <SfDropDownList ShowClearButton="true" FloatLabelType="@FloatLabelType.Always" ID="Item_Group" Placeholder="@languageContainer.Keys["Items_Item_Group"]" Value="@((context as VM_Def_Items).Item_Group)" DataSource="@DataSource_Items_Groups">
+                                                            <DropDownListFieldSettings Text="@Groups_Language" Value="@Groups_Language"></DropDownListFieldSettings>
+                                                        </SfDropDownList>
+                                                    </EditTemplate>
+                                                </GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Activity) HeaderText="@languageContainer.Keys["Def_Activity"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Item_Unit) HeaderText="@languageContainer.Keys["Unit"]" TextAlign="TextAlign.Center" Width="150">
+                                                    <EditTemplate>
+                                                        <SfDropDownList ShowClearButton="true" FloatLabelType="@FloatLabelType.Always" ID="Item_Unit" Placeholder="@languageContainer.Keys["Unit"]" Value="@((context as VM_Def_Items).Item_Unit)" DataSource="@DataSource_Items_Units">
+                                                            <DropDownListFieldSettings Text="@Units_Language" Value="@Units_Language"></DropDownListFieldSettings>
+                                                        </SfDropDownList>
+                                                    </EditTemplate>
+                                                </GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Item_Code) HeaderText="@languageContainer.Keys["Items_Item_Code"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.VAT) HeaderText="@languageContainer.Keys["Items_VAT"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.URL) HeaderText="@languageContainer.Keys["Items_URL"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Description) HeaderText="@languageContainer.Keys["Items_Description"]" TextAlign="TextAlign.Center" Width="150">
+                                                    <EditTemplate>
+                                                        <SfDropDownList ShowClearButton="true" FloatLabelType="@FloatLabelType.Always" ID="Description" Placeholder="@languageContainer.Keys["Items_Description"]" Value="@((context as VM_Def_Items).Description)" DataSource="@DataSource_Items_Descriptions">
+                                                            <DropDownListFieldSettings Text="@Description_Language" Value="@Description_Language"></DropDownListFieldSettings>
+                                                        </SfDropDownList>
+                                                    </EditTemplate>
+                                                </GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Length) HeaderText="@languageContainer.Keys["Items_Length"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Width) HeaderText="@languageContainer.Keys["Items_Width"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Height) HeaderText="@languageContainer.Keys["Items_Height"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Weight) HeaderText="@languageContainer.Keys["Items_Weight"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Thickness) HeaderText="@languageContainer.Keys["Items_Thickness"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Volume) HeaderText="@languageContainer.Keys["Items_Volume"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Validation_Period) HeaderText="@languageContainer.Keys["Items_Validation_Period"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Preparation_Period) HeaderText="@languageContainer.Keys["Items_Preparation_Period"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Garantee_Period) HeaderText="@languageContainer.Keys["Items_Garantee_Period"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Packaging) HeaderText="@languageContainer.Keys["Items_Packaging"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Material) HeaderText="@languageContainer.Keys["Items_Material"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Preservation) HeaderText="@languageContainer.Keys["Items_Preservation"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.To_Inventory_allow_Buy) HeaderText="@languageContainer.Keys["Items_To_Inventory_allow_Buy"]" DefaultValue="1" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.To_Inventory_allow_Fractions) HeaderText="@languageContainer.Keys["Items_To_Inventory_allow_Fractions"]" DefaultValue="1" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.To_Inventory_allow_Frabrications) HeaderText="@languageContainer.Keys["Items_To_Inventory_allow_Frabrications"]" DefaultValue="1" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.To_Inventory_allow_Rebounds) HeaderText="@languageContainer.Keys["Items_To_Inventory_allow_Rebounds"]" DefaultValue="1" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.To_Inventory_allow_Free_Samples) HeaderText="@languageContainer.Keys["Items_To_Inventory_allow_Free_Samples"]" DefaultValue="1" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.To_Inventory_Maximum_Stock) HeaderText="@languageContainer.Keys["Items_To_Inventory_Maximum_Stock"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.To_Inventory_Inventory) HeaderText="@languageContainer.Keys["Items_To_Inventory_Inventory"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.To_Inventory_Supplier) HeaderText="@languageContainer.Keys["Items_To_Inventory_Supplier"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.To_Inventory_Buy_Price) HeaderText="@languageContainer.Keys["Items_To_Inventory_Buy_Price"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.To_Inventory_BOP) HeaderText="@languageContainer.Keys["Items_To_Inventory_BOP"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_allow_Sell) HeaderText="@languageContainer.Keys["Items_From_Inventory_allow_Sell"]" DefaultValue="1" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_allow_Fractions) HeaderText="@languageContainer.Keys["Items_From_Inventory_allow_Fractions"]" DefaultValue="1" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_allow_term_sales) HeaderText="@languageContainer.Keys["Items_From_Inventory_allow_term_sales"]" DefaultValue="1" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_allow_Frabrications) HeaderText="@languageContainer.Keys["Items_From_Inventory_allow_Frabrications"]" DefaultValue="1" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_allow_Rebounds) HeaderText="@languageContainer.Keys["Items_From_Inventory_allow_Rebounds"]" DefaultValue="1" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_allow_Free_Samples) HeaderText="@languageContainer.Keys["Items_From_Inventory_allow_Free_Samples"]" DefaultValue="1" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_Sell_Price) HeaderText="@languageContainer.Keys["Items_From_Inventory_Sell_Price"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_SemiWholeSales_Price) HeaderText="@languageContainer.Keys["Items_From_Inventory_SemiWholeSales_Price"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_WholeSales_Price) HeaderText="@languageContainer.Keys["Items_From_Inventory_WholeSales_Price"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_Term_Sell_Price) HeaderText="@languageContainer.Keys["Items_From_Inventory_Term_Sell_Price"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_Inventory) HeaderText="@languageContainer.Keys["Items_From_Inventory_Inventory"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_Customer) HeaderText="@languageContainer.Keys["Items_From_Inventory_Customer"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_Sales_Representative) HeaderText="@languageContainer.Keys["Items_From_Inventory_Sales_Representative"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_Sales_Representative_Commession) HeaderText="@languageContainer.Keys["Items_From_Inventory_Sales_Representative_Commession"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.From_Inventory_allow_Discount) HeaderText="@languageContainer.Keys["Items_From_Inventory_allow_Discount"]" DefaultValue="1" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Code_At_Supplier) HeaderText="@languageContainer.Keys["Items_Code_At_Supplier"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Supplier_Country) HeaderText="@languageContainer.Keys["Items_Supplier_Country"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Ampere) HeaderText="@languageContainer.Keys["Items_Ampere"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Volt) HeaderText="@languageContainer.Keys["Items_Volt"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Power) HeaderText="@languageContainer.Keys["Items_Power"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Persons) HeaderText="@languageContainer.Keys["Items_Persons"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Color_r) HeaderText="@languageContainer.Keys["Items_Color_r"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Color_g) HeaderText="@languageContainer.Keys["Items_Color_g"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Color_b) HeaderText="@languageContainer.Keys["Items_Color_b"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Touch) HeaderText="@languageContainer.Keys["Items_Touch"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Transperancy) HeaderText="@languageContainer.Keys["Items_Transperancy"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Shining) HeaderText="@languageContainer.Keys["Items_Shining"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Diameter) HeaderText="@languageContainer.Keys["Items_Diameter"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Nature) HeaderText="@languageContainer.Keys["Items_Nature"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Main_Property) HeaderText="@languageContainer.Keys["Items_Main_Property"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Class) HeaderText="@languageContainer.Keys["Items_Class"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Parent_Group) HeaderText="@languageContainer.Keys["Items_Parent_Group"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Pre_Validation_End_Warning_Period) HeaderText="@languageContainer.Keys["Items_Pre_Validation_End_Warning_Period"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.First_Balance) HeaderText="@languageContainer.Keys["Items_First_Balance"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Debit_Balance) HeaderText="@languageContainer.Keys["Debit_Balance"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Credit_Balance) HeaderText="@languageContainer.Keys["Credit_Balance"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Current_Balance) HeaderText="@languageContainer.Keys["Items_Current_Balance"]" ValidationRules="@(new { number = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Certificates) HeaderText="@languageContainer.Keys["Items_Certificate"]" TextAlign="TextAlign.Center" Width="150">
+                                                    <EditTemplate>
+                                                        <SfDropDownList ShowClearButton="true" FloatLabelType="@FloatLabelType.Always" ID="Certificates" Placeholder="@languageContainer.Keys["Items_Certificate"]" Value="@((context as VM_Def_Items).Certificates)" DataSource="@DataSource_Items_Certificates">
+                                                            <DropDownListFieldSettings Text="@Certificates_Language" Value="@Certificates_Language"></DropDownListFieldSettings>
+                                                        </SfDropDownList>
+                                                    </EditTemplate>
+                                                </GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Image) HeaderText="@languageContainer.Keys["Def_Image"]" TextAlign="TextAlign.Center" Width="150">
+                                                    <Template>
+                                                        <img width="40" height="40" src="@UriHelper.ToAbsoluteUri($"css/UploadsFile/{(context as VM_Def_Items).Image}")" />
+                                                    </Template>
+                                                    <EditTemplate>
+                                                        <label class="font-weight-bold">@languageContainer.Keys["Def_Image"]</label>
+                                                        <img width="300" height="250" class="m-2" src="@UriHelper.ToAbsoluteUri($"css/UploadsFile/{(context as VM_Def_Items).Image}")" />
+                                                        <InputFile OnChange="HandleFileSelected" />
+                                                    </EditTemplate>
+                                                </GridColumn>
+
+                                                @*<GridColumn Field=@nameof(VM_Def_Items.Image) HeaderText="@languageContainer.Keys["Def_Image"]" TextAlign="TextAlign.Center" Width="150">
+                                                                                    <EditTemplate>
+                                            <SfDropDownList ShowClearButton="true" TValue="string" TItem="VM_Def_Items_Images"  FloatLabelType="@FloatLabelType.Always" ID="Image" Placeholder="@languageContainer.Keys["Def_Image"]" @bind-Value="VM_Def_Items_Object.Image" DataSource="@DataSource_Items_Images">
+                                                <DropDownListTemplates TItem="VM_Def_Items_Images">
+                                                    <ItemTemplate Context="VM_Def_Items_Images">
+                                                        <div class="name"> @((context as VM_Def_Items_Images).Description) </div>
+                                                        <img class="image" src="@UriHelper.ToAbsoluteUri($"css/UploadsFile/{(context as VM_Def_Items_Images).image}")" />
+                                                    </ItemTemplate>
+                                                    <HeaderTemplate>
+                                                        <div class="header"> <span>Photo</span> <span class="info">Employee Info</span></div>
+                                                    </HeaderTemplate>
+                                                    <ValueTemplate Context="VM_Def_Items_Images">
+                                                        <div class="dropdown-width" style="width:100%;height:100%;">
+                                                            <div class="name"> @((context as VM_Def_Items_Images).Description) </div>
+                                                            <img class="image" src="@UriHelper.ToAbsoluteUri($"css/UploadsFile/{(context as VM_Def_Items_Images).image}")" />
+                                                        </div>
+                                                    </ValueTemplate>
+                                                </DropDownListTemplates>
+                                                <DropDownListFieldSettings Text="Description" Value="Description"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                        </EditTemplate>
+                                                                                </GridColumn>*@
+                                                <GridColumn Field=@nameof(VM_Def_Items.Notes) HeaderText="@languageContainer.Keys["Def_Notes"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Enabled) HeaderText="@languageContainer.Keys["Def_Enabled"]" DefaultValue="1" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Archived) HeaderText="@languageContainer.Keys["Def_Archived"]" DefaultValue="0" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items.Deleted) HeaderText="@languageContainer.Keys["Def_Deleted"]" DefaultValue="0" EditType="EditType.BooleanEdit" DisplayAsCheckBox="true" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+
+                                            </GridColumns>
+                                            @*<SfButton OnClick="GetRowData" Content="Get Data from row"></SfButton>*@
+
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+                            @*---------------------------------  Print Settings Dialog  ------------------------*@
+                            <SfDialog Target="body" @ref="Sf_PrintSettings" Width="500px" MinHeight="300px" CssClass='@languageContainer.Keys["Text_Align"]'
+                                      IsModal="true" @bind-Visible="@Visible_PrintSettings" ShowCloseIcon="true"
+                                      Header="Print Settings" AnimationSettings="@dialogAnnimation_PrintSettings">
+                                <ChildContent>
+                                    @*<DialogEvents Opened="@EditDialogOpen_B_"></DialogEvents>*@
+                                    @*<EditForm Model="@tbl_def_Company_y" >*@
+                                    <div class="control_wrapper">
+                                        <SfMultiSelect @bind-Value="@bindPrin" TValue="string[]" Placeholder="Select" AllowFiltering="true" DataSource="@List_Items">
+                                            <MultiSelectFieldSettings Text="Name"></MultiSelectFieldSettings>
+                                        </SfMultiSelect>
+                                        <br />
+                                        @*<SfRadioButton Label="Male" Name="Gender" Value="male" @bind-Checked="@Annotate.Gender"></SfRadioButton>*@
+                                        <br /> <SfRadioButton @ref="RdB_A3" Value="A3" Label="A3" Name="custom" CssClass="e-primary"></SfRadioButton><br />
+                                        <br /><SfRadioButton Value="A4" Checked="true" Label="A4" Name="custom" CssClass="e-success"></SfRadioButton><br />
+                                    </div>
+                                    <br />
+                                    <div class="e-footer-content">
+                                        <div class="button-container text-center">
+                                            <button type="button" class="e-btn e-normal" @onclick="@onCancelClick_PrintSettings">@languageContainer.Keys["cancel"]</button>
+                                            <button type="button" class="e-btn e-normal e-primary" @onclick="@Update_PrintSettings">@languageContainer.Keys["Edit"]</button>
+                                        </div>
+                                    </div>
+
+                                    @*</EditForm>*@
+                                </ChildContent>
+                            </SfDialog>
+                            @code{
+
+                                public void CreatedHundler(object args)
+                                {
+                                    //jsRuntime.InvokeAsync<object>("Print11");
+                                }
+
+                                public string[] bindPrin;
+                                SfRadioButton RdB_A3;
+                                string PageSize;
+
+                                public class PrintSettings_Class
+                                {
+                                    public string Name { get; set; }
+
+                                }
+
+                                private List<PrintSettings_Class> List_Items = new List<PrintSettings_Class>
+
+                                                                                                                                   {
+                                    new PrintSettings_Class() { Name = "Item_Title_Ar"},
+                                    new PrintSettings_Class() { Name = "Item_Title_En"},
+                                    new PrintSettings_Class() { Name = "Item_Group"},
+                                    new PrintSettings_Class() { Name = "Unit"},
+                                    new PrintSettings_Class() { Name = "Items_Item_Code"},
+                                    new PrintSettings_Class() { Name = "From_Inventory_Sell_Price"},
+
+                                   };
+                                PrintSettings_Class printSettings_Object = new PrintSettings_Class();
+
+
+                                SfDialog Sf_PrintSettings;
+                                public bool Visible_PrintSettings { get; set; } = false;
+                                private void onCancelClick_PrintSettings(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+                                {
+                                    Visible_PrintSettings = false;
+                                }
+                                private void btn_PrintSettings(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+                                {
+                                    Visible_PrintSettings = true;
+                                }
+                                public async Task Update_PrintSettings(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+                                {
+
+                                    //await jsRuntime.InvokeAsync<string>("console.log", " Print Settings  >> " + string.Join(",", bindPrin));
+                                    if (RdB_A3.Checked)
+                                    {
+                                        PageSize = "A3";
+                                    }
+                                    else
+                                    {
+                                        PageSize = "A4";
+                                    }
+                                    //await jsRuntime.InvokeAsync<string>("console.log", " Page Size  >> " + PageSize);
+
+                                    Visible_PrintSettings = false;
+                                }
+                                private DialogAnimationSettings dialogAnnimation_PrintSettings { get; set; } = new DialogAnimationSettings { Effect = DialogEffect.Zoom };
+
+                            }
+                            @*---------------------------------/  Print Settings Dialog  ------------------------*@
+
+                            @*-----------------------------------  Code Items  -----------------------------*@
+                            @code{
+
+                                //public void GetRowData()
+                                //{
+                                //    var Viewdata = Grid1.CurrentViewData.ElementAt(2);   //Based on row index 2 get the data in row
+
+                                //    jsRuntime.InvokeAsync<string>("console.log", "Filterd Idxxxx  >> "+Viewdata);
+                                //}
+
+
+                                public async void FilterdData(ActionEventArgs<VM_Def_Items> args)
+                                {
+                                    if (args.RequestType == Syncfusion.Blazor.Grids.Action.Filtering)
+                                    {
+                                        //foreach (var i in VM_Def_Items_Object.Item_Title_Ar)
+                                        //{
+                                        //    Grid1.CurrentViewData.ElementAt(1);
+
+                                        //    await jsRuntime.InvokeAsync<string>("console.log", "Filterd 3  >> " + i);
+                                        //    await jsRuntime.InvokeAsync<string>("console.log", "Filterd 3  >> " + Grid1.CurrentViewData);
+
+                                        //}
+                                        //string items = string.Join(Environment.NewLine, Grid1.CurrentViewData);
+
+                                        //IEnumerable<VM_Def_Items> sss = new List<VM_Def_Items>();
+
+                                        //VM_Def_Items vM_Def_Items =new VM_Def_Items();
+                                        //await jsRuntime.InvokeAsync<string>("console.log", "Filterd Id  >> "+items);
+                                        //await jsRuntime.InvokeAsync<string>("console.log", "Filterd 2  >> "+ Grid1.CurrentViewData.Count());
+                                        //await jsRuntime.InvokeAsync<string>("console.log", "Filterd 3  >> " + Grid1.DataContainer.Values);
+
+                                        //await jsRuntime.InvokeAsync<string>("console.log", "Filterd Id1  >> " + Grid1.CurrentViewData.Count());
+                                        //await jsRuntime.InvokeAsync<string>("console.log", "Filterd xxxxxxx  >> " + string.Join(",", Grid1.CurrentViewData.First().ToString()));
+                                        //await jsRuntime.InvokeAsync<string>("console.log", "Filterd Id3  >> " + args.FilterChoiceCount.ToString("ID"));
+                                        //await jsRuntime.InvokeAsync<string>("console.log", "Filterd Id4  >> " + this.Grid1.GetDataRows().ToString());
+
+                                    }
+                                }
+
+                                SfGrid<VM_Def_Items> Grid1;
+                                public void ToolbarClick(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+                                {
+                                    if (args.Item.Id == "Grid_excelexport") { this.Grid1.ExcelExport(); }
+                                }
+
+                                private object DialogParams = new
+                                {
+@@params = new DialogModel { MinHeight = "400px", Width = "450px" }
+                            };
+
+                            VM_Def_Items VM_Def_Items_Object = new VM_Def_Items();
+                            VM_Def_Items VM_Def_Items_Object2 = new VM_Def_Items();
+                            @*-----------------------------------  Print Selected Row   -----------------------------*@
+                            public int? RowID = 0;
+                            string Url_Parm;
+                            string Querystring = "Select * From Def_Items_api where ID=";
+
+                            private async void Item_Url()
+                            {
+                                if (RowID.Value == 0)
+                                {
+                                    await this.Toast_SelectRow_Failed.Show();
+                                }
+                                else
+                                {
+                                    //UriHelper.NavigateTo(Url_Parm);
+                                    await jsRuntime.InvokeAsync<object>("open", new TimeSpan(1, 1, 1), Url_Parm, "_blank");
+
+                                }
+
+                            }
+                            public void RowSelecthandler(RowSelectEventArgs<VM_Def_Items> Args)
+                            {
+                                RowID = Args.Data.ID;
+
+                                //jsRuntime.InvokeAsync<string>("console.log", "Query_And_SelectedRow_ID >> " + Querystring + RowID);
+
+                                //Url_Parm = Configuration.GetValue<string>("Reports") + "/Print/Print_Receipt_Receive.aspx" + "?P_Querystring=" + Querystring + RowID + "&P_User=" + User_Name;
+                                Url_Parm = Configuration.GetValue<string>("Reports") + "/Print/Item_Form.aspx" + "?P_Querystring=" + Querystring + RowID + "&P_User=" + User_Name;
+                            }
+                            @*----------------------------------- / Print Selected Row  -----------------------------*@
+
+
+                            public async void ActionBegin_Items(ActionEventArgs<VM_Def_Items> args)
+                            {
+
+                                string List_Item_Title_Ar = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select * from Def_Items_api&Required_Field=Item_Title_Ar");
+                                string List_Item_Title_En = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select * from Def_Items_api&Required_Field=Item_Title_En");
+
+                                // Delete Api Items
+                                // Prevent Delete If User Hasn't Permission
+                                if (args.RequestType.ToString() == "Delete")
+                                {
+                                    if (Check_User_Super_Admin == "False")
+                                    {
+                                        await this.Toast_Permission_Failed.Show();
+                                    }
+                                    // Prevent Delete If ID = 0 (It's Means That Id Didn't take His Place In DataBase)
+                                    else if (args.Data.ID == 0)
+                                    {
+                                        await this.Toast_Reload_Failed.Show();
+                                    }
+
+                                    else
+                                    {
+                                        await httpClient.DeleteAsync(Configuration.GetValue<string>("Api") + "/api/Items_api/" + args.Data.ID);
+                                        await this.Toast_Success.Show();
+                                    }
+                                }
+                                // Post Api JoItemsbs
+
+                                else if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+                                {
+                                    if (args.Action == "add")
+                                    {
+                                        VM_Def_Items_Object.Item_Title_Ar = args.Data.Item_Title_Ar;
+                                        VM_Def_Items_Object.Item_Title_En = args.Data.Item_Title_En;
+                                        VM_Def_Items_Object.Item_Group = args.Data.Item_Group;
+                                        VM_Def_Items_Object.Activity = args.Data.Activity;
+                                        VM_Def_Items_Object.Item_Unit = args.Data.Item_Unit;
+                                        VM_Def_Items_Object.Item_Code = args.Data.Item_Code;
+                                        VM_Def_Items_Object.VAT = args.Data.VAT;
+                                        VM_Def_Items_Object.URL = args.Data.URL;
+                                        VM_Def_Items_Object.Description = args.Data.Description;
+                                        VM_Def_Items_Object.Length = args.Data.Length;
+                                        VM_Def_Items_Object.Width = args.Data.Width;
+                                        VM_Def_Items_Object.Height = args.Data.Height;
+                                        VM_Def_Items_Object.Weight = args.Data.Weight;
+                                        VM_Def_Items_Object.Thickness = args.Data.Thickness;
+                                        VM_Def_Items_Object.Volume = args.Data.Volume;
+                                        VM_Def_Items_Object.Validation_Period = args.Data.Validation_Period;
+                                        VM_Def_Items_Object.Preparation_Period = args.Data.Preparation_Period;
+                                        VM_Def_Items_Object.Garantee_Period = args.Data.Garantee_Period;
+                                        VM_Def_Items_Object.Packaging = args.Data.Packaging;
+                                        VM_Def_Items_Object.Material = args.Data.Material;
+                                        VM_Def_Items_Object.Preservation = args.Data.Preservation;
+                                        VM_Def_Items_Object.To_Inventory_allow_Buy = args.Data.To_Inventory_allow_Buy;
+                                        VM_Def_Items_Object.To_Inventory_allow_Fractions = args.Data.To_Inventory_allow_Fractions;
+                                        VM_Def_Items_Object.To_Inventory_allow_Frabrications = args.Data.To_Inventory_allow_Frabrications;
+                                        VM_Def_Items_Object.To_Inventory_allow_Rebounds = args.Data.To_Inventory_allow_Rebounds;
+                                        VM_Def_Items_Object.To_Inventory_allow_Free_Samples = args.Data.To_Inventory_allow_Free_Samples;
+                                        VM_Def_Items_Object.To_Inventory_Maximum_Stock = args.Data.To_Inventory_Maximum_Stock;
+                                        VM_Def_Items_Object.To_Inventory_Inventory = args.Data.To_Inventory_Inventory;
+                                        VM_Def_Items_Object.To_Inventory_Supplier = args.Data.To_Inventory_Supplier;
+                                        VM_Def_Items_Object.To_Inventory_Buy_Price = args.Data.To_Inventory_Buy_Price;
+                                        VM_Def_Items_Object.To_Inventory_BOP = args.Data.To_Inventory_BOP;
+                                        VM_Def_Items_Object.From_Inventory_allow_Sell = args.Data.From_Inventory_allow_Sell;
+                                        VM_Def_Items_Object.From_Inventory_allow_Fractions = args.Data.From_Inventory_allow_Fractions;
+                                        VM_Def_Items_Object.From_Inventory_allow_term_sales = args.Data.From_Inventory_allow_term_sales;
+                                        VM_Def_Items_Object.From_Inventory_allow_Frabrications = args.Data.From_Inventory_allow_Frabrications;
+                                        VM_Def_Items_Object.From_Inventory_allow_Rebounds = args.Data.From_Inventory_allow_Rebounds;
+                                        VM_Def_Items_Object.From_Inventory_allow_Free_Samples = args.Data.From_Inventory_allow_Free_Samples;
+                                        VM_Def_Items_Object.From_Inventory_Sell_Price = args.Data.From_Inventory_Sell_Price;
+                                        VM_Def_Items_Object.From_Inventory_SemiWholeSales_Price = args.Data.From_Inventory_SemiWholeSales_Price;
+                                        VM_Def_Items_Object.From_Inventory_WholeSales_Price = args.Data.From_Inventory_WholeSales_Price;
+                                        VM_Def_Items_Object.From_Inventory_Term_Sell_Price = args.Data.From_Inventory_Term_Sell_Price;
+                                        VM_Def_Items_Object.From_Inventory_Inventory = args.Data.From_Inventory_Inventory;
+                                        VM_Def_Items_Object.From_Inventory_Customer = args.Data.From_Inventory_Customer;
+                                        VM_Def_Items_Object.From_Inventory_Sales_Representative = args.Data.From_Inventory_Sales_Representative;
+                                        VM_Def_Items_Object.From_Inventory_Sales_Representative_Commession = args.Data.From_Inventory_Sales_Representative_Commession;
+                                        VM_Def_Items_Object.From_Inventory_allow_Discount = args.Data.From_Inventory_allow_Discount;
+                                        VM_Def_Items_Object.Code_At_Supplier = args.Data.Code_At_Supplier;
+                                        VM_Def_Items_Object.Supplier_Country = args.Data.Supplier_Country;
+                                        VM_Def_Items_Object.Ampere = args.Data.Ampere;
+                                        VM_Def_Items_Object.Volt = args.Data.Volt;
+                                        VM_Def_Items_Object.Power = args.Data.Power;
+                                        VM_Def_Items_Object.Persons = args.Data.Persons;
+                                        VM_Def_Items_Object.Color_r = args.Data.Color_r;
+                                        VM_Def_Items_Object.Color_g = args.Data.Color_g;
+                                        VM_Def_Items_Object.Color_b = args.Data.Color_b;
+                                        VM_Def_Items_Object.Touch = args.Data.Touch;
+                                        VM_Def_Items_Object.Transperancy = args.Data.Transperancy;
+                                        VM_Def_Items_Object.Shining = args.Data.Shining;
+                                        VM_Def_Items_Object.Diameter = args.Data.Diameter;
+                                        VM_Def_Items_Object.Nature = args.Data.Nature;
+                                        VM_Def_Items_Object.Main_Property = args.Data.Main_Property;
+                                        VM_Def_Items_Object.Class = args.Data.Class;
+                                        VM_Def_Items_Object.Parent_Group = args.Data.Parent_Group;
+                                        VM_Def_Items_Object.Pre_Validation_End_Warning_Period = args.Data.Pre_Validation_End_Warning_Period;
+                                        VM_Def_Items_Object.First_Balance = args.Data.First_Balance;
+                                        VM_Def_Items_Object.Debit_Balance = args.Data.Debit_Balance;
+                                        VM_Def_Items_Object.Credit_Balance = args.Data.Credit_Balance;
+                                        VM_Def_Items_Object.Current_Balance = args.Data.Current_Balance;
+                                        VM_Def_Items_Object.Certificates = args.Data.Certificates;
+                                        VM_Def_Items_Object.Image = myimg;
+                                        VM_Def_Items_Object.Notes = args.Data.Notes;
+                                        VM_Def_Items_Object.Enabled = args.Data.Enabled;
+                                        VM_Def_Items_Object.Archived = args.Data.Archived;
+                                        VM_Def_Items_Object.Deleted = args.Data.Deleted;
+
+                                        if (List_Item_Title_Ar.IndexOf(args.Data.Item_Title_Ar) != -1)
+                                        {
+                                            await this.Toast_Add_Failed.Show();
+                                        }
+                                        else if (List_Item_Title_En.IndexOf(args.Data.Item_Title_En) != -1)
+                                        {
+                                            await this.Toast_Add_Failed.Show();
+                                        }
+                                        else
+                                        {
+                                            await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Items_api", VM_Def_Items_Object);
+                                            await this.Toast_Success.Show();
+                                        }
+                                    }
+
+                                    // (Edit) Put Api Items
+
+                                    else
+                                    {
+                                        VM_Def_Items_Object2.ID = args.Data.ID;
+                                        VM_Def_Items_Object2.Item_Title_Ar = args.Data.Item_Title_Ar;
+                                        VM_Def_Items_Object2.Item_Title_En = args.Data.Item_Title_En;
+                                        VM_Def_Items_Object2.Item_Group = args.Data.Item_Group;
+                                        VM_Def_Items_Object2.Activity = args.Data.Activity;
+                                        VM_Def_Items_Object2.Item_Unit = args.Data.Item_Unit;
+                                        VM_Def_Items_Object2.Item_Code = args.Data.Item_Code;
+                                        VM_Def_Items_Object2.VAT = args.Data.VAT;
+                                        VM_Def_Items_Object2.URL = args.Data.URL;
+                                        VM_Def_Items_Object2.Description = args.Data.Description;
+                                        VM_Def_Items_Object2.Length = args.Data.Length;
+                                        VM_Def_Items_Object2.Width = args.Data.Width;
+                                        VM_Def_Items_Object2.Height = args.Data.Height;
+                                        VM_Def_Items_Object2.Weight = args.Data.Weight;
+                                        VM_Def_Items_Object2.Thickness = args.Data.Thickness;
+                                        VM_Def_Items_Object2.Volume = args.Data.Volume;
+                                        VM_Def_Items_Object2.Validation_Period = args.Data.Validation_Period;
+                                        VM_Def_Items_Object2.Preparation_Period = args.Data.Preparation_Period;
+                                        VM_Def_Items_Object2.Garantee_Period = args.Data.Garantee_Period;
+                                        VM_Def_Items_Object2.Packaging = args.Data.Packaging;
+                                        VM_Def_Items_Object2.Material = args.Data.Material;
+                                        VM_Def_Items_Object2.Preservation = args.Data.Preservation;
+                                        VM_Def_Items_Object2.To_Inventory_allow_Buy = args.Data.To_Inventory_allow_Buy;
+                                        VM_Def_Items_Object2.To_Inventory_allow_Fractions = args.Data.To_Inventory_allow_Fractions;
+                                        VM_Def_Items_Object2.To_Inventory_allow_Frabrications = args.Data.To_Inventory_allow_Frabrications;
+                                        VM_Def_Items_Object2.To_Inventory_allow_Rebounds = args.Data.To_Inventory_allow_Rebounds;
+                                        VM_Def_Items_Object2.To_Inventory_allow_Free_Samples = args.Data.To_Inventory_allow_Free_Samples;
+                                        VM_Def_Items_Object2.To_Inventory_Maximum_Stock = args.Data.To_Inventory_Maximum_Stock;
+                                        VM_Def_Items_Object2.To_Inventory_Inventory = args.Data.To_Inventory_Inventory;
+                                        VM_Def_Items_Object2.To_Inventory_Supplier = args.Data.To_Inventory_Supplier;
+                                        VM_Def_Items_Object2.To_Inventory_Buy_Price = args.Data.To_Inventory_Buy_Price;
+                                        VM_Def_Items_Object2.To_Inventory_BOP = args.Data.To_Inventory_BOP;
+                                        VM_Def_Items_Object2.From_Inventory_allow_Sell = args.Data.From_Inventory_allow_Sell;
+                                        VM_Def_Items_Object2.From_Inventory_allow_Fractions = args.Data.From_Inventory_allow_Fractions;
+                                        VM_Def_Items_Object2.From_Inventory_allow_term_sales = args.Data.From_Inventory_allow_term_sales;
+                                        VM_Def_Items_Object2.From_Inventory_allow_Frabrications = args.Data.From_Inventory_allow_Frabrications;
+                                        VM_Def_Items_Object2.From_Inventory_allow_Rebounds = args.Data.From_Inventory_allow_Rebounds;
+                                        VM_Def_Items_Object2.From_Inventory_allow_Free_Samples = args.Data.From_Inventory_allow_Free_Samples;
+                                        VM_Def_Items_Object2.From_Inventory_Sell_Price = args.Data.From_Inventory_Sell_Price;
+                                        VM_Def_Items_Object2.From_Inventory_SemiWholeSales_Price = args.Data.From_Inventory_SemiWholeSales_Price;
+                                        VM_Def_Items_Object2.From_Inventory_WholeSales_Price = args.Data.From_Inventory_WholeSales_Price;
+                                        VM_Def_Items_Object2.From_Inventory_Term_Sell_Price = args.Data.From_Inventory_Term_Sell_Price;
+                                        VM_Def_Items_Object2.From_Inventory_Inventory = args.Data.From_Inventory_Inventory;
+                                        VM_Def_Items_Object2.From_Inventory_Customer = args.Data.From_Inventory_Customer;
+                                        VM_Def_Items_Object2.From_Inventory_Sales_Representative = args.Data.From_Inventory_Sales_Representative;
+                                        VM_Def_Items_Object2.From_Inventory_Sales_Representative_Commession = args.Data.From_Inventory_Sales_Representative_Commession;
+                                        VM_Def_Items_Object2.From_Inventory_allow_Discount = args.Data.From_Inventory_allow_Discount;
+                                        VM_Def_Items_Object2.Code_At_Supplier = args.Data.Code_At_Supplier;
+                                        VM_Def_Items_Object2.Supplier_Country = args.Data.Supplier_Country;
+                                        VM_Def_Items_Object2.Ampere = args.Data.Ampere;
+                                        VM_Def_Items_Object2.Volt = args.Data.Volt;
+                                        VM_Def_Items_Object2.Power = args.Data.Power;
+                                        VM_Def_Items_Object2.Persons = args.Data.Persons;
+                                        VM_Def_Items_Object2.Color_r = args.Data.Color_r;
+                                        VM_Def_Items_Object2.Color_g = args.Data.Color_g;
+                                        VM_Def_Items_Object2.Color_b = args.Data.Color_b;
+                                        VM_Def_Items_Object2.Touch = args.Data.Touch;
+                                        VM_Def_Items_Object2.Transperancy = args.Data.Transperancy;
+                                        VM_Def_Items_Object2.Shining = args.Data.Shining;
+                                        VM_Def_Items_Object2.Diameter = args.Data.Diameter;
+                                        VM_Def_Items_Object2.Nature = args.Data.Nature;
+                                        VM_Def_Items_Object2.Main_Property = args.Data.Main_Property;
+                                        VM_Def_Items_Object2.Class = args.Data.Class;
+                                        VM_Def_Items_Object2.Parent_Group = args.Data.Parent_Group;
+                                        VM_Def_Items_Object2.Pre_Validation_End_Warning_Period = args.Data.Pre_Validation_End_Warning_Period;
+                                        VM_Def_Items_Object2.First_Balance = args.Data.First_Balance;
+                                        VM_Def_Items_Object2.Debit_Balance = args.Data.Debit_Balance;
+                                        VM_Def_Items_Object2.Credit_Balance = args.Data.Credit_Balance;
+                                        VM_Def_Items_Object2.Current_Balance = args.Data.Current_Balance;
+                                        VM_Def_Items_Object2.Certificates = args.Data.Certificates;
+                                        VM_Def_Items_Object2.Image = myimg;
+                                        VM_Def_Items_Object2.Notes = args.Data.Notes;
+                                        VM_Def_Items_Object2.Enabled = args.Data.Enabled;
+                                        VM_Def_Items_Object2.Archived = args.Data.Archived;
+                                        VM_Def_Items_Object2.Deleted = args.Data.Deleted;
+
+
+                                        if (Check_User_Super_Admin == "False")
+                                        {
+                                            await this.Toast_Permission_Failed.Show();
+                                        }
+                                        else
+                                        {
+                                            await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Items_api?id=" + args.Data.ID.ToString(), VM_Def_Items_Object2);
+                                            await this.Toast_Success.Show();
+                                        }
+                                    }
+                                }
+                            }
+                            }
+
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+
+                @*=========================================  End Basic Items Tab  ========================================================*@
+                @*=========================================  Start  Items_Units  Tab   ========================================================*@
+
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["Items_Units_Grid"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*----------------------------------- Grid    Items_Units    -----------------------------*@
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#7575ff;margin-top:20px;font-size:x-large;border-radius:5px">@languageContainer.Keys["Items_Units_Grid"]</div>
+                                        <SfGrid ID="Grid" @ref="Grid4" DataSource="@DataSource_Items_Units" Width="100%" cssclass="" AllowPaging="true" AllowResizing="true" AllowRowDragAndDrop="true" AllowExcelExport="true" Toolbar="@(new string[] { "Add","Delete","Edit", "Update", "Cancel" , "Print" , "ExcelExport", "Search"  })">
+                                            <GridEvents OnActionBegin="ActionBeginHandler_Items_Units" OnToolbarClick="ToolbarClick" TValue="VM_Def_Items_Units"></GridEvents>
+                                            <GridEditSettings AllowAdding="true" AllowEditOnDblClick="true" ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowEditing="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Dialog" Dialog="DialogParams5"></GridEditSettings>
+                                            <GridColumns>
+
+                                                <GridColumn Field=@nameof(VM_Def_Items_Units.ID) IsIdentity="true" HeaderText="ID" IsPrimaryKey="true" ValidationRules="@(new { required = true, number = true })" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Units.Unit_Title_Ar) HeaderText="@languageContainer.Keys["Items_Unit_Title_Ar"]" ValidationRules="@(new { required = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Units.Unit_Title_En) HeaderText="@languageContainer.Keys["Items_Unit_Title_En"]" ValidationRules="@(new { required = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Units.Unit_Abbreviation_Ar) HeaderText="@languageContainer.Keys["Items_Unit_Abbreviation_Ar"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Units.Unit_Abbreviation_En) HeaderText="@languageContainer.Keys["Items_Unit_Abbreviation_En"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Units.Unit_Type) HeaderText="@languageContainer.Keys["Items_Unit_Type"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Units.Description) HeaderText="@languageContainer.Keys["Def_Description"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Units.Activity) HeaderText="@languageContainer.Keys["Def_Activity"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Units.Enabled) HeaderText="@languageContainer.Keys["Def_Enabled"]" DisplayAsCheckBox="true" EditType="EditType.BooleanEdit" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Units.Archived) HeaderText="@languageContainer.Keys["Def_Archived"]" DisplayAsCheckBox="true" EditType="EditType.BooleanEdit" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Units.Deleted) HeaderText="@languageContainer.Keys["Def_Deleted"]" DisplayAsCheckBox="true" EditType="EditType.BooleanEdit" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-----------------------------------   Code Items_Units   -----------------------------*@
+                            @code{
+                                SfGrid<VM_Def_Items_Units> Grid4;
+
+                                private object DialogParams5 = new
+                                {
+@@params = new DialogModel { MinHeight = "400px", Width = "450px" }
+                            };
+
+                            VM_Def_Items_Units VM_Def_Items_Units_Object1 = new VM_Def_Items_Units();
+                            VM_Def_Items_Units VM_Def_Items_Units_Object2 = new VM_Def_Items_Units();
+
+                            public async void ActionBeginHandler_Items_Units(ActionEventArgs<VM_Def_Items_Units> args)
+                            {
+                                string Used_Item_Units = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select * from Def_Items_api&Required_Field=Item_Unit");
+                                string Units_Title_Ar = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select* from Def_Units&Required_Field=Unit_Title_Ar");
+                                string Units_Title_En = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select* from Def_Units&Required_Field=Unit_Title_En");
+
+                                // Delete Api Items_Units
+
+                                if (args.RequestType.ToString() == "Delete")
+                                {
+
+                                    // Prevent Delete If Element was used
+                                    if (Used_Item_Units.IndexOf(args.Data.Unit_Title_Ar) != -1)
+                                    {
+                                        await this.Toast_Del_Failed.Show();
+                                    }
+                                    else if (Used_Item_Units.IndexOf(args.Data.Unit_Title_En) != -1)
+                                    {
+                                        await this.Toast_Del_Failed.Show();
+                                    }
+                                    // Prevent Delete If User Hasn't Permission
+                                    else if (Check_User_Super_Admin == "False")
+                                    {
+                                        await this.Toast_Permission_Failed.Show();
+                                    }
+                                    // Prevent Delete If ID = 0 (It's Means That Id Didn't take His Place In DataBase)
+                                    else if (args.Data.ID == 0)
+                                    {
+                                        await this.Toast_Reload_Failed.Show();
+                                    }
+                                    else
+                                    {
+                                        await httpClient.DeleteAsync(Configuration.GetValue<string>("Api") + "/api/Items_Units_api/" + args.Data.ID);
+                                        await this.Toast_Success.Show();
+                                    }
+                                }
+
+                                else if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+                                {
+                                    if (args.Action == "add")
+
+                                    // (Add) Post Api Items_units
+
+                                    {
+                                        VM_Def_Items_Units_Object1.Unit_Title_Ar = args.Data.Unit_Title_Ar;
+                                        VM_Def_Items_Units_Object1.Unit_Title_En = args.Data.Unit_Title_En;
+                                        VM_Def_Items_Units_Object1.Unit_Abbreviation_Ar = args.Data.Unit_Abbreviation_Ar;
+                                        VM_Def_Items_Units_Object1.Unit_Abbreviation_En = args.Data.Unit_Abbreviation_En;
+                                        VM_Def_Items_Units_Object1.Activity = args.Data.Activity;
+                                        VM_Def_Items_Units_Object1.Unit_Type = args.Data.Unit_Type;
+                                        VM_Def_Items_Units_Object1.Description = args.Data.Description;
+                                        VM_Def_Items_Units_Object1.Enabled = args.Data.Enabled;
+                                        VM_Def_Items_Units_Object1.Archived = args.Data.Archived;
+                                        VM_Def_Items_Units_Object1.Deleted = args.Data.Deleted;
+
+                                        // Prevent Adding If Element is repeat
+                                        if (Units_Title_Ar.IndexOf(args.Data.Unit_Title_Ar) != -1)
+                                        {
+                                            await this.Toast_Add_Failed.Show();
+                                        }
+                                        else if (Units_Title_En.IndexOf(args.Data.Unit_Title_En) != -1)
+                                        {
+                                            await this.Toast_Add_Failed.Show();
+                                        }
+                                        else
+                                        {
+                                            await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Items_Units_api", VM_Def_Items_Units_Object1);
+                                            await this.Toast_Success.Show();
+                                        }
+                                    }
+                                    else
+
+                                    // (Edit) Put Api Items_Units
+
+                                    {
+                                        VM_Def_Items_Units_Object2.ID = args.Data.ID;
+                                        VM_Def_Items_Units_Object2.Unit_Title_Ar = args.Data.Unit_Title_Ar;
+                                        VM_Def_Items_Units_Object2.Unit_Title_En = args.Data.Unit_Title_En;
+                                        VM_Def_Items_Units_Object2.Unit_Abbreviation_Ar = args.Data.Unit_Abbreviation_Ar;
+                                        VM_Def_Items_Units_Object2.Unit_Abbreviation_En = args.Data.Unit_Abbreviation_En;
+                                        VM_Def_Items_Units_Object2.Activity = args.Data.Activity;
+                                        VM_Def_Items_Units_Object2.Unit_Type = args.Data.Unit_Type;
+                                        VM_Def_Items_Units_Object2.Description = args.Data.Description;
+                                        VM_Def_Items_Units_Object2.Enabled = args.Data.Enabled;
+                                        VM_Def_Items_Units_Object2.Archived = args.Data.Archived;
+                                        VM_Def_Items_Units_Object2.Deleted = args.Data.Deleted;
+
+                                        // Prevent Update If User Hasn't Permission
+                                        if (Check_User_Super_Admin == "False")
+                                        {
+                                            await this.Toast_Permission_Failed.Show();
+                                        }
+                                        else
+                                        {
+                                            await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Items_Units_api?id=" + args.Data.ID.ToString(), VM_Def_Items_Units_Object2);
+                                            await this.Toast_Success.Show();
+                                        }
+                                    }
+
+                                }
+
+                            }
+
+                            }
+
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                @*========================================= / End   Items_Units Tab    ========================================================*@
+                @*=========================================  Start  Items_Groups  Tab   ========================================================*@
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["Items_Groups_Grid"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*----------------------------------- Grid    Items_Groups    -----------------------------*@
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#7575ff;margin-top:20px;font-size:x-large;border-radius:5px">@languageContainer.Keys["Items_Groups_Grid"]</div>
+                                        <SfGrid ID="Grid" @ref="Grid5" DataSource="@DataSource_Items_Groups" Width="100%" cssclass="" AllowPaging="true" AllowResizing="true" AllowRowDragAndDrop="true" AllowExcelExport="true" Toolbar="@(new string[] { "Add","Delete","Edit", "Update", "Cancel" , "Print" , "ExcelExport", "Search"  })">
+                                            <GridEvents OnActionBegin="ActionBegin_Items_Groups" OnToolbarClick="ToolbarClick" TValue="VM_Def_Items_Groups"></GridEvents>
+                                            <GridEditSettings AllowAdding="true" AllowEditOnDblClick="true" ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowEditing="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Dialog" Dialog="DialogParams6"></GridEditSettings>
+                                            <GridColumns>
+
+                                                <GridColumn Field=@nameof(VM_Def_Items_Groups.ID) IsIdentity="true" HeaderText="ID" IsPrimaryKey="true" ValidationRules="@(new { required = true, number = true })" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Groups.Title_Ar) HeaderText="@languageContainer.Keys["Def_Title_Ar"]" ValidationRules="@(new { required = true})" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Groups.Title_En) HeaderText="@languageContainer.Keys["Def_Title_En"]" ValidationRules="@(new { required = true})" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Groups.Prefix) HeaderText="@languageContainer.Keys["Items_Groups_Prefix"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Groups.Parents) HeaderText="@languageContainer.Keys["Items_Groups_Parents"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Groups.Description) HeaderText="@languageContainer.Keys["Def_Description"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Groups.Activity) HeaderText="@languageContainer.Keys["Def_Activity"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Groups.Notes) HeaderText="@languageContainer.Keys["Def_Notes"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Groups.Enabled) HeaderText="@languageContainer.Keys["Def_Enabled"]" DisplayAsCheckBox="true" EditType="EditType.BooleanEdit" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Groups.Archived) HeaderText="@languageContainer.Keys["Def_Archived"]" DisplayAsCheckBox="true" EditType="EditType.BooleanEdit" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Groups.Deleted) HeaderText="@languageContainer.Keys["Def_Deleted"]" DisplayAsCheckBox="true" EditType="EditType.BooleanEdit" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-----------------------------------   Code Items_Groups   -----------------------------*@
+                            @code{
+                                SfGrid<VM_Def_Items_Groups> Grid5;
+
+                                private object DialogParams6 = new
+                                {
+@@params = new DialogModel { MinHeight = "400px", Width = "450px" }
+                            };
+
+                            VM_Def_Items_Groups VM_Def_Items_Groups_Object1 = new VM_Def_Items_Groups();
+                            VM_Def_Items_Groups VM_Def_Items_Groups_Object2 = new VM_Def_Items_Groups();
+
+                            public async Task ActionBegin_Items_Groups(ActionEventArgs<VM_Def_Items_Groups> args)
+                            {
+                                string Used_Item_Groups = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select * from Def_Items_api&Required_Field=Item_Group");
+                                string Groups_Title_Ar = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select* from Def_Items_Groups_api&Required_Field=Title_Ar");
+                                string Groups_Title_En = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select* from Def_Items_Groups_api&Required_Field=Title_En");
+
+                                if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+                                {
+
+                                    if (args.Action == "add")
+
+                                    // (Add) Post Api Items_Groups
+
+                                    {
+                                        VM_Def_Items_Groups_Object1.Title_Ar = args.Data.Title_Ar;
+                                        VM_Def_Items_Groups_Object1.Title_En = args.Data.Title_En;
+                                        VM_Def_Items_Groups_Object1.Prefix = args.Data.Prefix;
+                                        VM_Def_Items_Groups_Object1.Parents = args.Data.Parents;
+                                        VM_Def_Items_Groups_Object1.Activity = args.Data.Activity;
+                                        VM_Def_Items_Groups_Object1.Notes = args.Data.Notes;
+                                        VM_Def_Items_Groups_Object1.Description = args.Data.Description;
+                                        VM_Def_Items_Groups_Object1.Enabled = args.Data.Enabled;
+                                        VM_Def_Items_Groups_Object1.Archived = args.Data.Archived;
+                                        VM_Def_Items_Groups_Object1.Deleted = args.Data.Deleted;
+
+                                        // Prevent Adding Because This Element is repeat
+                                        if (Groups_Title_Ar.IndexOf(args.Data.Title_Ar) != -1)
+                                        {
+                                            await this.Toast_Add_Failed.Show();
+                                        }
+                                        else if (Groups_Title_En.IndexOf(args.Data.Title_En) != -1)
+                                        {
+                                            await this.Toast_Add_Failed.Show();
+                                        }
+                                        else
+                                        {
+                                            await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Items_Groups_api", VM_Def_Items_Groups_Object1);
+                                            await this.Toast_Success.Show();
+                                        }
+
+                                    }
+
+                                    else
+
+                                    // (Edit) Put Api Items_Groups
+
+                                    {
+                                        VM_Def_Items_Groups_Object2.ID = args.Data.ID;
+                                        VM_Def_Items_Groups_Object2.Title_Ar = args.Data.Title_Ar;
+                                        VM_Def_Items_Groups_Object2.Title_En = args.Data.Title_En;
+                                        VM_Def_Items_Groups_Object2.Prefix = args.Data.Prefix;
+                                        VM_Def_Items_Groups_Object2.Parents = args.Data.Parents;
+                                        VM_Def_Items_Groups_Object2.Activity = args.Data.Activity;
+                                        VM_Def_Items_Groups_Object2.Notes = args.Data.Notes;
+                                        VM_Def_Items_Groups_Object2.Description = args.Data.Description;
+                                        VM_Def_Items_Groups_Object2.Enabled = args.Data.Enabled;
+                                        VM_Def_Items_Groups_Object2.Archived = args.Data.Archived;
+                                        VM_Def_Items_Groups_Object2.Deleted = args.Data.Deleted;
+
+                                        // Prevent Update If User Hasn't Permission
+                                        if (Check_User_Super_Admin == "False")
+                                        {
+                                            await this.Toast_Permission_Failed.Show();
+                                        }
+                                        else
+                                        {
+                                            await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Items_Groups_api?id=" + args.Data.ID.ToString(), VM_Def_Items_Groups_Object2);
+                                            await this.Toast_Success.Show();
+                                        }
+
+                                    }
+                                }
+
+                                // (Delete) Api Items_Groups
+
+                                else if (args.RequestType == Syncfusion.Blazor.Grids.Action.Delete)
+                                {
+                                    // Prevent Delete If Element used
+                                    if (Used_Item_Groups.IndexOf(args.Data.Title_Ar) != -1)
+                                    {
+                                        await this.Toast_Del_Failed.Show();
+                                    }
+                                    else if (Used_Item_Groups.IndexOf(args.Data.Title_En) != -1)
+                                    {
+                                        await this.Toast_Del_Failed.Show();
+                                    }
+                                    // Prevent Delete If User Hasn't Permission
+                                    else if (Check_User_Super_Admin == "False")
+                                    {
+                                        await this.Toast_Permission_Failed.Show();
+                                    }
+                                    // Prevent Delete If ID = 0 (It's Means That Id Didn't take His Place In DataBase)
+                                    else if (args.Data.ID == 0)
+                                    {
+                                        await this.Toast_Reload_Failed.Show();
+                                    }
+                                    else
+                                    {
+                                        await httpClient.DeleteAsync(Configuration.GetValue<string>("Api") + "/api/Items_Groups_api/" + args.Data.ID);
+                                        await this.Toast_Success.Show();
+                                    }
+
+                                }
+                                //else
+                                //{
+                                //    await jsRuntime.InvokeAsync<string>("console.log", "action Name >> " + args.RequestType + " - " + args.Action);
+
+                                //}
+                            }
+
+                            }
+
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                @*========================================= / End   Items_Groups Tab    ========================================================*@
+
+                @*=========================================  Start  Items_Certificates  Tab   ========================================================*@
+
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["Items_Certificates_Grid"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*----------------------------------- Grid    Items_Certificates    -----------------------------*@
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#7575ff;margin-top:20px;font-size:x-large;border-radius:5px">@languageContainer.Keys["Items_Certificates_Grid"]</div>
+
+                                        <SfGrid ID="Grid" @ref="Grid2" DataSource="@DataSource_Items_Certificates" Width="100%" cssclass="" AllowPaging="true" AllowResizing="true" AllowRowDragAndDrop="true" AllowExcelExport="true" Toolbar="@(new string[] { "Add","Delete","Edit", "Update", "Cancel" , "Print" , "ExcelExport", "Search"  })">
+                                            <GridEvents Created="CreatedHundler" OnActionBegin="ActionBeginHandler_Items_Certificates" OnToolbarClick="ToolbarClick" TValue="VM_Def_Items_Certificates"></GridEvents>
+                                            <GridEditSettings AllowAdding="true" AllowEditOnDblClick="true" ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowEditing="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Dialog" Dialog="DialogParams3"></GridEditSettings>
+                                            <GridColumns>
+
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.ID) IsIdentity="true" HeaderText="ID" IsPrimaryKey="true" ValidationRules="@(new { required = true, number = true })" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.Title_Ar) HeaderText="@languageContainer.Keys["Items_Certificates_Title_Ar"]" ValidationRules="@(new { required = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.Title_En) HeaderText="@languageContainer.Keys["Items_Certificates_Title_En"]" ValidationRules="@(new { required = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.Issuer_Ar) HeaderText="@languageContainer.Keys["Items_Certificates_Issuer_Ar"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.Issuer_En) HeaderText="@languageContainer.Keys["Items_Certificates_Issuer_En"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.Issuer_Country_Ar) HeaderText="@languageContainer.Keys["Items_Certificates_Issuer_Country_Ar"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.Issuer_Country_En) HeaderText="@languageContainer.Keys["Items_Certificates_Issuer_Country_En"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.Certificate_Description_Ar) HeaderText="@languageContainer.Keys["Items_Certificates_Description_Ar"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.Certificate_Description_En) HeaderText="@languageContainer.Keys["Items_Certificates_Description_En"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.image) HeaderText="@languageContainer.Keys["Items_Certificates_Image"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.Activity) HeaderText="@languageContainer.Keys["Def_Activity"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.Notes) HeaderText="@languageContainer.Keys["Def_Notes"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.Enabled) HeaderText="@languageContainer.Keys["Def_Enabled"]" DisplayAsCheckBox="true" EditType="EditType.BooleanEdit" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.Archived) HeaderText="@languageContainer.Keys["Def_Archived"]" DisplayAsCheckBox="true" EditType="EditType.BooleanEdit" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Certificates.Deleted) HeaderText="@languageContainer.Keys["Def_Deleted"]" DisplayAsCheckBox="true" EditType="EditType.BooleanEdit" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-----------------------------------   Code Items_Certificates   -----------------------------*@
+                            @code{
+                                SfGrid<VM_Def_Items_Certificates> Grid2;
+
+                                private object DialogParams3 = new
+                                {
+@@params = new DialogModel { MinHeight = "400px", Width = "450px" }
+                            };
+
+                            VM_Def_Items_Certificates VM_Def_Items_Certificates_Object1 = new VM_Def_Items_Certificates();
+                            VM_Def_Items_Certificates VM_Def_Items_Certificates_Object2 = new VM_Def_Items_Certificates();
+                            string Used_Item_Certificates;
+                            public async void ActionBeginHandler_Items_Certificates(ActionEventArgs<VM_Def_Items_Certificates> args)
+                            {
+                                Used_Item_Certificates = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select * from Def_Items_api&Required_Field=Certificates");
+
+                                //await jsRuntime.InvokeAsync<string>("console.log", "Used_Item_Certificates  >> " + Used_Item_Certificates);
+
+                                // Delete Api Items_Certificates
+
+                                if (args.RequestType.ToString() == "Delete")
+                                {
+                                    // Prevent Delete If This Element was used
+
+                                    if (Used_Item_Certificates.IndexOf(args.Data.Title_Ar) != -1)
+                                    {
+                                        await this.Toast_Del_Failed.Show();
+                                    }
+                                    else if (Used_Item_Certificates.IndexOf(args.Data.Title_En) != -1)
+                                    {
+                                        await this.Toast_Del_Failed.Show();
+                                    }
+                                    // Prevent Delete If User Hasn't Permission
+                                    else if (Check_User_Super_Admin == "False")
+                                    {
+                                        await this.Toast_Permission_Failed.Show();
+                                    }
+                                    // Prevent Delete If ID = 0 (It's Means That Id Didn't take His Place In DataBase)
+                                    else if (args.Data.ID == 0)
+                                    {
+                                        await this.Toast_Reload_Failed.Show();
+                                    }
+                                    else
+                                    {
+                                        await httpClient.DeleteAsync(Configuration.GetValue<string>("Api") + "/api/Items_Certificates_api/" + args.Data.ID);
+                                        await this.Toast_Success.Show();
+                                    }
+                                }
+                                // (add) Post Api Items_Certificates
+
+                                else if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+                                {
+                                    if (args.Action == "add")
+                                    {
+                                        VM_Def_Items_Certificates_Object1.Title_Ar = args.Data.Title_Ar;
+                                        VM_Def_Items_Certificates_Object1.Title_En = args.Data.Title_En;
+                                        VM_Def_Items_Certificates_Object1.Issuer_Ar = args.Data.Issuer_Ar;
+                                        VM_Def_Items_Certificates_Object1.Issuer_En = args.Data.Issuer_En;
+                                        VM_Def_Items_Certificates_Object1.Issuer_Country_Ar = args.Data.Issuer_Country_Ar;
+                                        VM_Def_Items_Certificates_Object1.Issuer_Country_En = args.Data.Issuer_Country_En;
+                                        VM_Def_Items_Certificates_Object1.Certificate_Description_Ar = args.Data.Certificate_Description_Ar;
+                                        VM_Def_Items_Certificates_Object1.Certificate_Description_En = args.Data.Certificate_Description_En;
+                                        VM_Def_Items_Certificates_Object1.image = args.Data.image;
+                                        VM_Def_Items_Certificates_Object1.Activity = args.Data.Activity;
+                                        VM_Def_Items_Certificates_Object1.Notes = args.Data.Notes;
+                                        VM_Def_Items_Certificates_Object1.Enabled = args.Data.Enabled;
+                                        VM_Def_Items_Certificates_Object1.Archived = args.Data.Archived;
+                                        VM_Def_Items_Certificates_Object1.Deleted = args.Data.Deleted;
+
+                                        string Certificates_Title_Ar = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select* from Def_Items_Certificates_api&Required_Field=Title_Ar");
+                                        string Certificates_Title_En = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select* from Def_Items_Certificates_api&Required_Field=Title_En");
+                                        // Prevent Adding Because This Element is repeat
+                                        if (Certificates_Title_Ar.IndexOf(args.Data.Title_Ar) != -1)
+                                        {
+                                            await this.Toast_Add_Failed.Show();
+                                        }
+                                        else if (Certificates_Title_En.IndexOf(args.Data.Title_En) != -1)
+                                        {
+                                            await this.Toast_Add_Failed.Show();
+                                        }
+                                        else
+                                        {
+                                            await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Items_Certificates_api", VM_Def_Items_Certificates_Object1);
+                                            await this.Toast_Success.Show();
+                                        }
+                                    }
+
+
+                                    // (Edit) Put Api Employees
+
+                                    else
+                                    {
+                                        VM_Def_Items_Certificates_Object2.ID = args.Data.ID;
+                                        VM_Def_Items_Certificates_Object2.Title_Ar = args.Data.Title_Ar;
+                                        VM_Def_Items_Certificates_Object2.Title_En = args.Data.Title_En;
+                                        VM_Def_Items_Certificates_Object2.Issuer_Ar = args.Data.Issuer_Ar;
+                                        VM_Def_Items_Certificates_Object2.Issuer_En = args.Data.Issuer_En;
+                                        VM_Def_Items_Certificates_Object2.Issuer_Country_Ar = args.Data.Issuer_Country_Ar;
+                                        VM_Def_Items_Certificates_Object2.Issuer_Country_En = args.Data.Issuer_Country_En;
+                                        VM_Def_Items_Certificates_Object2.Certificate_Description_Ar = args.Data.Certificate_Description_Ar;
+                                        VM_Def_Items_Certificates_Object2.Certificate_Description_En = args.Data.Certificate_Description_En;
+                                        VM_Def_Items_Certificates_Object2.image = args.Data.image;
+                                        VM_Def_Items_Certificates_Object2.Activity = args.Data.Activity;
+                                        VM_Def_Items_Certificates_Object2.Notes = args.Data.Notes;
+                                        VM_Def_Items_Certificates_Object2.Enabled = args.Data.Enabled;
+                                        VM_Def_Items_Certificates_Object2.Archived = args.Data.Archived;
+                                        VM_Def_Items_Certificates_Object2.Deleted = args.Data.Deleted;
+
+                                        // Prevent Update Because This User Hasn't Permission
+                                        if (Check_User_Super_Admin == "False")
+                                        {
+                                            await this.Toast_Permission_Failed.Show();
+                                        }
+                                        else
+                                        {
+                                            await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Items_Certificates_api?id=" + args.Data.ID.ToString(), VM_Def_Items_Certificates_Object2);
+                                            await this.Toast_Success.Show();
+                                        }
+                                    }
+                                }
+                            }
+                            }
+
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                @*========================================= / End   Items_Certificates Tab    ========================================================*@
+
+                @*=========================================  Start  Items_Description  Tab   ========================================================*@
+
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["Items_Descriptions_Grid"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*----------------------------------- Grid    Items_Description    -----------------------------*@
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#7575ff;margin-top:20px;font-size:x-large;border-radius:5px">@languageContainer.Keys["Items_Descriptions_Grid"]</div>
+                                        <SfGrid ID="Grid" @ref="Grid3" DataSource="@DataSource_Items_Descriptions" Width="100%" cssclass="" AllowPaging="true" AllowResizing="true" AllowRowDragAndDrop="true" AllowExcelExport="true" Toolbar="@(new string[] { "Add","Delete","Edit", "Update", "Cancel" , "Print" , "ExcelExport", "Search"  })">
+                                            <GridEvents OnActionBegin="ActionBegin_Items_Description" OnToolbarClick="ToolbarClick" TValue="VM_Def_Items_Descriptions"></GridEvents>
+                                            <GridEditSettings AllowAdding="true" AllowEditOnDblClick="true" ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowEditing="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Dialog" Dialog="DialogParams4"></GridEditSettings>
+                                            <GridColumns>
+
+                                                <GridColumn Field=@nameof(VM_Def_Items_Descriptions.ID) HeaderText="ID" IsPrimaryKey="true" IsIdentity="true" ValidationRules="@(new { required = true, number = true })" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Descriptions.Title_Ar) HeaderText="@languageContainer.Keys["Items_Descriptions_Title_Ar"]" ValidationRules="@(new { required = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Descriptions.Title_En) HeaderText="@languageContainer.Keys["Items_Descriptions_Title_En"]" ValidationRules="@(new { required = true })" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Descriptions.Description_Ar) HeaderText="@languageContainer.Keys["Items_Descriptions_Issuer_Ar"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Descriptions.Description_En) HeaderText="@languageContainer.Keys["Items_Descriptions_Issuer_En"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Descriptions.Activity) HeaderText="@languageContainer.Keys["Def_Activity"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Descriptions.Notes) HeaderText="@languageContainer.Keys["Def_Notes"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Descriptions.Enabled) HeaderText="@languageContainer.Keys["Def_Enabled"]" DisplayAsCheckBox="true" EditType="EditType.BooleanEdit" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Descriptions.Archived) HeaderText="@languageContainer.Keys["Def_Archived"]" DisplayAsCheckBox="true" EditType="EditType.BooleanEdit" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Def_Items_Descriptions.Deleted) HeaderText="@languageContainer.Keys["Def_Deleted"]" DisplayAsCheckBox="true" EditType="EditType.BooleanEdit" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-----------------------------------   Code Items_Description   -----------------------------*@
+                            @code{
+                                SfGrid<VM_Def_Items_Descriptions> Grid3;
+
+                                private object DialogParams4 = new
+                                {
+@@params = new DialogModel { MinHeight = "400px", Width = "450px" }
+                            };
+
+                            VM_Def_Items_Descriptions VM_Def_Items_Descriptions_Object1 = new VM_Def_Items_Descriptions();
+                            VM_Def_Items_Descriptions VM_Def_Items_Descriptions_Object2 = new VM_Def_Items_Descriptions();
+
+                            public async void ActionBegin_Items_Description(ActionEventArgs<VM_Def_Items_Descriptions> args)
+                            {
+
+                                string Used_Item_Descriptions = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select * from Def_Items_api&Required_Field=Description");
+                                string List_Descriptions_Title_Ar = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select* from Def_Items_Descriptions_api&Required_Field=Title_Ar");
+                                string List_Descriptions_Title_En = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select* from Def_Items_Descriptions_api&Required_Field=Title_En");
+
+                                // (Delete) Delete Api Items_Descriptions
+
+                                if (args.RequestType.ToString() == "Delete")
+                                {
+
+                                    // Prevent Delete If Element was used
+                                    if (Used_Item_Descriptions.IndexOf(args.Data.Title_Ar) != -1)
+                                    {
+                                        await this.Toast_Del_Failed.Show();
+                                    }
+                                    else if (Used_Item_Descriptions.IndexOf(args.Data.Title_En) != -1)
+                                    {
+                                        await this.Toast_Del_Failed.Show();
+                                    }
+                                    // Prevent Delete If User Hasn't Permission
+                                    else if (Check_User_Super_Admin == "False")
+                                    {
+                                        await this.Toast_Permission_Failed.Show();
+                                    }
+                                    // Prevent Delete If ID = 0 (It's Means That Id Didn't take His Place In DataBase)
+                                    else if (args.Data.ID == 0)
+                                    {
+                                        await this.Toast_Reload_Failed.Show();
+                                    }
+                                    else
+                                    {
+                                        await httpClient.DeleteAsync(Configuration.GetValue<string>("Api") + "/api/Items_Descriptions_api/" + args.Data.ID);
+                                        await this.Toast_Success.Show();
+                                    }
+                                }
+
+                                else if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+                                {
+                                    // (Aadd) Post Api Items_Descriptions
+
+                                    if (args.Action == "add")
+                                    {
+
+                                        VM_Def_Items_Descriptions_Object1.Title_Ar = args.Data.Title_Ar;
+                                        VM_Def_Items_Descriptions_Object1.Title_En = args.Data.Title_En;
+                                        VM_Def_Items_Descriptions_Object1.Description_Ar = args.Data.Description_Ar;
+                                        VM_Def_Items_Descriptions_Object1.Description_En = args.Data.Description_En;
+                                        VM_Def_Items_Descriptions_Object1.Activity = args.Data.Activity;
+                                        VM_Def_Items_Descriptions_Object1.Notes = args.Data.Notes;
+                                        VM_Def_Items_Descriptions_Object1.Enabled = args.Data.Enabled;
+                                        VM_Def_Items_Descriptions_Object1.Archived = args.Data.Archived;
+                                        VM_Def_Items_Descriptions_Object1.Deleted = args.Data.Deleted;
+
+                                        // Prevent Adding If Element is repeat
+                                        if (List_Descriptions_Title_Ar.IndexOf(args.Data.Title_Ar) != -1)
+                                        {
+                                            await this.Toast_Add_Failed.Show();
+                                        }
+                                        else if (List_Descriptions_Title_En.IndexOf(args.Data.Title_En) != -1)
+                                        {
+                                            await this.Toast_Add_Failed.Show();
+                                        }
+                                        else
+                                        {
+                                            await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Items_Descriptions_api", VM_Def_Items_Descriptions_Object1);
+                                            await this.Toast_Success.Show();
+                                        }
+                                    }
+
+                                    else
+
+                                    // (Edit) Put Api Items_Description
+
+                                    {
+                                        VM_Def_Items_Descriptions_Object2.ID = args.Data.ID;
+                                        VM_Def_Items_Descriptions_Object2.Title_Ar = args.Data.Title_Ar;
+                                        VM_Def_Items_Descriptions_Object2.Title_En = args.Data.Title_En;
+                                        VM_Def_Items_Descriptions_Object2.Description_Ar = args.Data.Description_Ar;
+                                        VM_Def_Items_Descriptions_Object2.Description_En = args.Data.Description_En;
+                                        VM_Def_Items_Descriptions_Object2.Activity = args.Data.Activity;
+                                        VM_Def_Items_Descriptions_Object2.Notes = args.Data.Notes;
+                                        VM_Def_Items_Descriptions_Object2.Enabled = args.Data.Enabled;
+                                        VM_Def_Items_Descriptions_Object2.Archived = args.Data.Archived;
+                                        VM_Def_Items_Descriptions_Object2.Deleted = args.Data.Deleted;
+                                        // Prevent Update If User Hasn't Permission
+                                        if (Check_User_Super_Admin == "False")
+                                        {
+                                            await this.Toast_Permission_Failed.Show();
+                                        }
+
+                                        // Prevent Update If Element was used
+                                        if (Used_Item_Descriptions.IndexOf(args.PreviousData.Title_Ar) != -1)
+                                        {
+                                            await this.Toast_Del_Failed.Show();
+                                        }
+                                        else if (Used_Item_Descriptions.IndexOf(args.PreviousData.Title_En) != -1)
+                                        {
+                                            await this.Toast_Del_Failed.Show();
+                                        }
+
+                                        else
+                                        {
+                                            await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Items_Descriptions_api?id=" + args.Data.ID.ToString(), VM_Def_Items_Descriptions_Object2);
+                                            // To Updates All Title_ar in basic table "Items" with new value
+                                            //await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Def_Items_api set Description = '" + args.Data.Title_Ar+ "' where Description = '" + args.PreviousData.Title_Ar+"'", VM_Def_Items_Descriptions_Object2);
+                                            await this.Toast_Success.Show();
+                                        }
+                                    }
+
+                                }
+                            }
+
+                            }
+
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                @*========================================= / End   Items_Description Tab    ========================================================*@
+
+
+                @code{
+                    //   For Images
+                    string myimg = "";
+                    IFileListEntry file;
+
+                    async Task HandleFileSelected(IFileListEntry[] files)
+                    {
+                        file = files.FirstOrDefault();
+                        if (file != null)
+                        {
+                            await fileupload.Upload(file);
+                            myimg = file.Name;
+                        }
+                    }
+                    //  / For Images
+                }
+
+
+                @*========================================= / End   Items_Images Tab    ========================================================*@
+
+            </TabItems>
+        </SfTab>
+
+    </div>
+</div>
+@code{
+
+    string Check_User_Super_Admin = "true";
+    string Certificates_Language;
+    string Description_Language;
+    string Units_Language;
+    string Groups_Language;
+    string User_Name;
+
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        /////////////////////////////////////////
+        //-- Get User Data
+        var user = (await AuthStat).User;
+        User_Name = user.Identity.Name;
+        /////////////////////////////////////////
+
+        Certificates_Language = "Title_Ar";
+        Description_Language = "Title_Ar";
+        Units_Language = "Unit_Title_Ar";
+        Groups_Language = "Title_Ar";
+    }
+
+    private List<VM_Def_Items> DataSource_Items = new List<VM_Def_Items>();
+    private List<VM_Def_Items_Certificates> DataSource_Items_Certificates = new List<VM_Def_Items_Certificates>();
+    private List<VM_Def_Items_Descriptions> DataSource_Items_Descriptions = new List<VM_Def_Items_Descriptions>();
+    private List<VM_Def_Items_Units> DataSource_Items_Units = new List<VM_Def_Items_Units>();
+    private List<VM_Def_Items_Groups> DataSource_Items_Groups = new List<VM_Def_Items_Groups>();
+    private List<VM_Def_Items_Images> DataSource_Items_Images = new List<VM_Def_Items_Images>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Get Api Items
+
+            DataSource_Items = await httpClient.GetJsonAsync<List<VM_Def_Items>>(Configuration.GetValue<string>("Api") + "/api/Items_api");
+
+            // Get Api Items_Certificates
+            DataSource_Items_Certificates = await httpClient.GetJsonAsync<List<VM_Def_Items_Certificates>>(Configuration.GetValue<string>("Api") + "/api/Items_Certificates_api");
+
+            // Get Api Items_Descriptions
+            DataSource_Items_Descriptions = await httpClient.GetJsonAsync<List<VM_Def_Items_Descriptions>>(Configuration.GetValue<string>("Api") + "/api/Items_Descriptions_api");
+
+            // Get Api Items_Units
+            DataSource_Items_Units = await httpClient.GetJsonAsync<List<VM_Def_Items_Units>>(Configuration.GetValue<string>("Api") + "/api/Items_Units_api");
+
+            // Get Api Items_Groups
+            DataSource_Items_Groups = await httpClient.GetJsonAsync<List<VM_Def_Items_Groups>>(Configuration.GetValue<string>("Api") + "/api/Items_Groups_api");
+
+            // Get Api Items_Images
+            DataSource_Items_Images = await httpClient.GetJsonAsync<List<VM_Def_Items_Images>>(Configuration.GetValue<string>("Api") + "/api/Items_Images_api");
+
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex.Message);
+        }
+    }
+}
+@*=========================================  Toast Start ========================================================*@
+@*=========================================   Toast  Code ========================================================*@
+@code{
+    SfToast Toast_Success;
+    SfToast Toast_Add_Failed;
+    SfToast Toast_Del_Failed;
+    SfToast Toast_SelectRow_Failed;
+    SfToast Toast_Permission_Failed;
+    SfToast Toast_Reload_Failed;
+}
+@*========================================= /  Toast  Code ========================================================*@
+@*=========================================  Toast Permission ========================================================*@
+<SfToast ID="Failed_Id_Permission" @ref="Toast_Permission_Failed" TimeOut="5000" Icon="e-error toast-icons" CssClass="e-toast-danger" Title="@languageContainer.Keys["Toast_Title_Failed"]" Content="@languageContainer.Keys["Toast_Content_Permission_Failed"]">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= /  Toast Permission ========================================================*@
+@*=========================================  Toast Reload ========================================================*@
+<SfToast ID="Failed_Id_Reload" @ref="Toast_Reload_Failed" TimeOut="5000" Icon="e-error toast-icons" CssClass="e-toast-danger" Title="@languageContainer.Keys["Toast_Title_Failed"]" Content="@languageContainer.Keys["Toast_Failed_Reload"]">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= /  Toast Reload ========================================================*@
+@*=========================================  Toast Add ========================================================*@
+<SfToast ID="Failed_Id_Add" @ref="Toast_Add_Failed" TimeOut="5000" Icon="e-error toast-icons" CssClass="e-toast-danger" Title="@languageContainer.Keys["Toast_Title_Failed"]" Content="@languageContainer.Keys["Toast_Content_Add_Failed"]">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= /  Toast Add ========================================================*@
+@*=========================================  Toast  Delete ========================================================*@
+<SfToast ID="Failed_Id_Delete" @ref="Toast_Del_Failed" TimeOut="5000" Icon="e-error toast-icons" CssClass="e-toast-danger" Title="@languageContainer.Keys["Toast_Title_Failed"]" Content="@languageContainer.Keys["Toast_Content_Delete_Failed"]">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= / Toast  Delete ========================================================*@
+@*=========================================  Toast  Select Row Print ========================================================*@
+<SfToast ID="Failed_Id_SelectRow" @ref="Toast_SelectRow_Failed" TimeOut="5000" Icon="e-error toast-icons" CssClass="e-toast-danger" Title="@languageContainer.Keys["Toast_Title_Failed"]" Content="@languageContainer.Keys["Toast_Failed_SelectRow"]">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= / Toast Select Row Print========================================================*@
+@*========================================= / Toast  Success ========================================================*@
+
+<SfToast ID="Success_Id" @ref="Toast_Success" TimeOut="4000" CssClass="e-toast-success" Icon="e-success toast-icons" Title="@languageContainer.Keys["Toast_Title_Success"]" Content="@languageContainer.Keys["Toast_Content_Success"]">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= / Toast  Success ========================================================*@
+
+@*=========================================  Toast End ========================================================*@

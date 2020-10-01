@@ -1,0 +1,333 @@
+﻿@page "/Accounts"
+@layout MainLayout_Accounts
+@using AjaTech_Blazor.Data.ViewModels;
+@using System.Threading.Tasks;
+@using Microsoft.Extensions.Configuration;
+@using AjaTech_Blazor.Data.IServices;
+@using System.Diagnostics;
+
+@inject HttpClient httpClient
+@inject NavigationManager UriHelper
+@inject IJSRuntime jsRuntime
+@inject IConfiguration Configuration
+@*@inject Blazored.SessionStorage.ISessionStorageService sessionStorage*@
+
+<div class="container card-container p-1">
+    <div class="row">
+        <SfTab ShowCloseButton="true">
+            <TabItems>
+
+                @*=========================================  Start Header Tab  Accounts (Basic Tab)    ========================================================*@
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["accounts"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*=========================================  Start Code Accounts      ========================================================*@
+
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+
+                                        <SfButton CssClass="e-btn font-weight-bold e-normal e-primary" IconCss="e-icons e-settings-icon" OnClick="Add_Account">@languageContainer.Keys["AddAccount"]</SfButton>
+                                        <br />  <br />
+                                        <SfTreeGrid @ref="TreeGrid1" DataSource="@DataSource_Accounts" IdMapping="@nameof(VM_Def_Accounts.ID)" Toolbar="@(new string[] { "Edit", "Delete", "Print", "Search" })"
+                                                    ParentIdMapping="@nameof(VM_Def_Accounts.ParentID)" TreeColumnIndex="1" AllowPaging="true" Height="315">
+                                            <TreeGridPageSettings PageSize="2"></TreeGridPageSettings>
+                                            <TreeGridEditSettings AllowEditOnDblClick="true" ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowEditing="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.TreeGrid.EditMode.Dialog"></TreeGridEditSettings>
+                                            <TreeGridEvents OnActionBegin="ActionBegin_Account" OnToolbarClick="ToolbarClick" TValue="VM_Def_Accounts"></TreeGridEvents>
+                                            <TreeGridColumns>
+                                                <TreeGridColumn Field=@nameof(VM_Def_Accounts.ID) IsIdentity="true" HeaderText="@languageContainer.Keys["ID"]" IsPrimaryKey="true" ValidationRules="@(new { required = true, number = true })" Width="100" TextAlign="TextAlign.Center"></TreeGridColumn>
+                                                <TreeGridColumn Field=@nameof(VM_Def_Accounts.Title) AllowEditing="false" HeaderText="@languageContainer.Keys["account"]" Width="100" TextAlign="TextAlign.Center"></TreeGridColumn>
+                                                <TreeGridColumn Field=@nameof(VM_Def_Accounts.Balance) HeaderText="@languageContainer.Keys["Items_First_Balance"]" ValidationRules="@(new { number = true })" Width="100" TextAlign="TextAlign.Center"></TreeGridColumn>
+                                                @*<TreeGridColumn Field=@nameof(VM_Def_Accounts.First_Debit) HeaderText="First_Debit" ValidationRules="@(new { number = true })" Width="100" TextAlign="TextAlign.Center"></TreeGridColumn>
+        <TreeGridColumn Field=@nameof(VM_Def_Accounts.First_Credit) HeaderText="First_Credit" ValidationRules="@(new { number = true })" Width="100" TextAlign="TextAlign.Center"></TreeGridColumn>*@
+                                                <TreeGridColumn Field=@nameof(VM_Def_Accounts.Notes) HeaderText="@languageContainer.Keys["Notes"]" Width="100" TextAlign="TextAlign.Center"></TreeGridColumn>
+                                            </TreeGridColumns>
+                                        </SfTreeGrid>
+                                        <SfDialog @bind-Visible="@sfd_Add_Account_Visible" @ref="sfd_Add_Account" Target="body"
+                                                  Width="500px" MinHeight="350px" CssClass='@languageContainer.Keys["Text_Align"]'
+                                                  IsModal="true" ShowCloseIcon="true" AllowDragging="true" EnableResize="true"
+                                                  Header="إضافة حساب" AnimationSettings="@dialogAnnimation_PrintSettings">
+                                            <ChildContent>
+                                                <div class="control_wrapper">
+                                                    <SfDropDownList ShowClearButton="true" @bind-Value="cmbParent_Account" FloatLabelType="@FloatLabelType.Always" ID="Parent_Account"
+                                                                    TItem="Account_Types" TValue="string" Placeholder="@languageContainer.Keys["account_Type"]"
+                                                                    DataSource="@account_Types">
+                                                        <DropDownListFieldSettings Value="The_type" Text="The_type"></DropDownListFieldSettings>
+                                                    </SfDropDownList>
+                                                    <SfTextBox FloatLabelType="@FloatLabelType.Always" @ref="txtTitle" Placeholder="@languageContainer.Keys["account_Name"]"></SfTextBox>
+                                                    <SfDropDownList ShowClearButton="true" @bind-Value="cmbCurrency" FloatLabelType="@FloatLabelType.Always" Text="@languageContainer.Keys["SAR"]"
+                                                                    TItem="VM_Def_Currencies" TValue="string" Placeholder="@languageContainer.Keys["Currency"]"
+                                                                    DataSource="@DataSource_Currencies">
+                                                        <DropDownListFieldSettings Value="Title_Ar" Text="Title_Ar"></DropDownListFieldSettings>
+                                                    </SfDropDownList>
+                                                    <SfNumericTextBox FloatLabelType="@FloatLabelType.Always" Min="-100000000" Max="100000000" @bind-Value="First_Balance" Placeholder="@languageContainer.Keys["Items_First_Balance"]"></SfNumericTextBox>
+                                                    <br />
+                                                </div>
+                                                <br />
+                                                <div class="e-footer-content">
+                                                    <div class="button-container text-center">
+                                                        <sfbutton class="e-btn e-normal" @onclick="on_Cancel_AddAccount">@languageContainer.Keys["Add"]</sfbutton>
+                                                        <sfbutton class="e-btn e-normal e-primary" @onclick="on_insert_AddAccount">@languageContainer.Keys["Cancel"]</sfbutton>
+                                                    </div>
+                                                </div>
+                                            </ChildContent>
+                                        </SfDialog>
+                                    </div>
+                                </div>
+                            </div>
+                            @*=========================================  Start Code Accounts      ================= Text="ريال سعودي" =======================================*@
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                @code {
+
+                    SfTreeGrid<VM_Def_Accounts> TreeGrid1;
+                    public void ToolbarClick(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+                    {
+                        if (args.Item.Id == "Grid_excelexport") { this.TreeGrid1.ExcelExport(); }
+                    }
+
+
+                    VM_Def_Accounts vM_Def_Accounts = new VM_Def_Accounts();
+
+                    public async void ActionBegin_Account(ActionEventArgs<VM_Def_Accounts> args)
+                    {
+
+                        string List_Item_Title_Ar = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select* from Def_Items_api&Required_Field=Item_Title_Ar");
+                        string List_Item_Title_En = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select* from Def_Items_api&Required_Field=Item_Title_En");
+
+                        // Delete Api ccounts
+                        // Prevent Delete If User Hasn't Permission Or ID < 1 Melion To UnDelete Main Accounts
+                        if (args.RequestType.ToString() == "Delete")
+                        {
+                            if (Check_User_Super_Admin == "False" || args.Data.ID < 1000000)
+                            {
+                                await this.Toast_Permission_Failed.Show();
+                            }
+                            else
+                            {
+                                await httpClient.DeleteAsync(Configuration.GetValue<string>("Api") + "/api/Accounts_api/" + args.Data.ID);
+                                await this.Toast_Success.Show();
+                            }
+                        }
+                        // Post Api ccounts
+
+                        else if (args.RequestType.ToString() == "Save")
+                        {
+                            if (args.Action == "add")
+                            {
+                            }
+
+                            // (Edit) Put Api ccounts
+
+                            else
+                            {
+
+                                vM_Def_Accounts.ID = args.Data.ID;
+                                vM_Def_Accounts.Title = args.Data.Title;
+                                vM_Def_Accounts.Balance = args.Data.Balance;
+                                vM_Def_Accounts.Notes = args.Data.Notes;
+
+                                if (args.Data.Balance > 0)
+                                {
+                                    vM_Def_Accounts.First_Debit = args.Data.Balance;
+                                    vM_Def_Accounts.First_Credit = 0;
+                                }
+                                else if (args.Data.Balance < 0)
+                                {
+                                    vM_Def_Accounts.First_Credit = -1 * (args.Data.Balance);
+                                    vM_Def_Accounts.First_Debit = 0;
+                                }
+
+                                if (Check_User_Super_Admin == "False")
+                                {
+                                    await this.Toast_Permission_Failed.Show();
+                                }
+                                else
+                                {
+                                    await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Def_Accounts_api set Balance = '" + args.Data.Balance + "' , First_Debit = '" + vM_Def_Accounts.First_Debit + "' , First_Credit = '" + vM_Def_Accounts.First_Credit + "',Notes = '" + vM_Def_Accounts.Notes + "'where ID = '" + args.PreviousData.ID + "'", vM_Def_Accounts);
+                                    await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_GL set Value = '" + Math.Abs(Convert.ToDecimal(args.Data.Balance)) + "' , Notes = '" + vM_Def_Accounts.Notes + "' where DebitAccount = '" + vM_Def_Accounts.Title + "' Or CreditAccount = '" + vM_Def_Accounts.Title + "'", vM_Def_Accounts);
+
+                                    await this.Toast_Success.Show();
+                                }
+                            }
+                        }
+                    }
+
+                    SfDialog sfd_Add_Account;
+                    SfTextBox txtTitle;
+                    bool sfd_Add_Account_Visible = false;
+                    string cmbParent_Account;
+                    string cmbCurrency;
+                    decimal First_Balance = 0;
+
+                    private DialogAnimationSettings dialogAnnimation_PrintSettings { get; set; } = new DialogAnimationSettings { Effect = DialogEffect.Zoom };
+
+                    public class Account_Types
+                    {
+                        public string The_type { get; set; }
+                    }
+                    public List<Account_Types> account_Types = new List<Account_Types>
+                                                 {
+                        new Account_Types{ The_type = "العملاء" },
+                        new Account_Types{ The_type = "الموردين" },
+                        new Account_Types{ The_type = "الصناديق" },
+                        new Account_Types{ The_type = "المخازن" }
+                        };
+
+                    protected void Add_Account()
+                    {
+                        sfd_Add_Account_Visible = true;
+                    }
+
+                    protected void on_Cancel_AddAccount()
+                    {
+                        sfd_Add_Account_Visible = false;
+                    }
+                    //Insert a new account
+                    protected async void on_insert_AddAccount()
+                    {
+                        string My_Accounts = "";
+                        string My_Debiters_GL = "";
+                        string My_Crediters_GL = "";
+                        decimal First_Debit = 0;
+                        decimal First_Credit = 0;
+                        VM_Def_Accounts vM_Def_Accounts = new VM_Def_Accounts();
+                        string Max_Account_ID;
+                        string QueryString;
+                        string The_type = "";
+                        string ParentID = "";
+                        //-----------------------
+                        if (string.IsNullOrEmpty(cmbParent_Account) || string.IsNullOrEmpty(txtTitle.Value))
+                        {
+                            await this.Toast_Empty_Failed.Show();
+                            return;
+                        }
+                        //Prevent Adding Because This Element is repeat
+                        My_Accounts = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select* from Def_Accounts_api&Required_Field=Title");
+                        My_Debiters_GL = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select* from Inv_GL&Required_Field=DebitAccount");
+                        My_Crediters_GL = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select* from Inv_GL&Required_Field=CreditAccount");
+
+                        if (My_Accounts.IndexOf(txtTitle.Value) != -1 || My_Debiters_GL.IndexOf(txtTitle.Value) != -1 || My_Crediters_GL.IndexOf(txtTitle.Value) != -1)
+                        {
+                            await this.Toast_Add_Failed.Show();
+                            return;
+                        }
+                        //الإضافة
+                        if (First_Balance > 0)
+                        {
+                            First_Debit = First_Balance;
+                            First_Credit = 0;
+                        }
+                        else
+                        {
+                            First_Debit = 0;
+                            First_Credit = -1 * First_Balance;
+                        }
+                        //قيد بداية المدة
+                        QueryString = "Title=" + txtTitle.Value + "&firstDebit=" + First_Debit + "&firstCredit=" + First_Credit + "&User=" + User_Name + "&Currency =" + cmbCurrency;
+                        await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/Update_FirstDebit_FirstCredit_Inv_GL?" + QueryString);
+
+                        QueryString = "QueryString=Select Max(ID) as 'ID' From Def_Accounts_api where ParentAccount = '" + cmbParent_Account + "'&Required_Field=ID";
+                        Max_Account_ID = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?" + QueryString);
+                        Max_Account_ID = JsonConvert.DeserializeObject<string>(Max_Account_ID);
+
+                        if (string.IsNullOrEmpty(Max_Account_ID))
+                        {
+                            Max_Account_ID = "1000";
+                        }
+                        Max_Account_ID = (Convert.ToInt32(Max_Account_ID) + 1).ToString();
+
+
+                        QueryString = "QueryString=Select ID  From Def_Accounts_api where Title ='" + cmbParent_Account + "'&Required_Field=ID";
+                        ParentID = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?" + QueryString);
+                        ParentID = JsonConvert.DeserializeObject<string>(ParentID);
+
+
+                        QueryString = "QueryString=  select top(1) [type] from [Def_Accounts_api] where ParentAccount='" + cmbParent_Account + "'&Required_Field=type";
+                        The_type = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?" + QueryString);
+                        The_type = JsonConvert.DeserializeObject<string>(The_type);
+
+                        if (string.IsNullOrEmpty(The_type))
+                        {
+                            The_type = cmbParent_Account;
+                        }
+                        //filling the object
+                        vM_Def_Accounts.ID = Convert.ToInt32(Max_Account_ID);
+                        vM_Def_Accounts.Title = txtTitle.Value;
+                        vM_Def_Accounts.First_Debit = First_Debit;
+                        vM_Def_Accounts.First_Credit = First_Credit;
+                        vM_Def_Accounts.Balance = First_Debit - First_Credit;
+                        vM_Def_Accounts.ParentID = Convert.ToInt32(ParentID);
+                        vM_Def_Accounts.Type = The_type;
+                        vM_Def_Accounts.ParentAccount = cmbParent_Account;
+                        vM_Def_Accounts.CurrencyID = cmbCurrency;
+                        await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Accounts_api", vM_Def_Accounts);
+
+                        sfd_Add_Account_Visible = false;
+                        await this.Toast_Success.Show();
+
+                    }
+                }
+
+                @*=========================================  End Header Tab  Accounts (Basic Tab)  ========================================================*@
+
+            </TabItems>
+        </SfTab>
+    </div>
+</div>
+
+@code {
+    //Toast
+    SfToast Toast_Success;
+    SfToast Toast_Add_Failed;
+    SfToast Toast_Empty_Failed;
+    SfToast Toast_Permission_Failed;
+    private List<VM_Def_Accounts> DataSource_Accounts = new List<VM_Def_Accounts>();
+    private List<VM_Def_Currencies> DataSource_Currencies = new List<VM_Def_Currencies>();
+    protected override async Task OnInitializedAsync()
+    {
+        // Get  DataSources
+        DataSource_Accounts = await httpClient.GetJsonAsync<List<VM_Def_Accounts>>(Configuration.GetValue<string>("Api") + "/api/Accounts_api");
+        DataSource_Currencies = await httpClient.GetJsonAsync<List<VM_Def_Currencies>>(Configuration.GetValue<string>("Api") + "/api/Currency_api");
+    }
+
+    string Check_User_Super_Admin = "true";
+    string User_Name;
+
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        /////////////////////////////////////////
+        //--- Get User Data
+        var user = (await AuthStat).User;
+        User_Name = user.Identity.Name;
+        /////////////////////////////////////////
+    }
+}
+@*========================================= / Toast  Success ========================================================*@
+
+<SfToast ID="Success_Id" @ref="Toast_Success" TimeOut="4000" CssClass="e-toast-success" Icon="e-success toast-icons" Title="@languageContainer.Keys["Toast_Title_Success"]" Content="@languageContainer.Keys["Toast_Content_Success"]">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= / Toast  Success ========================================================*@
+@*=========================================  Toast Add Failed ========================================================*@
+<SfToast ID="Failed_Id_Add" @ref="Toast_Add_Failed" TimeOut="5000" Icon="e-error toast-icons" CssClass="e-toast-danger" Title="@languageContainer.Keys["Toast_Title_Failed"]" Content="@languageContainer.Keys["Toast_Content_Add_Failed"]">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= /  Toast Add Failed ========================================================*@
+@*=========================================  Toast Empty Failed ========================================================*@
+<SfToast ID="Failed_Id_Add_Empty" @ref="Toast_Empty_Failed" TimeOut="5000" Icon="e-error toast-icons" CssClass="e-toast-danger" Title="@languageContainer.Keys["Toast_Title_Failed"]" Content="Empty   Empty">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= /  Toast Empty Failed ========================================================*@
+@*=========================================  Toast Permission ========================================================*@
+<SfToast ID="Failed_Id_Permission" @ref="Toast_Permission_Failed" TimeOut="5000" Icon="e-error toast-icons" CssClass="e-toast-danger" Title="@languageContainer.Keys["Toast_Title_Failed"]" Content="@languageContainer.Keys["Toast_Content_Permission_Failed"]">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= /  Toast Permission ========================================================*@

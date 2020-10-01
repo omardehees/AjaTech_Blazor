@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject AKSoftware.Localization.MultiLanguages.ILanguageContainerService languageContainer
+
+@if (SignInManager.IsSignedIn(User))
+{
+
+    <div class="planner-header" style="width:100%">
+
+        <div class="side-bar-opener">
+            <span class="open-icon e-icons"></span>
+        </div>
+
+        <div class="name-cantainer">
+            <a class="m-2" asp-area="Identity" asp-page="/Account/Manage/Index">
+                <span class="e-icons e-settings-icon m-2"></span>
+            </a>
+            <h1 class="mt-2 clinic-name appointment-title"> Hello @UserManager.GetUserName(User)</h1>
+        </div>
+
+        <div class='logout-container'>
+            <div class="logout-icon-container mt-1"><a href="/Identity/Account/LogOut"><span class="e-icons e-LogOut-icon m-2"></span></a></div>
+            <span class='logout-name'>@languageContainer.Keys["login_logout"]</span>
+            @*</a>*@
+        </div>
+
+    </div>
+}
+else
+{
+    <ul class="navbar-nav">
+
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    </ul>
+
+}

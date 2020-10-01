@@ -1,0 +1,381 @@
+﻿@page "/Missions"
+@layout MainLayout_SupplyInstall
+
+@using AjaTech_Blazor.Data.ViewModels;
+@using Microsoft.Extensions.Configuration;
+
+@inject HttpClient httpClient
+@inject NavigationManager UriHelper
+@inject IJSRuntime jsRuntime
+@inject IConfiguration Configuration
+@*@inject Blazored.SessionStorage.ISessionStorageService sessionStorage*@
+@*---------------------------------------------------------------------------------------------------------------------------*@
+
+<div class="container card-container">
+    <div class="row">
+
+        @*---------------------------------------------------------------------------------------------------------------------------*@
+        @*-------------------------------------------------------- مهام العمل -----------------------------------------------------*@
+        @*-------------------------------------------------- ------------------------- --------------------------------------------------*@
+        <div class="col-lg-12 text-center font-weight-bold" style="border:#e8e11f 1px solid;background-color:#868218;color:white;margin-top:20px;font-size:x-large;border-radius:5px">@languageContainer.Keys["Create_Missions"]</div>
+
+        @*--------------------------------------------------إنشاء مهام العمل    --------------------------------------------------*@
+        <div class="col-lg-12 control-section">
+            <div class="content-wrapper">
+                <div class="row" style="direction:@languageContainer.Keys["Text_Direction"]">
+                    @*---------------------------------------------------------------------------------------------------------------------------*@
+
+                    <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @bind-Value="txtNxtHardCopyCode_MissionCode" Placeholder='@languageContainer.Keys["TaskCode"]' Enabled="false" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDatePicker @bind-Value="The_date" TValue="DateTime" Format="dd/MM/yyyy" Placeholder='@languageContainer.Keys["Date"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfDatePicker>
+                    </div>
+
+                    <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" ValueChanged="GetOrderDetails" @ref="cmbOrderCode" AllowFiltering="true" CssClass="pr-1 pl-1"
+                                        DataSource="DataSource_OrderCode" TValue="string"
+                                        TItem="string" Placeholder='@languageContainer.Keys["SupplyingOrder_Code"]'
+                                        FloatLabelType="@FloatLabelType.Always">
+                        </SfDropDownList>
+                    </div>
+
+                    <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @ref="txtContractCode" Enabled="Enabled_txtContractCode" Placeholder='@languageContainer.Keys["Contract_Code"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" @ref="cmbCustomer" Enabled="Enabled_cmbCustomer" AllowFiltering="true" DataSource="DataSource_Customers" TValue="string" CssClass="pr-1 pl-1"
+                                        TItem="string" Placeholder='@languageContainer.Keys["Customer_Name"]' FloatLabelType="@FloatLabelType.Always">
+                            <DropDownListFieldSettings Text="Title" Value="Title"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" @ref="cmbMissionType" AllowFiltering="true" DataSource="DataSource_MissionType" TValue="string" CssClass="pr-1 pl-1"
+                                        TItem="string" Placeholder='@languageContainer.Keys["MissionType"]' FloatLabelType="@FloatLabelType.Always">
+                            <DropDownListFieldSettings Text="HardCopyCode" Value="HardCopyCode"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @ref="txtTaskName" Placeholder='@languageContainer.Keys["Task"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" @ref="cmbEmployeesBoss" AllowFiltering="true" DataSource="DataSource_Employees" TValue="string" CssClass="pr-1 pl-1"
+                                        TItem="string" Placeholder='@languageContainer.Keys["Employees_Boss"]' FloatLabelType="@FloatLabelType.Always">
+                            <DropDownListFieldSettings Text="Name_Ar" Value="Name_Ar"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfMultiSelect @ref="cmbEmployees" TValue="string[]" AllowCustomValue="true" Mode="@VisualMode.Box" DataSource="DataSource_Employees"
+                                       Placeholder='@languageContainer.Keys["Employees"]' FloatLabelType="@FloatLabelType.Always">
+                            <MultiSelectFieldSettings Text="Name_Ar" Value="Name_Ar"></MultiSelectFieldSettings>
+                        </SfMultiSelect>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @ref="txtCar_No" Placeholder='@languageContainer.Keys["Car_No"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfNumericTextBox @bind-Value="seTransportation_Cost" TValue="decimal" Placeholder='@languageContainer.Keys["Transportation_Cost"]' Min="0" Max="1000000" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                    </div>
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfNumericTextBox @bind-Value="seShiping_Cost" TValue="decimal" Placeholder='@languageContainer.Keys["Shipping_Chargest"]' Min="0" Max="1000000" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDatePicker @bind-Value="deTime_Start" TValue="DateTime" Format="dd/MM/yyyy" Placeholder='@languageContainer.Keys["Time_Start"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfDatePicker>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDatePicker @bind-Value="deTime_End" TValue="DateTime" Format="dd/MM/yyyy" Placeholder='@languageContainer.Keys["Time_End"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfDatePicker>
+                    </div>
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfNumericTextBox @bind-Value="seAcheivmentBefor_Avarage" TValue="decimal" Placeholder='@languageContainer.Keys["Achievement_Avarege_Befor"]' Min="0" Max="100" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                    </div>
+
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfNumericTextBox @bind-Value="seAcheivementAfter_Avarage" TValue="decimal" Placeholder='@languageContainer.Keys["Achievement_Avarege_After"]' Min="0" Max="100" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @ref="txtAchievement_Statment" Placeholder='@languageContainer.Keys["Achievement_Avarege_Statment"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfNumericTextBox @bind-Value="seSubcontractor_Cost" TValue="decimal" Placeholder='@languageContainer.Keys["Subcontractor_Cost"]' Min="0" Max="1000000" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                    </div>
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @ref="txtSubcontractor_Statment" Placeholder='@languageContainer.Keys["Subcontractor_Statment"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @ref="txtBoss_Notes" Placeholder='@languageContainer.Keys["Boss_Notes"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @ref="txtCustomer_Note" Placeholder='@languageContainer.Keys["Customer_Note"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @ref="txtDepartment_Note" Placeholder='@languageContainer.Keys["Department_Note"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @ref="txtFinancial_Note" Placeholder='@languageContainer.Keys["Financial_Note"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @ref="txtManagement_Notes" Placeholder='@languageContainer.Keys["Management_Notes"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+                    <div class="col-lg-1"></div>
+
+                    <div class="col-lg-2 font-weight-bold form-group" style="margin-top:auto">
+                        <SfButton @onclick="btnSaveItem" type="button" CssClass="e-btn e-normal e-success form-control font-weight-bold">@languageContainer.Keys["Save"]</SfButton>
+                    </div>
+                    @*---------------------------------------------------------------------------------------------------------------------------*@
+
+                </div>
+            </div>
+        </div>
+
+        @*=========================================  Grid  ========================================================*@
+
+        @*----------------------------------------------عناصر المهام   ----------------------------------- -----------------*@
+
+        <div class="col-lg-12 control-section">
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["Items_Missions"]</div>
+                    <SfGrid @ref="grdMissions" AllowSelection="true" EnableRtl="true" DataSource="DataSource_Missions" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] { "Search"})">
+                        <GridColumns>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.ID)" Visible="false" IsPrimaryKey="true" IsIdentity="true" DefaultValue="1" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.HardCopyCode)" AllowEditing="false" HeaderText="@languageContainer.Keys["TaskCode"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.The_date)" EditType="EditType.DatePickerEdit" Format="dd/MM/yyyy" Type="ColumnType.DateTime" HeaderText="@languageContainer.Keys["Date"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.HardCopyCode_Items_Transfere)" AllowEditing="false" HeaderText="@languageContainer.Keys["SupplyingOrder_Code"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Customer)" HeaderText="@languageContainer.Keys["Customer_Name"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Contract_HardCopyCode)" HeaderText="@languageContainer.Keys["Contract_Code"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Mission_Type)" HeaderText="@languageContainer.Keys["MissionType"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Mission_Subject)" HeaderText="@languageContainer.Keys["Task"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Boss)" HeaderText="@languageContainer.Keys["Employees_Boss"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Workers)" HeaderText="@languageContainer.Keys["Employees"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Cars)" HeaderText="@languageContainer.Keys["Car_No"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Transportation_Cost)" ValidationRules="@(new { number=true})" HeaderText="@languageContainer.Keys["Transportation_Cost"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Shipping_Cost)" ValidationRules="@(new { number=true})" HeaderText="@languageContainer.Keys["Shipping_Chargest"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Start_Date)" EditType="EditType.DatePickerEdit" Format="dd/MM/yyyy" Type="ColumnType.DateTime" HeaderText="@languageContainer.Keys["Time_Start"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Finishing_Date)" EditType="EditType.DatePickerEdit" Format="dd/MM/yyyy" Type="ColumnType.DateTime" HeaderText="@languageContainer.Keys["Time_End"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Completion_Rate_Before)" ValidationRules="@(new{number=true})" HeaderText="@languageContainer.Keys["Achievement_Avarege_Befor"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Completion_Rate_After)" ValidationRules="@(new{number=true})" HeaderText="@languageContainer.Keys["Achievement_Avarege_After"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Completion_Rate_Statement)" HeaderText="@languageContainer.Keys["Achievement_Avarege_Statment"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.SubContractor_Cost)" ValidationRules="@(new{number=true})" HeaderText="@languageContainer.Keys["Subcontractor_Cost"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.SubContractor_Statement)" HeaderText="@languageContainer.Keys["Subcontractor_Statment"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Boss_Notes)" HeaderText="@languageContainer.Keys["Boss_Notes"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Customer_Notes)" HeaderText="@languageContainer.Keys["Customer_Note"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Financial_Department_Notes)" HeaderText="@languageContainer.Keys["Financial_Note"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Technical_Department_Notes)" HeaderText="@languageContainer.Keys["Department_Note"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_SupplyInstall_Missions.Management_Notes)" HeaderText="@languageContainer.Keys["Notes"]" TextAlign="TextAlign.Center"></GridColumn>
+
+                        </GridColumns>
+                    </SfGrid>
+                </div>
+            </div>
+        </div>
+
+        @*-----------------------------------------------------------------------------------------------------*@
+    </div>
+</div>
+
+
+@*========================================= Toast Custom   Code ============================================================*@
+
+<SfToast ID="Failed_Id_Custom" @ref="Toast_Custom_Failed"
+         TimeOut="5000" Icon="e-error toast-icons" CssClass="e-toast-danger"
+         Title="@languageContainer.Keys["Toast_Title_Failed"]"
+         Content="@ToastContent">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= / Toast  Success =================================================================*@
+
+<SfToast ID="Success_Id" @ref="Toast_Success" TimeOut="4000" CssClass="e-toast-success" Icon="e-success toast-icons" Title="@languageContainer.Keys["Toast_Title_Success"]" Content="@languageContainer.Keys["Toast_Content_Success"]">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= / Toast  Success ==================================================================*@
+
+@*-----------------------------------------------------------------------------------------------------*@
+@*-------------------------------------------------  Code  --------------------------------------------*@
+@*-----------------------------------------------------------------------------------------------------*@
+
+@code {
+
+    // المتغيرات
+    #region
+
+    string ToastContent, txtNxtHardCopyCode_MissionCode;
+    string CustomerName, ContractType, ContractCode;
+    int? RowId_Selected = 0;
+    decimal seTransportation_Cost, seShiping_Cost, seAcheivmentBefor_Avarage, seAcheivementAfter_Avarage, seSubcontractor_Cost;
+    bool Enabled_txtContractCode = true, Enabled_cmbCustomer = true;
+    DateTime The_date = DateTime.Now, deTime_Start = DateTime.Now.AddDays(1), deTime_End = DateTime.Now.AddDays(2);
+
+    SfGrid<VM_SupplyInstall_Missions> grdMissions;
+    SfToast Toast_Custom_Failed, Toast_Success;
+    SfTextBox txtContractCode, txtCar_No, txtTaskName, txtAchievement_Statment, txtSubcontractor_Statment, txtBoss_Notes, txtCustomer_Note, txtDepartment_Note, txtFinancial_Note, txtManagement_Notes;
+    SfDropDownList<string, string> cmbOrderCode,cmbMissionType, cmbEmployeesBoss;
+    SfDropDownList<string, string> cmbCustomer;
+    SfMultiSelect<string[]> cmbEmployees;
+
+    List<string> DataSource_OrderCode, DataSource_Customers, DataSource_Employees = new List<string>();
+    List<string> DataSource_MissionType = new List<string>();
+    List<VM_SupplyInstall_Missions> DataSource_Missions = new List<VM_SupplyInstall_Missions>();
+
+    VM_SupplyInstall_Missions vM_SupplyInstall_Missions = new VM_SupplyInstall_Missions();
+    VM_SupplyInstall_Missions vM_SupplyInstall_Missions2 = new VM_SupplyInstall_Missions();
+
+    #endregion
+
+    //تهيئة الصفحة  
+    protected override async Task OnInitializedAsync()
+    {
+
+        DataSource_Customers = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=select Title From Def_Accounts_api where Type='عميل'&Required_Field=Title");
+        DataSource_MissionType = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=select Title From SupplyInstall_Missions_Types&Required_Field=Title");
+        DataSource_Employees = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=select Name_Ar From Def_Employees_api&Required_Field=Name_Ar");
+        txtNxtHardCopyCode_MissionCode = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/GetNextHardCopyCode?tbl=SupplyInstall_Missions&Form=Missions");
+        DataSource_OrderCode = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select HardCopyCode From SupplyInstall_Items_Transfere &Required_Field=HardCopyCode");
+        DataSource_Missions = await httpClient.GetJsonAsync<List<VM_SupplyInstall_Missions>>(Configuration.GetValue<string>("Api") + "/api/Missions");
+        DataSource_Missions.RemoveAll(a => a.Deleted_By != null);
+
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+    }
+
+    //إضافة مهمة
+    protected async void btnSaveItem()
+    {
+        //---------- validating ---------------------
+
+        if (string.IsNullOrWhiteSpace(cmbMissionType.Text) )
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["MissionType"] + languageContainer.Keys["Empty"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(txtTaskName.Value) )
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Task"] + languageContainer.Keys["Empty"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(cmbEmployeesBoss.Text) )
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Employees_Boss"] + languageContainer.Keys["Empty"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(cmbEmployees.Text))
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Employees"] + languageContainer.Keys["Empty"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+
+        vM_SupplyInstall_Missions.HardCopyCode =Convert.ToInt64( txtNxtHardCopyCode_MissionCode);
+        vM_SupplyInstall_Missions.The_date = The_date;
+        vM_SupplyInstall_Missions.HardCopyCode_Items_Transfere = Convert.ToInt64(cmbOrderCode.Value);
+        vM_SupplyInstall_Missions.Customer = cmbCustomer.Value;
+        vM_SupplyInstall_Missions.Contract_HardCopyCode = txtContractCode.Value;
+        vM_SupplyInstall_Missions.Mission_Type = cmbMissionType.Value;
+        vM_SupplyInstall_Missions.Contract_Type = ContractType;
+        vM_SupplyInstall_Missions.Mission_Subject = txtTaskName.Value;
+        vM_SupplyInstall_Missions.Boss = cmbEmployeesBoss.Value;
+        vM_SupplyInstall_Missions.Workers= string.Join("**", cmbEmployees.Value);
+        vM_SupplyInstall_Missions.Cars = txtCar_No.Value;
+        vM_SupplyInstall_Missions.Transportation_Cost = seTransportation_Cost;
+        vM_SupplyInstall_Missions.Shipping_Cost = seShiping_Cost;
+        vM_SupplyInstall_Missions.Start_Date = deTime_Start;
+        vM_SupplyInstall_Missions.Finishing_Date = deTime_End;
+        vM_SupplyInstall_Missions.Completion_Rate_Before = seAcheivmentBefor_Avarage;
+        vM_SupplyInstall_Missions.Completion_Rate_After = seAcheivementAfter_Avarage;
+        vM_SupplyInstall_Missions.Completion_Rate_Statement = txtAchievement_Statment.Value;
+        vM_SupplyInstall_Missions.SubContractor_Cost = seSubcontractor_Cost;
+        vM_SupplyInstall_Missions.SubContractor_Statement = txtSubcontractor_Statment.Value;
+        vM_SupplyInstall_Missions.Boss_Notes = txtBoss_Notes.Value;
+        vM_SupplyInstall_Missions.Customer_Notes = txtCustomer_Note.Value;
+        vM_SupplyInstall_Missions.Technical_Department_Notes = txtDepartment_Note.Value;
+        vM_SupplyInstall_Missions.Financial_Department_Notes = txtFinancial_Note.Value;
+        vM_SupplyInstall_Missions.Management_Notes = txtManagement_Notes.Value;
+        vM_SupplyInstall_Missions.TimeStamp = DateTime.Now;
+
+        await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Missions", vM_SupplyInstall_Missions);
+        await grdMissions.AddRecord(vM_SupplyInstall_Missions);
+        await this.Toast_Success.Show();
+
+        The_date = DateTime.Now;
+        deTime_Start = DateTime.Now.AddDays(1);
+        deTime_End = DateTime.Now.AddDays(2);
+
+        cmbOrderCode.Clear();
+        cmbEmployees.Text="";
+        cmbEmployeesBoss.Clear();
+        cmbMissionType.Clear();
+
+        txtAchievement_Statment.Value = "";
+        txtBoss_Notes.Value = "";
+        txtCar_No.Value = "";
+        txtCustomer_Note.Value = "";
+        txtDepartment_Note.Value = "";
+        txtFinancial_Note.Value = "";
+        txtManagement_Notes.Value = "";
+        txtSubcontractor_Statment.Value = "";
+        txtTaskName.Value="";
+
+        seAcheivementAfter_Avarage = 0;
+        seAcheivmentBefor_Avarage = 0;
+        seShiping_Cost = 0;
+        seSubcontractor_Cost=0;
+        seTransportation_Cost = 0;
+
+        await OnInitializedAsync();
+        StateHasChanged();
+
+    }
+
+    //جلب بيانات الاذن
+    protected async void GetOrderDetails()
+    {
+        if (!string.IsNullOrEmpty(cmbOrderCode.Text))
+        {
+
+            CustomerName = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select Customer from SupplyInstall_Items_Transfere where HardCopyCode = '" + cmbOrderCode.Text + "'&Required_Field=Customer");
+            CustomerName = CustomerName.Replace("\"", "");
+
+            ContractType = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select Contract_Type from SupplyInstall_Items_Transfere where HardCopyCode = '" + cmbOrderCode.Text + "'&Required_Field=Contract_Type");
+            ContractType = ContractType.Replace("\"", "");
+
+            ContractCode = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select Contract_HardCopyCode from SupplyInstall_Items_Transfere where HardCopyCode = '" + cmbOrderCode.Text + "'&Required_Field=Contract_HardCopyCode");
+            ContractCode = ContractCode.Replace("\"", "");
+
+            cmbCustomer.Text = CustomerName;
+            txtContractCode.Value = ContractCode;
+
+            Enabled_cmbCustomer = false;
+            Enabled_txtContractCode = false;
+
+            StateHasChanged();
+        }
+        if (string.IsNullOrEmpty(cmbOrderCode.Text))
+        {
+            Enabled_cmbCustomer = true;
+            Enabled_txtContractCode = true;
+
+            cmbCustomer.Clear();
+            txtContractCode.Value = "";
+
+
+            StateHasChanged();
+        }
+
+    }
+}

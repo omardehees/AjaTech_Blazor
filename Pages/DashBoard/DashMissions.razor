@@ -1,0 +1,68 @@
+﻿@page "/DashMissions"
+
+@layout MainLayout_DashBoard
+@inject NavigationManager NavigationManager
+@inject NavigationManager UriHelper
+@inject HttpClient httpClient
+@inject IConfiguration Configuration
+@using Microsoft.Extensions.Configuration;
+@using AjaTech_Blazor.Data.ViewModels;
+
+<div class="control-section">
+    <SfAccumulationChart EnableBorderOnMouseMove="false" Title="@languageContainer.Keys["Supplyin_And_Recovery_Orders"]" EnableSmartLabels="true" EnableRtl="true">
+        <AccumulationChartEvents Load="BeforeRender" />
+        <AccumulationChartLegendSettings Visible="true"></AccumulationChartLegendSettings>
+        <AccumulationChartTooltipSettings Enable="true" Format="${point.x} : <b> ${point.y} Order</b>"></AccumulationChartTooltipSettings>
+        <AccumulationChartSeriesCollection>
+            <AccumulationChartSeries DataSource="@List_SupplyInstall_Items" XName="MissionName" YName="MissionConunt" StartAngle="0" InnerRadius="0%">
+                <AccumulationDataLabelSettings Name="MissionName" Visible="true" Position="AccumulationLabelPosition.Outside">
+                    <AccumulationChartConnector Length="20px" Type="ConnectorType.Curve"></AccumulationChartConnector>
+                </AccumulationDataLabelSettings>
+            </AccumulationChartSeries>
+        </AccumulationChartSeriesCollection>
+    </SfAccumulationChart>
+</div>
+@code{
+
+    public List<VM_SupplyInstall_Items_Transfere> List_SupplyInstall_Items = new List<VM_SupplyInstall_Items_Transfere>();
+
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await AuthStat).User;
+        if (user.Identity.Name != "admin")
+        {
+            UriHelper.NavigateTo("/");
+        }
+
+        List_SupplyInstall_Items = await httpClient.GetJsonAsync<List<VM_SupplyInstall_Items_Transfere>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=select Job_Type as 'MissionName', count(*)as'MissionConunt' from SupplyInstall_Items_Transfere group by Job_Type");
+    }
+
+    string CurrentUri;
+    void BeforeRender(IAccLoadedEventArgs Args)
+    {
+        CurrentUri = NavigationManager.Uri;
+        if (CurrentUri.IndexOf("material") > -1)
+        {
+            Args.Theme = AccumulationTheme.Material;
+        }
+        else if (CurrentUri.IndexOf("fabric") > -1)
+        {
+            Args.Theme = AccumulationTheme.Fabric;
+        }
+        else if (CurrentUri.IndexOf("bootstrap") > -1)
+        {
+            Args.Theme = AccumulationTheme.Bootstrap;
+        }
+        else if (CurrentUri.IndexOf("highcontrast") > -1)
+        {
+            Args.Theme = AccumulationTheme.HighContrast;
+        }
+        else
+        {
+            Args.Theme = AccumulationTheme.Bootstrap4;
+        }
+    }
+
+}

@@ -1,0 +1,82 @@
+﻿@page
+@model RegisterModel
+<hr />
+@{
+    ViewData["Title"] = "صفحة التسجيل";
+}
+@*<div class="container">
+
+    <h1 class="text-center">@ViewData["Title"]</h1>
+
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <h4>انشاء حساب جديد</h4>
+                <hr />
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label>الاسم</label>
+                    <input asp-for="Input.Name" class="form-control" />
+                    <span asp-validation-for="Input.Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label>الوظيفة</label>
+                    <input asp-for="Input.Job" class="form-control" />
+                    <span asp-validation-for="Input.Job" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label>الجوال</label>
+                    <input asp-for="Input.Phone" class="form-control" />
+                    <span asp-validation-for="Input.Phone" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label>الجنس</label>
+                    <select class="form-control" asp-for="Input.Sex">
+                        <Option class="form-control" value="ذكر">ذكر</Option>
+                        <Option class="form-control" value="انثي">انثي</Option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الجنسية</label>
+                    <input asp-for="Input.Nationality" class="form-control" />
+                    <span asp-validation-for="Input.Nationality" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label>اللغة</label>
+                    <input asp-for="Input.Language" class="form-control" />
+                    <span asp-validation-for="Input.Language" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input asp-for="Input.Email" class="form-control" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="bg-info">
+                    <div class="form-group">
+                        <label>اسم المستخدم</label>
+                        <input asp-for="Input.UserName" class="form-control" />
+                        <span asp-validation-for="Input.UserName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>كلمة المرور</label>
+                        <input asp-for="Input.Password" class="form-control" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>تأكيد كلمة المرور</label>
+                        <input asp-for="Input.ConfirmPassword" class="form-control" />
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+                <br />
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-info text-center">تسجيل</button>
+                    </div>
+            </form>
+        </div>
+    </div>
+    </div>*@
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }

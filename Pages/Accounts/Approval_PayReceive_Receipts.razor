@@ -1,0 +1,155 @@
+﻿@page "/Approval_PayReceive_Receipts"
+@layout MainLayout_Accounts
+
+@using AjaTech_Blazor.Data.ViewModels;
+@using Microsoft.Extensions.Configuration;
+
+@inject HttpClient httpClient
+@inject NavigationManager UriHelper
+@inject IJSRuntime jsRuntime
+@inject IConfiguration Configuration
+@*---------------------------------------------------------------------------------------------------------------------------*@
+
+<div class="container card-container">
+    <div class="row">
+        @*=========================================   Page Content Interface ================================================*@
+
+        @*------------------------------------------  شبكة دفع/قبض ورقي    ------------------------------------------------*@
+        <div class="col-lg-12 control-section">
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["Receipt_Entry"]</div>
+                    <SfGrid @ref="grdEntry_Receipts" AllowSelection="true" EnableRtl="true" DataSource="DataSource_grdEntry_Receipts" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] { "Search"})">
+                        <GridColumns>
+                            <GridColumn Field="@nameof(VM_Inv_Checks.ID)" Visible="false" IsPrimaryKey="true" IsIdentity="true" DefaultValue="1" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_Checks.HardCopyCode)" AllowEditing="false" HeaderText="@languageContainer.Keys["Entry_Code"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_Checks.Issuied_Date)" EditType="EditType.DatePickerEdit" Format="dd/MM/yyyy" Type="ColumnType.DateTime" HeaderText="@languageContainer.Keys["Issued_Date"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_Checks.Due_Date)" EditType="EditType.DatePickerEdit" Format="dd/MM/yyyy" Type="ColumnType.DateTime" HeaderText="@languageContainer.Keys["RequireDate"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_Checks.Type)" AllowEditing="false" HeaderText="@languageContainer.Keys["Entry_Type"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_Checks.Value)" HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_Checks.Account)" HeaderText="@languageContainer.Keys["account"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_Checks.BankAccount)" HeaderText="@languageContainer.Keys["BankAccount"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_Checks.Check_Number)" HeaderText="@languageContainer.Keys["Check_Number"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_Checks.Statement)" HeaderText="@languageContainer.Keys["Statement"]" TextAlign="TextAlign.Center"></GridColumn>
+                        </GridColumns>
+                    </SfGrid>
+                </div>
+            </div>
+        </div>
+        @*------------------------------------------  شبكة دفع/قبض ورقي    ------------------------------------------------*@
+
+
+        @*------------------------------------------  عمليات علي قيد دفع/قبض ورقي    ------------------------------------------*@
+        <div class="col-lg-12 control-section">
+            <div class="content-wrapper">
+                <div class="row" style="direction:@languageContainer.Keys["Text_Direction"]">
+                    @*----------------------------------------------------------------------------------------------------------------*@
+                    <div class="col-lg-12 text-center font-weight-bold" style="border:#e8e11f 1px solid;background-color:#868218;color:white;margin-top:20px;font-size:x-large;border-radius:5px">@languageContainer.Keys["Operations_PayReceive_Entry_Receipt"]</div>
+                    @*----------------------------------------------------------------------------------------------------------------*@
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @bind-Value="txtNxtHardCopyCode_Entry_ReceiptsCode" Placeholder='@languageContainer.Keys["Entry_Code"]' Enabled="false" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDatePicker @bind-Value="Issued_Date" TValue="DateTime" Format="dd/MM/yyyy" Placeholder='@languageContainer.Keys["Issued_Date"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfDatePicker>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDatePicker @bind-Value="Due_Date" TValue="DateTime" Format="dd/MM/yyyy" Placeholder='@languageContainer.Keys["RequireDate"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfDatePicker>
+                    </div>
+
+                    <div class="radio-control col-lg-2">
+                        <span class="row  font-weight-bold form-group">@languageContainer.Keys["Entry_Type"]</span>
+                        <div class="row">
+                            <SfRadioButton CssClass='pr-1 pl-1 font-weight-bold' Label="@languageContainer.Keys["Pay"]" Name="payment" Value="credit/debit"></SfRadioButton>
+                            <SfRadioButton CssClass='pr-1 pl-1 font-weight-bold' Label="@languageContainer.Keys["Receive"]" Name="payment" Checked="true" Value="netbanking"></SfRadioButton>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfNumericTextBox @bind-Value="seEntry_Receipts_Value" TValue="decimal" Placeholder='@languageContainer.Keys["Value"]' Min="0" Max="1000000" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" @ref="cmbAccount" AllowFiltering="true" DataSource="DataSource_Account" TValue="string" CssClass="pr-1 pl-1"
+                                        TItem="string" Placeholder='@languageContainer.Keys["account"]' FloatLabelType="@FloatLabelType.Always">
+                            <DropDownListFieldSettings Text="HardCopyCode" Value="HardCopyCode"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox Placeholder='@languageContainer.Keys["BankAccount"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox Placeholder='@languageContainer.Keys["Check_Number"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox Placeholder='@languageContainer.Keys["Check_Number"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox  Placeholder='@languageContainer.Keys["ChekStatment"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+
+                    <div class="col-lg-1 font-weight-bold form-group" style="margin-top:auto">
+                        <SfButton type="button" CssClass="e-btn e-normal e-warning form-control font-weight-bold">@languageContainer.Keys["Edit"]</SfButton>
+                    </div>
+
+                    <div class="col-lg-1 font-weight-bold form-group" style="margin-top:auto">
+                        <SfButton type="button" CssClass="e-btn e-normal e-success form-control font-weight-bold">@languageContainer.Keys["Approval"]</SfButton>
+                    </div>
+
+                    @*---------------------------------------------------------------------------------------------------------------------------*@
+
+                </div>
+            </div>
+        </div>
+        @*------------------------------------------/ عمليات علي قيد دفع/قبض ورقي    ------------------------------------------*@
+
+
+        @*========================================= / Page Content Interface ================================================*@
+    </div>
+</div>
+@*===========================================================================================================================*@
+@*====================================================   Code  ==============================================================*@
+@*===========================================================================================================================*@
+
+@code {
+
+    // المتغيرات
+    #region
+
+    string txtNxtHardCopyCode_Entry_ReceiptsCode;
+    decimal seEntry_Receipts_Value;
+    DateTime Issued_Date, Due_Date;
+
+    SfGrid<VM_Inv_Checks> grdEntry_Receipts;
+    SfToast Toast_Custom_Failed, Toast_Success;
+    SfTextBox txtStatment;
+    SfDropDownList<string, string> cmbAccount;
+    SfButton refbtnSave_Entry_Receipts;
+
+    List<string> DataSource_Account = new List<string>();
+    List<VM_Inv_Checks> DataSource_grdEntry_Receipts = new List<VM_Inv_Checks>();
+
+    #endregion
+
+    //تهيئة الصفحة
+    protected override async Task OnInitializedAsync()
+    {
+        DataSource_Account = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=select Title From Def_Accounts_api where Type='مورد' Or Type='عميل'&Required_Field=Title");
+        DataSource_grdEntry_Receipts = await httpClient.GetJsonAsync<List<VM_Inv_Checks>>(Configuration.GetValue<string>("Api") + "/api/Checks");
+        //DataSource_grdEntry_Receipts.RemoveAll(a => a.Deleted_By != null);
+        //DataSource_grdEntry_Receipts.RemoveAll(a => a.Type != ("دفع");
+        //DataSource_grdEntry_Receipts.RemoveAll(a => a.Type != "قبض");
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+    }
+
+}
+

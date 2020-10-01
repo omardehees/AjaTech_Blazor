@@ -1,0 +1,176 @@
+﻿@page "/DashBox"
+@layout MainLayout_DashBoard
+@inject NavigationManager NavigationManager
+@inject NavigationManager UriHelper
+@inject HttpClient httpClient
+@inject IConfiguration Configuration
+@using Microsoft.Extensions.Configuration;
+@using AjaTech_Blazor.Data.ViewModels;
+
+<div class="control-section">
+    <SfChart Title="@languageContainer.Keys["Box"]">
+        <ChartEvents Load="ChartLoad" />
+        <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
+        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Interval="1" LabelIntersectAction="LabelIntersectAction.Rotate45">
+            <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+            <ChartAxisMinorGridLines Width="0"></ChartAxisMinorGridLines>
+            <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+            <ChartAxisMinorTickLines Width="0"></ChartAxisMinorTickLines>
+            <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+        </ChartPrimaryXAxis>
+        <ChartPrimaryYAxis Title="Mony" Minimum="0" Maximum="200000" Interval="10000" LabelFormat="{value} RAS">
+            <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+            <ChartAxisMajorGridLines Width="1"></ChartAxisMajorGridLines>
+            <ChartAxisMinorGridLines Width="1"></ChartAxisMinorGridLines>
+            <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+            <ChartAxisMinorTickLines Width="0"></ChartAxisMinorTickLines>
+        </ChartPrimaryYAxis>
+        <ChartSeriesCollection>
+
+            <ChartSeries DataSource="@List_Pay_SupplyInstall_Items" XName="Dash_The_Date" YName="Total_Pay" Width="2" Name="@languageContainer.Keys["TotalPayEnteries"]" Type="ChartSeriesType.StackingColumn"></ChartSeries>
+            <ChartSeries DataSource="@List_Receive_SupplyInstall_Items" XName="Dash_The_Date" YName="Total_Receive" Width="2" Name="@languageContainer.Keys["TotalReceiveEntries"]" Type="ChartSeriesType.StackingColumn"></ChartSeries>
+            <ChartSeries DataSource="@List_Buy_SupplyInstall_Items" XName="Dash_The_Date" YName="Total_Buy" Width="2" Name="@languageContainer.Keys["TotalBuyingOperations"]" Type="ChartSeriesType.StackingColumn"></ChartSeries>
+            <ChartSeries DataSource="@List_BuyVat_SupplyInstall_Items" XName="Dash_The_Date" YName="Total_BuyVat" Width="2" Name="@languageContainer.Keys["TotalBuyingVat"]" Type="ChartSeriesType.StackingColumn"></ChartSeries>
+            <ChartSeries DataSource="@List_Balance_SupplyInstall_Items"  XName="Dash_The_Date"   YName="Total" Width="2" Name="@languageContainer.Keys["TotalBoxValue"]" Type="ChartSeriesType.StackingColumn"></ChartSeries>
+
+        </ChartSeriesCollection>
+        <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+    </SfChart>
+</div>
+
+
+@code{
+
+    public List<VM_Inv_GL> List_Pay_SupplyInstall_Items = new List<VM_Inv_GL>();
+    public List<VM_Inv_GL> List_Receive_SupplyInstall_Items = new List<VM_Inv_GL>();
+    public List<VM_Inv_GL> List_Buy_SupplyInstall_Items = new List<VM_Inv_GL>();
+    public List<VM_Inv_GL> List_BuyVat_SupplyInstall_Items = new List<VM_Inv_GL>();
+    public List<VM_Inv_GL> List_Balance_SupplyInstall_Items = new List<VM_Inv_GL>();
+
+
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await AuthStat).User;
+        if (user.Identity.Name != "admin")
+        {
+            UriHelper.NavigateTo("/");
+        }
+
+        List_Pay_SupplyInstall_Items = await httpClient.GetJsonAsync<List<VM_Inv_GL>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=SELECT format(The_Date,'Y') AS Dash_The_Date, sum(Value) AS Total_Pay FROM Inv_GL where Type='دفع' GROUP BY format(The_Date,'Y') order by max(The_Date) asc");
+        List_Receive_SupplyInstall_Items = await httpClient.GetJsonAsync<List<VM_Inv_GL>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=SELECT format(The_Date,'Y') AS Dash_The_Date, sum(Value) AS Total_Receive FROM Inv_GL where Type='قبض' GROUP BY format(The_Date,'Y') order by max(The_Date) asc");
+        List_Buy_SupplyInstall_Items = await httpClient.GetJsonAsync<List<VM_Inv_GL>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=SELECT format(The_Date,'Y') AS Dash_The_Date, sum(Value) AS Total_Buy FROM Inv_GL where Type='شراء' GROUP BY format(The_Date,'Y') order by max(The_Date) asc");
+        List_BuyVat_SupplyInstall_Items = await httpClient.GetJsonAsync<List<VM_Inv_GL>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=SELECT format(The_Date,'Y') AS Dash_The_Date, sum(Value) AS Total_BuyVat FROM Inv_GL where DebitAccount='ضريبة القيمة المضافة' GROUP BY format(The_Date,'Y') order by max(The_Date) asc");
+      //List_Balance_SupplyInstall_Items = await httpClient.GetJsonAsync<List<VM_Inv_GL>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=SELECT format(The_Date,'Y') AS Dash_The_Date, (select SUM(value)from Inv_GL where Type='قبض')-(select SUM(value)from Inv_GL where Type='دفع' Or Type = 'شراء') AS Total FROM Inv_GL where Type='دفع' GROUP BY format(The_Date,'Y') order by max(The_Date) asc");
+        List_Balance_SupplyInstall_Items = await httpClient.GetJsonAsync<List<VM_Inv_GL>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=select Format(The_Date,'Y') AS Dash_The_Date, (select sum(Value)FROM Inv_GL where Type='قبض')-(select sum(Value)FROM Inv_GL where Type='دفع' ) as 'Total' from Inv_GL GROUP BY format(The_Date,'Y') order by max(The_Date) asc ");
+
+    }
+
+    string CurrentUri4;
+    void ChartLoad(ILoadedEventArgs Args)
+    {
+        CurrentUri4 = NavigationManager.Uri;
+        if (CurrentUri4.IndexOf("material") > -1)
+        {
+            Args.Theme = ChartTheme.Material;
+        }
+        else if (CurrentUri4.IndexOf("fabric") > -1)
+        {
+            Args.Theme = ChartTheme.Fabric;
+        }
+        else if (CurrentUri4.IndexOf("bootstrap4") > -1)
+        {
+            Args.Theme = ChartTheme.Bootstrap4;
+        }
+        else if (CurrentUri4.IndexOf("bootstrap") > -1)
+        {
+            Args.Theme = ChartTheme.Bootstrap;
+        }
+        else if (CurrentUri4.IndexOf("highcontrast") > -1)
+        {
+            Args.Theme = ChartTheme.HighContrast;
+        }
+        else
+        {
+            Args.Theme = ChartTheme.Bootstrap4;
+        }
+    }
+}
+
+
+
+@*================================================     Static    ===============================================================*@
+
+
+
+<hr />
+<hr />
+<div class="control-section">
+
+    <SfChart Title="@languageContainer.Keys["Static"]">
+        <ChartEvents Load="ChartLoad" />
+        <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
+        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Interval="1" LabelIntersectAction="LabelIntersectAction.Rotate45">
+            <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+            <ChartAxisMinorGridLines Width="0"></ChartAxisMinorGridLines>
+            <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+            <ChartAxisMinorTickLines Width="0"></ChartAxisMinorTickLines>
+            <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+        </ChartPrimaryXAxis>
+        <ChartPrimaryYAxis Title="Mony" Minimum="0" Maximum="200000" Interval="10000" LabelFormat="{value} RAS">
+            <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+            <ChartAxisMajorGridLines Width="1"></ChartAxisMajorGridLines>
+            <ChartAxisMinorGridLines Width="1"></ChartAxisMinorGridLines>
+            <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+            <ChartAxisMinorTickLines Width="0"></ChartAxisMinorTickLines>
+        </ChartPrimaryYAxis>
+        <ChartSeriesCollection>
+
+            <ChartSeries DataSource="@DataSource" XName="x" YName="y" Width="2" Name="@languageContainer.Keys["TotalPayEnteries"]" Type="ChartSeriesType.StackingColumn"></ChartSeries>
+            <ChartSeries DataSource="@DataSource" XName="x" YName="y1" Width="2" Name="@languageContainer.Keys["TotalReceiveEntries"]" Type="ChartSeriesType.StackingColumn"></ChartSeries>
+            <ChartSeries DataSource="@DataSource" XName="x" YName="y2" Width="2" Name="@languageContainer.Keys["TotalBuyingOperations"]" Type="ChartSeriesType.StackingColumn"></ChartSeries>
+            <ChartSeries DataSource="@DataSource" XName="x" YName="y3" Width="2" Name="@languageContainer.Keys["TotalBuyingVat"]" Type="ChartSeriesType.StackingColumn"></ChartSeries>
+            <ChartSeries DataSource="@DataSource" XName="x" YName="y4" Width="2" Name="@languageContainer.Keys["TotalBoxValue"]" Type="ChartSeriesType.StackingColumn"></ChartSeries>
+
+        </ChartSeriesCollection>
+        <ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+    </SfChart>
+</div>
+@code{
+
+
+    public class StackedColumnChartData
+    {
+        public string x { get; set; }
+        public double y { get; set; }
+        public double y1 { get; set; }
+        public double y2 { get; set; }
+        public double y3 { get; set; }
+        public double y4 { get; set; }
+
+    }
+    public List<StackedColumnChartData>
+DataSource = new List<StackedColumnChartData>
+    {
+
+        new StackedColumnChartData { x= "January 2020" , y= 20000, y1= 25000, y2= 30000, y3= 40000, y4= 35000},
+        new StackedColumnChartData { x= "February 2020" ,y= 29000, y1= 25000, y2= 32000, y3= 43000, y4= 35000},
+        new StackedColumnChartData { x= "March 2020"   , y= 20000, y1= 29000, y2= 30000, y3= 40000, y4= 35000},
+        new StackedColumnChartData { x= "April 2020"   , y= 29000, y1= 25000, y2= 30000, y3= 43000, y4= 35000},
+        new StackedColumnChartData { x= "May 2020"     , y= 20000, y1= 27000, y2= 38000, y3= 49000, y4= 35000},
+        new StackedColumnChartData { x= "June 2020"    , y= 23000, y1= 29000, y2= 30000, y3= 43000, y4= 35000},
+        new StackedColumnChartData { x= "July 2020"    , y= 29000, y1= 25000, y2= 30000, y3= 40000, y4= 35000},
+        new StackedColumnChartData { x= "August 2020" ,  y= 23000, y1= 27000, y2= 38000, y3= 49000, y4= 35000},
+        new StackedColumnChartData { x="September 2020", y= 20000, y1= 29000, y2= 30000, y3= 43000, y4= 35000},
+        new StackedColumnChartData { x= "October 2020"  ,y= 23000, y1= 25000, y2= 32000, y3= 49000, y4= 35000},
+        new StackedColumnChartData { x= "November 2020" ,y= 29000, y1= 29000, y2= 38000, y3= 40000, y4= 35000},
+        new StackedColumnChartData { x= "December 2020", y= 23000, y1= 25000, y2= 30000, y3= 49000, y4= 35000},
+
+
+    };
+
+
+}
+
+
+

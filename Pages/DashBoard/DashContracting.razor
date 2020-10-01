@@ -1,0 +1,210 @@
+﻿@page "/DashContracting"
+@layout MainLayout_DashBoard
+@inject NavigationManager NavigationManager
+@inject NavigationManager UriHelper
+@inject HttpClient httpClient
+@inject IConfiguration Configuration
+@using Microsoft.Extensions.Configuration;
+@using AjaTech_Blazor.Data.ViewModels;
+
+<div class="control-section">
+    <SfChart Title="@languageContainer.Keys["TheContracting"]" EnableSideBySidePlacement="false" EnableRtl="true">
+        <ChartEvents Load="ChartLoad" />
+        <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
+        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Interval="1">
+            <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+        </ChartPrimaryXAxis>
+        <ChartPrimaryYAxis LabelFormat="{value} RAS">
+            <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+            <ChartAxisLabelStyle Color="transparent"></ChartAxisLabelStyle>
+            <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+            <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+        </ChartPrimaryYAxis>
+        <ChartSeriesCollection>
+            <ChartSeries DataSource="@List_Contracts" ColumnWidth="0.6" XName="Dash_Date" YName="Dash_Total" Name="@languageContainer.Keys["TotalContractsValue"]" Type="ChartSeriesType.Column">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                        <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                    </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@List_Contracts" ColumnWidth="0.5" XName="Dash_Date" YName="Dash_Value" Name="@languageContainer.Keys["ContractingValue_WithoutVat"]" Type="ChartSeriesType.Column">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                        <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                    </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@List_Contracts" ColumnWidth="0.4" XName="Dash_Date" YName="Dash_Vat" Name="@languageContainer.Keys["ContracsVatValue"]" Type="ChartSeriesType.Column">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                        <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                    </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@List_Contracts" ColumnWidth="0.3" XName="Dash_Date" YName="Dash_Profit" Name="@languageContainer.Keys["TotalProfitValue"]" Type="ChartSeriesType.Column">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                        <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                    </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+
+            <ChartSeries DataSource="@List_Contracts" ColumnWidth="0.2" XName="Dash_Date" YName="Dash_Count" Name="عدد التعاقدات" Type="ChartSeriesType.Column">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                        <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                    </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+        </ChartSeriesCollection>
+        <ChartTooltipSettings Enable="true" Shared="true"></ChartTooltipSettings>
+    </SfChart>
+</div>
+@code{
+
+    public List<VM_Inv_Pre_Sales_Financial_Offer> List_Contracts = new List<VM_Inv_Pre_Sales_Financial_Offer>();
+
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await AuthStat).User;
+        if (user.Identity.Name != "admin")
+        {
+            UriHelper.NavigateTo("/");
+        }
+
+        List_Contracts = await httpClient.GetJsonAsync<List<VM_Inv_Pre_Sales_Financial_Offer>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=SELECT FORMAT(PARSE(Approved_At AS datetime USING 'Et-EE'),'Y') AS 'Dash_Date', SUM(Contract_Total)as 'Dash_Total' ,SUM(Total_Cost)as 'Dash_Value' ,SUM(Vat)as 'Dash_Vat' ,SUM(Profit_Value)as 'Dash_Profit' ,count(*) as 'Dash_Count' from Inv_Pre_Sales_Financial_Offer  GROUP BY  FORMAT(PARSE(Approved_At AS datetime USING 'Et-EE'),'Y') ORDER BY MAX(PARSE(Approved_At AS datetime USING 'Et-EE')) asc ");
+    }
+
+    string CurrentUri;
+    void ChartLoad(ILoadedEventArgs Args)
+    {
+        CurrentUri = NavigationManager.Uri;
+        if (CurrentUri.IndexOf("material") > -1)
+        {
+            Args.Theme = ChartTheme.Material;
+        }
+        else if (CurrentUri.IndexOf("fabric") > -1)
+        {
+            Args.Theme = ChartTheme.Fabric;
+        }
+        else if (CurrentUri.IndexOf("bootstrap") > -1)
+        {
+            Args.Theme = ChartTheme.Bootstrap;
+        }
+        else if (CurrentUri.IndexOf("highcontrast") > -1)
+        {
+            Args.Theme = ChartTheme.HighContrast;
+        }
+        else
+        {
+            Args.Theme = ChartTheme.Bootstrap4;
+        }
+    }
+}
+
+
+
+@*====================================================  Fake  ===========================================================================*@
+@*====================================================  static  ===========================================================================*@
+
+<br />
+<hr />
+<hr />
+<div class="control-section">
+    <SfChart Title="Static" EnableSideBySidePlacement="false">
+        <ChartEvents Load="ChartLoad" />
+        <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
+        <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Interval="1">
+            <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+        </ChartPrimaryXAxis>
+        <ChartPrimaryYAxis>
+            <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+            <ChartAxisLabelStyle Color="transparent"></ChartAxisLabelStyle>
+            <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+            <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+        </ChartPrimaryYAxis>
+        <ChartSeriesCollection>
+            <ChartSeries DataSource="@ChartData" ColumnWidth="0.6" XName="x" YName="yValue" Name="إجمالي التعاقدات" Type="ChartSeriesType.Column">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                        <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                    </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" ColumnWidth="0.5" XName="x" YName="yValue1" Name="التعاقدات بدون ضرائب" Type="ChartSeriesType.Column">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                        <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                    </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" ColumnWidth="0.4" XName="x" YName="yValue2" Name="قيمة الضرائب" Type="ChartSeriesType.Column">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                        <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                    </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+            <ChartSeries DataSource="@ChartData" ColumnWidth="0.3" XName="x" YName="yValue3" Name="الربح" Type="ChartSeriesType.Column">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                        <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                    </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+
+            <ChartSeries DataSource="@ChartData" ColumnWidth="0.2" XName="x" YName="yValue4" Name="عدد التعاقدات" Type="ChartSeriesType.Column">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                        <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                    </ChartDataLabel>
+                </ChartMarker>
+            </ChartSeries>
+        </ChartSeriesCollection>
+        <ChartTooltipSettings Enable="true" Shared="true"></ChartTooltipSettings>
+    </SfChart>
+</div>
+
+
+@code{
+
+    public class ColumnPlacementChartData
+    {
+        public string x { get; set; }
+        public double yValue { get; set; }
+        public double yValue1 { get; set; }
+        public double yValue2 { get; set; }
+        public double yValue3 { get; set; }
+        public double yValue4 { get; set; }
+        public string text { get; set; }
+    }
+    public List<ColumnPlacementChartData> ChartData = new List<ColumnPlacementChartData>
+{
+                new ColumnPlacementChartData { x= "January 2020" , yValue= 400, yValue1=340, yValue2=60, yValue3=40, yValue4=4, text= "" },
+                new ColumnPlacementChartData { x= "February 2020", yValue= 400, yValue1=340, yValue2=60, yValue3=40, yValue4=4, text= "" },
+                new ColumnPlacementChartData { x= "March 2020"   , yValue= 400, yValue1=340, yValue2=60, yValue3=40, yValue4=4, text= "" },
+                new ColumnPlacementChartData { x= "April 2020"   , yValue= 400, yValue1=340, yValue2=60, yValue3=40, yValue4=4, text= "" },
+                new ColumnPlacementChartData { x= "May 2020"     , yValue= 400, yValue1=340, yValue2=60, yValue3=40, yValue4=4, text= "" },
+                new ColumnPlacementChartData { x= "June 2020"    , yValue= 400, yValue1=340, yValue2=60, yValue3=40, yValue4=4, text= "" },
+                new ColumnPlacementChartData { x= "July 2020"    , yValue= 400, yValue1=340, yValue2=60, yValue3=40, yValue4=4, text= "" },
+                new ColumnPlacementChartData { x= "August 2020"  , yValue= 400, yValue1=340, yValue2=60, yValue3=40, yValue4=4, text= "" },
+                new ColumnPlacementChartData { x="September 2020", yValue= 400, yValue1=340, yValue2=60, yValue3=40, yValue4=4, text= "" },
+                new ColumnPlacementChartData { x= "October 2020" , yValue= 400, yValue1=340, yValue2=60, yValue3=40, yValue4=4, text= "" },
+                new ColumnPlacementChartData { x= "November 2020", yValue= 400, yValue1=340, yValue2=60, yValue3=40, yValue4=4, text= "" },
+                new ColumnPlacementChartData { x= "December 2020", yValue= 400, yValue1=340, yValue2=60, yValue3=40, yValue4=4, text= "" }
+
+
+            };
+}
+
+
+
+
+
+
+
+
+
+

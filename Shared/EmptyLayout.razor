@@ -1,0 +1,14 @@
+﻿@inherits LayoutComponentBase
+
+@inject NavigationManager UriHelper
+@using AjaTech_Blazor.Data;
+@using Microsoft.JSInterop;
+@inject IJSRuntime JSRuntime
+
+
+    <div class="container-fluid">
+    @{    TimeSpan jSTimeOut = new TimeSpan(0, 0, 10); }
+
+        @Body
+    </div>
+    @*Using For Login And Menu Pages*@

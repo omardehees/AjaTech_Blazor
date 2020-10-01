@@ -1,0 +1,2126 @@
+﻿@page "/Purchases_Order"
+@layout MainLayout_Purchases
+
+@using AjaTech_Blazor.Data.ViewModels;
+@using System.Threading.Tasks;
+@using Microsoft.Extensions.Configuration;
+@using AjaTech_Blazor.Data.IServices;
+@using System.Diagnostics;
+
+@inject AKSoftware.Localization.MultiLanguages.ILanguageContainerService languageContainer
+@inject HttpClient httpClient
+@inject NavigationManager UriHelper
+@inject IJSRuntime jsRuntime
+@inject IConfiguration Configuration
+@*@inject Blazored.SessionStorage.ISessionStorageService sessionStorage*@
+@inject IFileUpload fileupload
+@*--------------------/ Container Page -----------Pre_Purchases_Offers_api----------------*@
+<div class="container card-container">
+    <div class="row">
+        @*========================================= All Tabs   =========================================================*@
+        <SfTab EnablePersistence="true" CssClass="text-center" EnableRtl="true">
+            <TabItems>
+
+                @*========================================= Tab  DirectBuing  ===========================================*@
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["Tab_DirectBuing"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*=========================================  Content Tab   ========================================================*@
+                            @*-------------------- Start Create DirectBuing ---------------------------*@
+                            <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;color:white;margin-top:20px;font-size:x-large;border-radius:5px">@languageContainer.Keys["Creat_DirectBuing"]</div>
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row" style="direction:@languageContainer.Keys["Text_Direction"]">
+
+                                        <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfTextBox @bind-Value="Get_HardCopyCode" Placeholder='@languageContainer.Keys["purchaseRequest_No"]' Enabled="false" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                                        </div>
+
+                                        <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfDatePicker @bind-Value="deDirectBuing_Date" Format="d/M/yyyy" TValue="DateTime" Placeholder='@languageContainer.Keys["Date"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfDatePicker>
+                                        </div>
+
+                                        <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfDatePicker @bind-Value="deDirectBuing_ExpectedBuyDate" Format="d/M/yyyy" TValue="DateTime" Placeholder='@languageContainer.Keys["Expected_Buy_Date"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfDatePicker>
+                                        </div>
+
+                                        <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfDropDownList ShowClearButton="true" @ref="txtDirectBuing_Supplier" AllowFiltering="true" DataSource="DataSource_Accounts" TValue="string"
+                                                            TItem="string" Placeholder='@languageContainer.Keys["Supplier"]' FloatLabelType="@FloatLabelType.Always">
+                                                <DropDownListFieldSettings Text="Title" Value="Title"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                        </div>
+
+                                        <div class="col-lg-3 font-weight-bold form-group pr-1 pl-1" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfNumericTextBox @bind-Value="seDirectBuing_Pre" Min="0" Max="1000000" TValue="decimal" Placeholder='@languageContainer.Keys["Pre_Value"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                                        </div>
+
+                                        <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfDropDownList ShowClearButton="true" @ref="txtDirectBuing_Inventory" AllowFiltering="true" DataSource="DataSource_Inventories" TValue="string" TItem="string" Placeholder='@languageContainer.Keys["Inventory"]' FloatLabelType="@FloatLabelType.Always">
+                                                <DropDownListFieldSettings Text="Title" Value="Title"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            @*-----------------------------------------------------------------------------------------------------*@
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row" style="direction:@languageContainer.Keys["Text_Direction"]">
+
+                                        <div class="col-lg-8 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfDropDownList ShowClearButton="true" @ref="cmbDirectBuing_Items" ValueChanged="GetItemDetails_DirectBuing" AllowFiltering="true" TValue="string" TItem="VM_Def_Items"
+                                                            Placeholder='@languageContainer.Keys["Item"]' DataSource="@DataSource_Items" FloatLabelType="@FloatLabelType.Always">
+                                                <DropDownListTemplates TItem="VM_Def_Items">
+                                                    <ItemTemplate>
+                                                        <table class="e-collapse" width="100%">
+                                                            <tr class='item1'><td class='name1'>@((context as VM_Def_Items).Item_Title_Ar)</td><td class='city1'>@((context as VM_Def_Items).Item_Group)</td></tr>
+                                                        </table>
+                                                    </ItemTemplate>
+                                                    <HeaderTemplate>
+                                                        <table class="e-collapse" width="100%">
+                                                            <tr class='head1'><th style="background-color: #4CAF50" class='name1'>@languageContainer.Keys["Items_Item_Title_Ar"]</th><th style="background-color: #4CAF50" class='city1'>@languageContainer.Keys["Items_Item_Group"]</th></tr>
+                                                        </table>
+                                                    </HeaderTemplate>
+                                                </DropDownListTemplates>
+                                                <DropDownListFieldSettings Text="Item_Title_Ar" Value="Item_Title_Ar"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                        </div>
+
+                                        <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfTextBox @bind-Value="txtDirectBuing_ItemCode" Enabled="false" Placeholder='@languageContainer.Keys["Code"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                                        </div>
+
+                                        <div class="col-lg-2 font-weight-bold form-group pr-1 pl-1" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfNumericTextBox @bind-Value="seDirectBuing_Quantity" Min="0" Max="1000000" TValue="decimal" Placeholder='@languageContainer.Keys["Quantity"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                                        </div>
+
+                                        <div class="col-lg-2 font-weight-bold form-group pr-1 pl-1" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfNumericTextBox @bind-Value="seDirectBuing_UnitPrice" Min="0" Max="1000000" TValue="decimal" Placeholder='@languageContainer.Keys["Unit_Price"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                                        </div>
+
+                                        <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfTextBox @bind-Value="txtDirectBuing_Balance" Enabled="false" Placeholder='@languageContainer.Keys["Balance"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                                        </div>
+
+                                        <div class="col-lg-2 font-weight-bold form-group" style="margin-top:auto">
+                                            <SfCheckBox @bind-Checked="chkTaxable_DirectBuy" Label="@languageContainer.Keys["Taxable"]"></SfCheckBox>
+                                        </div>
+
+                                        <div class="col-lg-4 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfTextBox @bind-Value="txtDirectBuing_tStatement" Placeholder='@languageContainer.Keys["Statement"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                                        </div>
+
+                                        <div class="col-lg-1 font-weight-bold form-group" style="margin-top:auto">
+                                            <SfButton @ref="ref_btn_Add_DirectBuing" @onclick="btn_AddItem_DirectBuing" type="button" CssClass="e-btn e-normal e-info form-control font-weight-bold">@languageContainer.Keys["Add"]</SfButton>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*----------------------------------------------------- Add ------------------------------- -----------------*@
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["purchases_Purchase_Invoice_Items"]</div>
+                                        <SfGrid @ref="grdDirectBuing" EnableRtl="true" AllowResizing="true" DataSource="DataSource_Pre_Purchases_DirectBuing" Width="100%" AllowPaging="true" Toolbar="@(new string[] {"Search" ,"Delete"  })">
+                                            <GridEvents OnActionBegin="ActionBegin_DirectBuing__Added" TValue="VM_Inv_Pre_Purchases"></GridEvents>
+                                            <GridEditSettings AllowAdding="true" AllowEditing="true" AllowEditOnDblClick="true" ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Dialog"></GridEditSettings>
+
+                                            <GridColumns>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.ID) Visible="false" IsPrimaryKey="true" IsIdentity="true" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Item) HeaderText="@languageContainer.Keys["Item"]" TextAlign="TextAlign.Center" Width="200px"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Item_Code) HeaderText="@languageContainer.Keys["Code"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit) HeaderText="@languageContainer.Keys["Unit"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit_Price) HeaderText="@languageContainer.Keys["Unit_Price"]" TextAlign="TextAlign.Center" Width="110px"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Quantity) HeaderText="@languageContainer.Keys["Quantity"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Value) HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit_Vat) HeaderText="@languageContainer.Keys["Items_VAT"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Current_Balance) HeaderText="@languageContainer.Keys["Balance"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Supplier) HeaderText="@languageContainer.Keys["Supplier"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Inventory) HeaderText="@languageContainer.Keys["Inventory"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Statement) HeaderText="@languageContainer.Keys["Statement"]" TextAlign="TextAlign.Center"></GridColumn>
+                                            </GridColumns>
+
+                                            @*<GridAggregates>
+            <GridAggregate>
+                <GridAggregateColumns>
+
+                    <GridAggregateColumn Field=@nameof(vM_Pre_Purchases.Value) Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="C2">
+                        <FooterTemplate>
+                            @{
+                                var aggregate = (context as Syncfusion.Blazor.Grids.AggregateTemplateContext);
+                                <div>
+                                    <p style="direction:@languageContainer.Keys["Text_Direction"]">@languageContainer.Keys["Total"]: @aggregate.Sum</p>
+                                </div>
+                            }
+                        </FooterTemplate>
+                    </GridAggregateColumn>
+
+                    <GridAggregateColumn Field=@nameof(vM_Pre_Purchases.Unit_Vat) Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="C2">
+                        <FooterTemplate>
+                            @{
+                                var aggregate = (context as Syncfusion.Blazor.Grids.AggregateTemplateContext);
+                                <div>
+                                    <p style="direction:@languageContainer.Keys["Text_Direction"]">@languageContainer.Keys["Total"]: @aggregate.Sum </p>
+                                </div>
+                            }
+                        </FooterTemplate>
+                    </GridAggregateColumn>
+
+                </GridAggregateColumns>
+            </GridAggregate>
+        </GridAggregates>*@
+
+
+
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*-------------------------------------------------- Save BUttons---------------------------------------------------*@
+                            <div class="col-lg-12 control-section form-group m-3">
+                                <div class="row">
+                                    <div class="col-lg-4"></div>
+                                    <SfButton @onclick="btnSavePurchasInvoice" @ref="ref_btnSavePurchasInvoice" type="button" CssClass="col-lg-4 e-btn e-normal e-success form-control font-weight-bold">@languageContainer.Keys["Purchases_Save_PurchaseInvoice"]</SfButton>
+                                    <div class="col-lg-4"></div>
+
+                                </div>
+                            </div>
+                            @*-----------------------------------------------------------------------------------------------------*@
+                            @*-------------------- /  Create Purchase Order ---------------------------*@
+                            @*========================================= / Content Tab   ========================================================*@
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                @*========================================= / Tab   ======================================================*@
+
+                @*========================================= Tab   Purchase Request=========================================*@
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["Tab_PurchaseRequest"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*=========================================  Content Tab   ========================================================*@
+                            @*-------------------- Start Create Purchase Request ---------------------------*@
+                            <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;color:white;margin-top:20px;font-size:x-large;border-radius:5px">@languageContainer.Keys["purchases_Creat_Purchase_Order"]</div>
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row" style="direction:@languageContainer.Keys["Text_Direction"]">
+
+                                        <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfTextBox @bind-Value="Get_HardCopyCode" Placeholder='@languageContainer.Keys["purchaseRequest_No"]' Enabled="false" FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                                        </div>
+
+                                        <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfDatePicker @bind-Value="dePurchaseRequestDate" TValue="DateTime" Placeholder='@languageContainer.Keys["Date"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfDatePicker>
+                                        </div>
+
+                                        <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfDatePicker @bind-Value="dePurchaseRequestExpectedBuyDate" TValue="DateTime" Placeholder='@languageContainer.Keys["Expected_Buy_Date"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfDatePicker>
+                                        </div>
+
+                                        <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfDropDownList ShowClearButton="true" @ref="txt_Supplier" AllowFiltering="true" DataSource="DataSource_Accounts" TValue="string"
+                                                            TItem="string" Placeholder='@languageContainer.Keys["Supplier"]' FloatLabelType="@FloatLabelType.Always">
+                                                <DropDownListFieldSettings Text="Title" Value="Title"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                        </div>
+
+                                        <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfDropDownList ShowClearButton="true" @ref="txt_Inventory" AllowFiltering="true" DataSource="DataSource_Inventories" TValue="string" TItem="string" Placeholder='@languageContainer.Keys["Inventory"]' FloatLabelType="@FloatLabelType.Always">
+                                                <DropDownListFieldSettings Text="Title" Value="Title"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            @*-----------------------------------------------------------------------------------------------------*@
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row" style="direction:@languageContainer.Keys["Text_Direction"]">
+
+                                        <div class="col-lg-8 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfDropDownList ShowClearButton="true" @ref="cmbPurchaseRequestItems" ValueChanged="GetItemDetails" AllowFiltering="true" TValue="string" TItem="VM_Def_Items"
+                                                            Placeholder='@languageContainer.Keys["Item"]' DataSource="@DataSource_Items" FloatLabelType="@FloatLabelType.Always">
+                                                <DropDownListTemplates TItem="VM_Def_Items">
+                                                    <ItemTemplate>
+                                                        <table class="e-collapse" width="100%">
+                                                            <tr class='item1'><td class='name1'>@((context as VM_Def_Items).Item_Title_Ar)</td><td class='city1'>@((context as VM_Def_Items).Item_Group)</td></tr>
+                                                        </table>
+                                                    </ItemTemplate>
+                                                    <HeaderTemplate>
+                                                        <table class="e-collapse" width="100%">
+                                                            <tr class='head1'><th style="background-color: #4CAF50" class='name1'>@languageContainer.Keys["Items_Item_Title_Ar"]</th><th style="background-color: #4CAF50" class='city1'>@languageContainer.Keys["Items_Item_Group"]</th></tr>
+                                                        </table>
+                                                    </HeaderTemplate>
+                                                </DropDownListTemplates>
+                                                <DropDownListFieldSettings Text="Item_Title_Ar" Value="Item_Title_Ar"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                        </div>
+                                        <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfTextBox @bind-Value="txtPurchaseRequestItemCode" Enabled="false" Placeholder='@languageContainer.Keys["Code"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                                        </div>
+
+                                        <div class="col-lg-2 font-weight-bold form-group pr-1 pl-1" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfNumericTextBox @bind-Value="sePurchaseRequestQuantity" Min="0" Max="1000000" TValue="decimal" Placeholder='@languageContainer.Keys["Quantity"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                                        </div>
+
+                                        <div class="col-lg-2 font-weight-bold form-group pr-1 pl-1" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfNumericTextBox @bind-Value="sePurchaseRequestUnitPrice" Min="0" Max="1000000" TValue="decimal" Placeholder='@languageContainer.Keys["Unit_Price"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                                        </div>
+                                        <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfTextBox @bind-Value="txtPurchaseRequestBalance" Enabled="false" Placeholder='@languageContainer.Keys["Balance"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                                        </div>
+                                        <div class="col-lg-2 font-weight-bold form-group" style="margin-top:auto">
+                                            <SfCheckBox @bind-Checked="chkTaxable" Label="@languageContainer.Keys["Taxable"]"></SfCheckBox>
+                                        </div>
+                                        <div class="col-lg-4 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                            <SfTextBox @bind-Value="txtPurchaseRequestStatement" Placeholder='@languageContainer.Keys["Statement"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                                        </div>
+
+                                        <div class="col-lg-1 font-weight-bold form-group" style="margin-top:auto">
+                                            <SfButton @ref="ref_btn_Add" @onclick="btnPurchaseRequestAddItem" type="button" CssClass="e-btn e-normal e-info form-control font-weight-bold">@languageContainer.Keys["Add"]</SfButton>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*----------------------------------------------------- Add ------------------------------- -----------------*@
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["Purchases_Order_Items"]</div>
+                                        <SfGrid @ref="grdPurchaseRequest" EnableRtl="true" DataSource="DataSource_Pre_Purchases" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] { "Search" ,"Delete" })">
+                                            <GridEvents OnActionBegin="ActionBegin_Del_ReqItem_Added" TValue="VM_Inv_Pre_Purchases"></GridEvents>
+                                            <GridEditSettings AllowAdding="true" ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Normal"></GridEditSettings>
+
+                                            <GridColumns>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.ID) Visible="false" IsPrimaryKey="true" IsIdentity="true" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Item) HeaderText="@languageContainer.Keys["Item"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Item_Code) HeaderText="@languageContainer.Keys["Code"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit) HeaderText="@languageContainer.Keys["Unit"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit_Price) HeaderText="@languageContainer.Keys["Unit_Price"]" TextAlign="TextAlign.Center" Width="110px"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Quantity) HeaderText="@languageContainer.Keys["Quantity"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Value) HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit_Vat) HeaderText="@languageContainer.Keys["Items_VAT"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Current_Balance) HeaderText="@languageContainer.Keys["Balance"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Supplier) HeaderText="@languageContainer.Keys["Supplier"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Inventory) HeaderText="@languageContainer.Keys["Inventory"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Statement) HeaderText="@languageContainer.Keys["Statement"]" TextAlign="TextAlign.Center"></GridColumn>
+                                            </GridColumns>
+
+                                            <GridAggregates>
+                                                <GridAggregate>
+                                                    <GridAggregateColumns>
+
+                                                        <GridAggregateColumn Field=@nameof(vM_Pre_Purchases.Value) Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="C2">
+                                                            <FooterTemplate>
+                                                                @{
+                                                                    var aggregate = (context as Syncfusion.Blazor.Grids.AggregateTemplateContext);
+                                                                    <div>
+                                                                        <p style="direction:@languageContainer.Keys["Text_Direction"]">@languageContainer.Keys["Total"]: @aggregate.Sum</p>
+                                                                    </div>
+                                                                }
+                                                            </FooterTemplate>
+                                                        </GridAggregateColumn>
+
+                                                        <GridAggregateColumn Field=@nameof(vM_Pre_Purchases.Unit_Vat) Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="C2">
+                                                            <FooterTemplate>
+                                                                @{
+                                                                    var aggregate = (context as Syncfusion.Blazor.Grids.AggregateTemplateContext);
+                                                                    <div>
+                                                                        <p style="direction:@languageContainer.Keys["Text_Direction"]">@languageContainer.Keys["Total"]: @aggregate.Sum </p>
+                                                                    </div>
+                                                                }
+                                                            </FooterTemplate>
+                                                        </GridAggregateColumn>
+
+                                                    </GridAggregateColumns>
+                                                </GridAggregate>
+                                            </GridAggregates>
+
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*-------------------------------------------------- Save BUttons---------------------------------------------------*@
+                            <div class="col-lg-12 control-section form-group m-3">
+                                <div class="row">
+                                    <SfButton @onclick="btnSavePurchasRequest" @ref="ref_btnSavePurchasRequest" type="button" CssClass="col-lg-3 e-btn e-normal e-success form-control font-weight-bold">@languageContainer.Keys["Purchases_Save_Req_Order"]</SfButton>
+                                    <div class="col-lg-1"></div>
+                                    <SfButton @onclick="btnSavePurchasOrder" @ref="ref_btnSavePurchasOrder" type="button" CssClass="col-lg-3 e-btn e-normal e-success form-control font-weight-bold">@languageContainer.Keys["Purchases_Save_ParchasesOrder"]</SfButton>
+                                    <div class="col-lg-1"></div>
+                                    <SfButton OnClick="btnPrint_AllRequests" CssClass="col-lg-3 e-btn font-weight-bold e-normal e-primary" IconCss="e-icons e-print-icon">. @languageContainer.Keys["Print_All_Requests"]</SfButton>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+                            @*-----------------------------------------------------------------------------------------------------*@
+                            @*-------------------- /  Create Purchase Order ---------------------------*@
+                            @*========================================= / Content Tab   ========================================================*@
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                @*========================================= / Tab   =======================================================*@
+
+                @*========================================= Tab   RequestApproval===========================================*@
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["Tab_RequestApproval"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*=========================================  Content Tab   ========================================================*@
+
+                            @*-------------------------------------------------Grid__RequestApproval----------------------------------- -----------------*@
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["Purchases_Requests"]</div>
+                                        <SfGrid @ref="grdPurchaseRequestApproval" AllowSelection="true" EnableRtl="true" DataSource="DataSource_Req_Approvals" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] { "Search" })">
+                                            <GridEvents RowSelected="RowSelecthandle_Req99" QueryCellInfo="CellColor_Grid_Approvals_Req" TValue="VM_Purshases_Approvals"></GridEvents>
+                                            @*<GridEditSettings AllowAdding="true" AllowEditOnDblClick="true" ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowEditing="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Normal"></GridEditSettings>*@
+                                            <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row"></GridSelectionSettings>
+                                            <GridColumns>
+                                                @*<GridColumn Field=@nameof(vM_Pre_Purchases.ID) Visible="false" IsPrimaryKey="true" IsIdentity="true" DefaultValue="1" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>*@
+                                                <GridColumn Field=@nameof(VM_Purshases_Approvals.HardCopyCode) HeaderText="@languageContainer.Keys["purchaseRequest_No"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Purshases_Approvals.ItemsCount) HeaderText="@languageContainer.Keys["Items_Count"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Purshases_Approvals.Total) HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Purshases_Approvals.Vats) HeaderText="@languageContainer.Keys["Items_VAT"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Purshases_Approvals.Issuance_At) HeaderText="@languageContainer.Keys["Issuance_Date"]" EditType="EditType.DatePickerEdit" Format="d/M/yyyy" Type="ColumnType.Date" TextAlign="TextAlign.Center" Width="140"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Purshases_Approvals.Last_At) HeaderText="@languageContainer.Keys["Last_At"]" EditType="EditType.DatePickerEdit" Format="d/M/yyyy" Type="ColumnType.Date" TextAlign="TextAlign.Center" Width="140"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Purshases_Approvals.Issuance_by) HeaderText="@languageContainer.Keys["Issuance_By"]" TextAlign="TextAlign.Center" Width="110"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Purshases_Approvals.Request_Approved_By) HeaderText="@languageContainer.Keys["Approval"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Purshases_Approvals.Request_Approved_At) EditType="EditType.DatePickerEdit" Format="d/M/yyyy" Type="ColumnType.Date" HeaderText="@languageContainer.Keys["Approval_Date"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Purshases_Approvals.Canceled_By) HeaderText="@languageContainer.Keys["Cancel"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Purshases_Approvals.Canceled_At) EditType="EditType.DatePickerEdit" Format="d/M/yyyy" Type="ColumnType.Date" HeaderText="@languageContainer.Keys["Cancel_Date"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*-----------------------------------------------------------------------------------------------------*@
+                            <div class="col-lg-12 control-section form-group m-3">
+                                <div class="row">
+                                    <SfButton @ref="ref_btn_Success_Approval" @onclick="btn_Success_Approval" CssClass="col-lg-3 e-btn e-normal e-success form-control font-weight-bold" type="button">@languageContainer.Keys["Approval"]</SfButton>
+                                    <div class="col-lg-1"></div>
+                                    <SfButton @ref="ref_btn_Cancel_Req_Approval" @onclick="btn_Cancel_Req_Approval" CssClass="col-lg-3 e-btn e-normal badge-danger form-control font-weight-bold" type="button">@languageContainer.Keys["Cancel"]</SfButton>
+                                    <div class="col-lg-1"></div>
+                                    <SfButton @onclick="@Print_Req" CssClass="col-lg-3 e-btn font-weight-bold e-normal e-primary" IconCss="e-icons e-print-icon">. @languageContainer.Keys["Print"]</SfButton>
+                                    <div class="col-lg-1"></div>
+                                </div>
+                            </div>
+
+                            @*-----------------------------------------------------------------------------------------------------*@
+                            @*-------------------------------------------------- Grid Selected Req Approval --------------------------------- -----------------*@
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["Purchases_Order_Items"]</div>
+                                        <SfGrid @ref="Grid3" AllowResizing="true" EnableRtl="true" DataSource="DataSource_Selected_Purchases_Approve_req" Width="100%" AllowPaging="true" Toolbar="@(new string[] {  })">
+                                            <GridEvents OnActionBegin="ActionBegin_Del_ReqItem" TValue="VM_Inv_Pre_Purchases"></GridEvents>
+                                            <GridEditSettings ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Normal"></GridEditSettings>
+                                            <GridSelectionSettings PersistSelection="true"></GridSelectionSettings>
+                                            <GridColumns>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.ID) Visible="false" IsPrimaryKey="true" IsIdentity="true" DefaultValue="1" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Item) HeaderText="@languageContainer.Keys["Item"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Current_Balance) HeaderText="@languageContainer.Keys["Balance"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit_Price) HeaderText="@languageContainer.Keys["Unit_Price"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Quantity) HeaderText="@languageContainer.Keys["Quantity"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Value) HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit_Vat) HeaderText="@languageContainer.Keys["Items_VAT"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Inventory) HeaderText="@languageContainer.Keys["Inventory"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Statement) HeaderText="@languageContainer.Keys["Statement"]" TextAlign="TextAlign.Center"></GridColumn>
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*-----------------------------------------------------------------------------------------------------*@
+                            @*========================================= / Content Tab   ========================================================*@
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                @*========================================= / Tab   ========================================================*@
+
+                @*========================================= Tab   Purchases_Requests ========================================*@
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["Tab_OffersPrices"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*=========================================  Content Tab   ========================================================*@
+
+                            @*------------------------------------------------- Purchases_Requests ----------------------------------- -----------------*@
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["Purchases_Requests"]</div>
+                                        <SfGrid @ref="grdPriceOffer" EnableRtl="true" DataSource="DataSource_Offers_Approvals" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] { "Search" })">
+                                            <GridEvents RowSelected="RowSelecthandler" TValue="VM_Inv_Pre_Purchases"></GridEvents>
+                                            <GridColumns>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.HardCopyCode) HeaderText="@languageContainer.Keys["purchaseRequest_No"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Items_Count) HeaderText="@languageContainer.Keys["Items_Count"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Total) HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Vats) HeaderText="@languageContainer.Keys["Items_VAT"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Issuance_by) HeaderText="@languageContainer.Keys["Issuance_By"]" TextAlign="TextAlign.Center" Width="110"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Request_Approved_By) HeaderText="@languageContainer.Keys["Approval"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Request_Approved_At) EditType="EditType.DatePickerEdit" Format="d/M/yyyy" Type="ColumnType.Date" HeaderText="@languageContainer.Keys["Approval_Date"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12 control-section form-group m-3">
+                                <div class="row">
+                                    <div class="col-lg-4"></div>
+                                    <SfButton CssClass="col-lg-4 e-btn font-weight-bold e-normal e-primary" @onclick="@Print_Offer" IconCss="e-icons e-print-icon">. @languageContainer.Keys["Print"]</SfButton>
+                                    <div class="col-lg-4"></div>
+                                </div>
+                            </div>
+
+                            @*-------------------------------------------------- Create Offer Price --------------------------------------------------*@
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["Create_PriceOffer"]</div>
+                                        <SfGrid @ref="Grid_PriceOffer_Items" EnableRtl="true" DataSource="DataSource_Selected_Purchases_Approval" Width="100%" AllowResizing="true" AllowPaging="true" Toolbar="@(new string[] {"Search" , "Edit" })">
+                                            <GridEvents OnActionBegin="ActionBegin_OfferItem" TValue="VM_Inv_Pre_Purchases"></GridEvents>
+                                            <GridEditSettings ShowConfirmDialog="true" AllowEditing="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Dialog"></GridEditSettings>
+                                            <GridSelectionSettings PersistSelection="true"></GridSelectionSettings>
+                                            <GridColumns>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.ID) Visible="false" IsPrimaryKey="true" IsIdentity="true" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.HardCopyCode) Visible="true" IsPrimaryKey="true" IsIdentity="true" DefaultValue="1" HeaderText="@languageContainer.Keys["purchaseRequest_No"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Item) AllowEditing="false" HeaderText="@languageContainer.Keys["Item"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit_Price) HeaderText="@languageContainer.Keys["Unit_Price"]" TextAlign="TextAlign.Center" Width="120" ValidationRules="@(new { required = true, number = true, min = 0.0001 })"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.VatIncluded) DisplayAsCheckBox="true" EditType="EditType.BooleanEdit" HeaderText="@languageContainer.Keys["Taxable"]" Width="0px" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Quantity) AllowEditing="false" HeaderText="@languageContainer.Keys["Quantity"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Current_Balance) AllowEditing="false" HeaderText="@languageContainer.Keys["Balance"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Value) AllowEditing="false" HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit_Vat) AllowEditing="false" HeaderText="@languageContainer.Keys["Items_VAT"]" TextAlign="TextAlign.Center" Width="100px"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Inventory) AllowEditing="false" HeaderText="@languageContainer.Keys["Inventory"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                            </GridColumns>
+
+                                            <GridAggregates>
+                                                <GridAggregate>
+                                                    <GridAggregateColumns>
+
+                                                        <GridAggregateColumn Field=@nameof(vM_Pre_Purchases.Value) Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="C2">
+                                                            <FooterTemplate>
+                                                                @{
+                                                                    var aggregate = (context as Syncfusion.Blazor.Grids.AggregateTemplateContext);
+                                                                    <div>
+                                                                        <p style="direction:@languageContainer.Keys["Text_Direction"]">@languageContainer.Keys["Total"]: @aggregate.Sum</p>
+                                                                    </div>
+                                                                }
+                                                            </FooterTemplate>
+                                                        </GridAggregateColumn>
+
+                                                        <GridAggregateColumn Field=@nameof(vM_Pre_Purchases.Unit_Vat) Type="Syncfusion.Blazor.Grids.AggregateType.Sum" Format="C2">
+                                                            <FooterTemplate>
+                                                                @{
+                                                                    var aggregate = (context as Syncfusion.Blazor.Grids.AggregateTemplateContext);
+                                                                    <div>
+                                                                        <p style="direction:@languageContainer.Keys["Text_Direction"]">@languageContainer.Keys["Total"]: @aggregate.Sum </p>
+                                                                    </div>
+                                                                }
+                                                            </FooterTemplate>
+                                                        </GridAggregateColumn>
+
+                                                    </GridAggregateColumns>
+                                                </GridAggregate>
+                                            </GridAggregates>
+
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*------------------------------------------------  Buttons  -----------------------------------------------------*@
+                            <div class="col-lg-12 control-section form-group m-3">
+                                <div class="row">
+                                    @*<div class="col-lg-2"></div>*@
+                                    <div class="col-lg-4 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                        <SfNumericTextBox @bind-Value="sePre" Min="0" Max="1000000" TValue="decimal" Placeholder='@languageContainer.Keys["Pre_Value"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfNumericTextBox>
+                                    </div>
+                                    <div class="col-lg-4 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                        <SfDatePicker @bind-Value="deExpectedDate" TValue="DateTime" Format="d/M/yyyy" Placeholder='@languageContainer.Keys["Expected_Supplierd_Date"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfDatePicker>
+                                    </div>                                    <div class="col-lg-4 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                        <SfDropDownList ShowClearButton="true" @bind-Value="cmbSupplier" AllowFiltering="true" DataSource="DataSource_AvailablerSupplier" TValue="string"
+                                                        TItem="string" Placeholder='@languageContainer.Keys["Supplier"]' FloatLabelType="@FloatLabelType.Always">
+                                            <DropDownListFieldSettings Text="Title" Value="Title"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 control-section form-group m-3">
+                                <div class="row">
+                                    <div class="col-lg-4"></div>
+                                    <SfButton @ref="ref_Save_PriceOffer" @onclick="btnSavePriceOffer" type="button" CssClass="col-lg-4 e-btn e-normal e-success form-control font-weight-bold">@languageContainer.Keys["Purchases_Save_PricesOffer"]</SfButton>
+                                    <div class="col-lg-4"></div>
+                                </div>
+                            </div>
+
+                            @*-----------------------------------------------------------------------------------------------------*@
+
+                            @*-----------------------------------------------------------------------------------------------------*@
+                            @*========================================= / Content Tab   ========================================================*@
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                @*========================================= / Tab   ==========================================================*@
+
+                @*========================================= Tab  OfferApproval ================================================*@
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["Tab_OfferApproval"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*=========================================  Content Tab   ========================================================*@
+
+                            @*------------------------------------------------- OfferApproval ----------------------------------- -----------------*@
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["Offers_Prices"]</div>
+                                        <SfGrid EnableRtl="true" DataSource="DataSource_OfferPrices" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] { "Search"})">
+                                            <GridEvents RowSelected="RowSeleced_OfferPrices" QueryCellInfo="CellColor_Grid_Offers" TValue="VM_Inv_Pre_Purchases_Offers"></GridEvents>
+                                            @*<GridEditSettings AllowAdding="true" AllowEditOnDblClick="true" ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowEditing="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Normal"></GridEditSettings>*@
+                                            <GridColumns>
+                                                @*<GridColumn Field=@nameof(vM_Pre_Purchases.ID) Visible="false" IsPrimaryKey="true" IsIdentity="true" DefaultValue="1" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>*@
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases_Offers.HardCopyCode) HeaderText="@languageContainer.Keys["purchaseRequest_No"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases_Offers.Offer_HardCopyCode) HeaderText="@languageContainer.Keys["Offer_HardCopyCode"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases_Offers.Items_Count) HeaderText="@languageContainer.Keys["Items_Count"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases_Offers.Total) HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases_Offers.Vat) HeaderText="@languageContainer.Keys["Items_Vat"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases_Offers.Approved_By) HeaderText="@languageContainer.Keys["Approval"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases_Offers.Supplier) HeaderText="@languageContainer.Keys["Supplier"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases_Offers.Inventory) HeaderText="@languageContainer.Keys["Inventory"]" TextAlign="TextAlign.Center"></GridColumn>
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-----------------------------------------------------------------------------------------------------*@
+                            <div class="col-lg-12 control-section form-group m-3">
+                                <div class="row">
+                                    @*<SfButton CssClass="col-lg-3 e-btn font-weight-bold e-normal e-primary" IconCss="e-icons e-print-icon">. @languageContainer.Keys["Print"]</SfButton>*@
+                                    <div class="col-lg-2"></div>
+                                    <SfButton OnClick="Approve_PriceOffer" CssClass="col-lg-3 e-btn e-normal e-success form-control font-weight-bold" type="button">@languageContainer.Keys["Approval"]</SfButton>
+                                    <div class="col-lg-2"></div>
+                                    <SfButton @onclick="btnOfferDelete" CssClass="col-lg-3 e-btn e-normal badge-danger form-control font-weight-bold" type="button">@languageContainer.Keys["Delete"]</SfButton>
+                                    <div class="col-lg-2"></div>
+                                </div>
+                            </div>
+
+                            @*--------------------------------------------------- Offers Prices Items --------------------------------------------------*@
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["PriceOffer_Items"]</div>
+                                        <SfGrid @ref="grdOffersApprovalsItems" EnableRtl="true" DataSource="DataSource_Selected_OffersPrices_Items_For_pproval" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] { })">
+                                            <GridSelectionSettings PersistSelection="true"></GridSelectionSettings>
+                                            <GridColumns>
+                                                <GridColumn Field=@nameof(vM_Inv_Pre_Purchases_Offers.HardCopyCode) Visible="true" IsPrimaryKey="true" IsIdentity="true" DefaultValue="1" HeaderText="@languageContainer.Keys["purchaseRequest_No"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_Pre_Purchases_Offers.Offer_HardCopyCode) HeaderText="@languageContainer.Keys["Offer_HardCopyCode"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_Pre_Purchases_Offers.Item) HeaderText="@languageContainer.Keys["Item"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_Pre_Purchases_Offers.Unit_Price) HeaderText="@languageContainer.Keys["Unit_Price"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_Pre_Purchases_Offers.Quantity) HeaderText="@languageContainer.Keys["Quantity"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_Pre_Purchases_Offers.Value) HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_Pre_Purchases_Offers.Vat) HeaderText="@languageContainer.Keys["Items_VAT"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_Pre_Purchases_Offers.Inventory) HeaderText="@languageContainer.Keys["Inventory"]" TextAlign="TextAlign.Center"></GridColumn>
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-----------------------------------------------------------------------------------------------------*@
+                            @*========================================= / Content Tab   ========================================================*@
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                @*========================================= / Tab   ===========================================================*@
+
+                @*========================================= Tab  PurchasesOrders ===============================================*@
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["Tab_PurchaseOrder"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*=========================================  Content Tab   ========================================================*@
+
+                            @*------------------------------------------------- PurchasesOrders ----------------------------------- -----------------*@
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["Purchases_Orders"]</div>
+                                        <SfGrid EnableRtl="true" DataSource="DataSource_PurchasesOrder" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] { "Search"})">
+                                            <GridEvents RowSelected="RowSeleced_PurchasesOrders" QueryCellInfo="CellColor_PurchasesOrders" TValue="VM_Inv_Pre_Purchases"></GridEvents>
+                                            @*<GridEditSettings AllowAdding="true" AllowEditOnDblClick="true" ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowEditing="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Normal"></GridEditSettings>*@
+                                            <GridColumns>
+                                                @*<GridColumn Field=@nameof(vM_Pre_Purchases.ID) Visible="false" IsPrimaryKey="true" IsIdentity="true" DefaultValue="1" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>*@
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.HardCopyCode) HeaderText="@languageContainer.Keys["purchaseRequest_No"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Items_Count) HeaderText="@languageContainer.Keys["Items_Count"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Total) HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Vats) HeaderText="@languageContainer.Keys["Items_Vat"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Supplier) HeaderText="@languageContainer.Keys["Supplier"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Order_Approved_By) HeaderText="@languageContainer.Keys["Order_Approved"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Order_Approved_At) EditType="EditType.DatePickerEdit" Format="d/M/yyyy" Type="ColumnType.Date" HeaderText="@languageContainer.Keys["Approval_Date"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-----------------------------------------------------------------------------------------------------*@
+                            <div class="col-lg-12 control-section form-group m-3">
+                                <div class="row">
+                                    @*<SfButton CssClass="col-lg-3 e-btn font-weight-bold e-normal e-primary" IconCss="e-icons e-print-icon">. @languageContainer.Keys["Print"]</SfButton>*@
+                                    <div class="col-lg-4"></div>
+                                    <SfButton OnClick="Approve_PurchasesOrders" CssClass="col-lg-4 e-btn e-normal e-success form-control font-weight-bold" type="button">@languageContainer.Keys["Approval"]</SfButton>
+                                    <div class="col-lg-2"></div>
+                                    @*<SfButton @onclick="btnOfferDelete" CssClass="col-lg-3 e-btn e-normal badge-danger form-control font-weight-bold" type="button">@languageContainer.Keys["Delete"]</SfButton>*@
+                                    <div class="col-lg-2"></div>
+                                </div>
+                            </div>
+
+                            @*--------------------------------------------------- PurchasesOrders Items --------------------------------------------------*@
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["PurchasesOrder_Items"]</div>
+                                        <SfGrid @ref="grdPurchasesOrders" EnableRtl="true" DataSource="DataSource_Selected_PurchasesOrders" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] {  })">
+                                            <GridSelectionSettings PersistSelection="true"></GridSelectionSettings>
+                                            <GridColumns>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.HardCopyCode) Visible="true" IsPrimaryKey="true" IsIdentity="true" DefaultValue="1" HeaderText="@languageContainer.Keys["purchaseRequest_No"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Item) AllowEditing="false" HeaderText="@languageContainer.Keys["Item"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit_Price) HeaderText="@languageContainer.Keys["Unit_Price"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Quantity) AllowEditing="false" HeaderText="@languageContainer.Keys["Quantity"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Value) AllowEditing="false" HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit_Vat) AllowEditing="false" HeaderText="@languageContainer.Keys["Items_VAT"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Supplier) AllowEditing="false" HeaderText="@languageContainer.Keys["Supplier"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Inventory) AllowEditing="false" HeaderText="@languageContainer.Keys["Inventory"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-----------------------------------------------------------------------------------------------------*@
+                            @*========================================= / Content Tab   ========================================================*@
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                @*========================================= / Tab   ============================================================*@
+
+                @*========================================= Tab  Purchase_Invoices ===============================================*@
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["Tab_BuyInvoice"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*=========================================  Content Tab   ========================================================*@
+
+                            @*-------------------------------------------------Purchase_Invoices----------------------------------- -----------------*@
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["Buy_Invoice"]</div>
+                                        <SfGrid EnableRtl="true" DataSource="DataSource_ParchaseInvoice" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] {"Search" })">
+                                            <GridEvents RowSelected="RowSeleced_Purchase_Invoices" TValue="VM_Inv_Pre_Purchases"></GridEvents>
+                                            <GridColumns>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.HardCopyCode) HeaderText="@languageContainer.Keys["purchaseRequest_No"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Items_Count) HeaderText="@languageContainer.Keys["Items_Count"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Total) HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Vats) HeaderText="@languageContainer.Keys["Items_Vat"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Supplier) HeaderText="@languageContainer.Keys["Supplier"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Pricing_Approved_By) HeaderText="@languageContainer.Keys["Offer_Approved"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Pricing_Approved_At) EditType="EditType.DatePickerEdit" Format="d/M/yyyy" Type="ColumnType.Date" HeaderText="@languageContainer.Keys["Approval_Date"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Order_Approved_By) HeaderText="@languageContainer.Keys["Order_Approved"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_Pre_Purchases.Order_Approved_At) EditType="EditType.DatePickerEdit" Format="d/M/yyyy" Type="ColumnType.Date" HeaderText="@languageContainer.Keys["Approval_Date"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-----------------------------------------------------------------------------------------------------*@
+
+                            <div class="col-lg-12 control-section form-group m-3">
+                                <div class="row">
+                                    <div class="col-lg-2"></div>
+                                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                        <SfTextBox @bind-Value="txtPurchaseInvoice" Placeholder='@languageContainer.Keys["Statement"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                                    </div>
+                                    <div class="col-lg-2"></div>
+                                    <div class="col-lg-3 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                        <SfDatePicker @bind-Value="dePurchaseInvoice_SupplingDate" TValue="DateTime" Placeholder='@languageContainer.Keys["Suppling_Date"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfDatePicker>
+                                    </div>
+                                    <div class="col-lg-2"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12 control-section form-group m-3">
+                                <div class="row">
+                                    <div class="col-lg-4"></div>
+                                    <SfButton @ref="Ref_btnBuyPurchaseInvoice" OnClick="btnBuyPurchaseInvoice" CssClass="col-lg-4 e-btn e-normal e-success form-control font-weight-bold" type="button">@languageContainer.Keys["Buy"]</SfButton>
+                                    <div class="col-lg-4"></div>
+                                </div>
+                            </div>
+                            @*--------------------------------------------------- Purchase_Invoice_Items--------------------------------------------------*@
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["purchases_Purchase_Invoice_Items"]</div>
+                                        <SfGrid @ref="grdPurchaseInvoice_Items" EnableRtl="true" AllowResizing="true" DataSource="DataSource_Selected_PurchaseInvoice_Items" Width="100%" AllowPaging="true" Toolbar="@(new string[] { })">
+                                            <GridEditSettings ShowConfirmDialog="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Dialog"></GridEditSettings>
+                                            <GridSelectionSettings PersistSelection="true"></GridSelectionSettings>
+                                            <GridColumns>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.HardCopyCode) Visible="true" IsPrimaryKey="true" IsIdentity="true" DefaultValue="1" HeaderText="@languageContainer.Keys["purchaseRequest_No"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Item) AllowEditing="false" HeaderText="@languageContainer.Keys["Item"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit_Price) HeaderText="@languageContainer.Keys["Unit_Price"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Quantity) AllowEditing="false" HeaderText="@languageContainer.Keys["Quantity"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Value) AllowEditing="false" HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Unit_Vat) AllowEditing="false" HeaderText="@languageContainer.Keys["Items_VAT"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Supplier) AllowEditing="false" HeaderText="@languageContainer.Keys["Supplier"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Pre_Purchases.Inventory) AllowEditing="false" HeaderText="@languageContainer.Keys["Inventory"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-----------------------------------------------------------------------------------------------------*@
+                            @*========================================= / Content Tab   ========================================================*@
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                @*========================================= / Tab   ==============================================================*@
+
+                @*========================================= Tab    Done_Purchase_Invoices  ========================================*@
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@languageContainer.Keys["Tab_PurchaseInvoices"]"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="tab-content">
+                            @*=========================================  Content Tab   ========================================================*@
+
+                            @*-------------------------------------------------Done_Purchase_Invoices----------------------------------- -----------------*@
+
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["Done_Purchase_Invoice"]</div>
+                                        <SfGrid @ref="grd_Invoice" EnableRtl="true" DataSource="DataSource_Done_ParchaseInvoice" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] {"Search" })">
+                                            <GridEvents RowSelected="RowSeleced_Done_Purchase_Invoices" TValue="VM_Inv_GL"></GridEvents>
+                                            <GridColumns>
+                                                <GridColumn Field=@nameof(VM_Inv_GL.HardCopyCode) HeaderText="@languageContainer.Keys["purchaseInvoice_No"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_GL.Document_ID) HeaderText="@languageContainer.Keys["purchaseRequest_No"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_GL.ItemsCount) HeaderText="@languageContainer.Keys["Items_Count"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_GL.Total) HeaderText="@languageContainer.Keys["value"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_GL.Unit_Vat) AllowEditing="false" HeaderText="@languageContainer.Keys["Items_VAT"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_GL.CreditAccount) HeaderText="@languageContainer.Keys["Supplier"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_GL.The_Date) EditType="EditType.DatePickerEdit" Format="d/M/yyyy" Type="ColumnType.Date" HeaderText="@languageContainer.Keys["Approval_Date"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_GL.Apporoved_By) HeaderText="@languageContainer.Keys["purchaseInvoice_ApprovedBy"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(VM_Inv_GL.Approved_At) EditType="EditType.DatePickerEdit" Format="d/M/yyyy" Type="ColumnType.Date" HeaderText="@languageContainer.Keys["Approval_Date"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-----------------------------------------------------------------------------------------------------*@
+                            <div class="col-lg-12 control-section form-group m-3">
+                                <div class="row">
+                                    <div class="col-lg-4"></div>
+                                    <SfButton OnClick="btnPrint_PurchaseInvoice" CssClass="col-lg-4 e-btn font-weight-bold e-normal e-primary" IconCss="e-icons e-print-icon">. @languageContainer.Keys["Print"]</SfButton>
+                                    <div class="col-lg-4"></div>
+                                </div>
+                            </div>
+                            @*--------------------------------------------------- Done_Purchase_Invoice_Items--------------------------------------------------*@
+                            <div class="col-lg-12 control-section">
+                                <div class="content-wrapper">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["purchases_Purchase_Invoice_Items"]</div>
+                                        <SfGrid @ref="grd_Invoice_Items" EnableRtl="true" DataSource="DataSource_Selected_Done_PurchaseInvoice_Items" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] {"Search" ,"Edit","Delete"  })">
+                                            <GridEditSettings AllowAdding="true" AllowEditing="true" AllowEditOnDblClick="true" ShowDeleteConfirmDialog="true" ShowConfirmDialog="true" AllowDeleting="true" Mode="@Syncfusion.Blazor.Grids.EditMode.Dialog"></GridEditSettings>
+                                            <GridEvents OnActionBegin="ActionBegin_Invoice" TValue="VM_Inv_GL"></GridEvents>
+                                            <GridColumns>
+                                                <GridColumn Field=@nameof(vM_Inv_GL.ID) Visible="false" IsPrimaryKey="true" IsIdentity="true" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_GL.HardCopyCode) Visible="false"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_GL.Item) AllowEditing="false" HeaderText="@languageContainer.Keys["Item"]" TextAlign="TextAlign.Center">
+                                                    @*<EditTemplate>
+                                                <SfDropDownList ShowClearButton="true" FloatLabelType="@FloatLabelType.Always" AllowFiltering="true" ID="Item" Placeholder="@languageContainer.Keys["Item"]" Value="@((context as VM_Inv_GL).Item)" DataSource="@DataSource_Items">
+                                                    <DropDownListFieldSettings Text="Item_Title_Ar" Value="Item_Title_Ar"></DropDownListFieldSettings>
+                                                </SfDropDownList>
+                                            </EditTemplate>*@
+                                                </GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_GL.Item_Code) AllowEditing="false" HeaderText="@languageContainer.Keys["Item_Code"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_GL.Item_Unit) AllowEditing="false" HeaderText="@languageContainer.Keys["Unit"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_GL.Unit_Price) ValidationRules="@(new {  number = true })" HeaderText="@languageContainer.Keys["Unit_Price"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_GL.Quantity) ValidationRules="@(new {  number = true })" HeaderText="@languageContainer.Keys["Quantity"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_GL.Value) ValidationRules="@(new {  number = true })" HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_GL.Unit_Vat) ValidationRules="@(new {  number = true })" HeaderText="@languageContainer.Keys["Items_Vat"]" TextAlign="TextAlign.Center"></GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_GL.To_Inventory) AllowEditing="false" HeaderText="@languageContainer.Keys["inventory"]" TextAlign="TextAlign.Center">
+                                                    @*<EditTemplate>
+                                                <SfDropDownList ShowClearButton="true" FloatLabelType="@FloatLabelType.Always" AllowFiltering="true" ID="To_Inventory" Placeholder="@languageContainer.Keys["inventory"]" Value="@((context as VM_Inv_GL).To_Inventory)" DataSource="@DataSource_Inventories">
+                                                    <DropDownListFieldSettings Text="Title_Ar" Value="Title_Ar"></DropDownListFieldSettings>
+                                                </SfDropDownList>
+                                            </EditTemplate>*@
+                                                </GridColumn>
+                                                <GridColumn Field=@nameof(vM_Inv_GL.Custom_Statement) HeaderText="@languageContainer.Keys["Statement"]" TextAlign="TextAlign.Center"></GridColumn>
+
+                                                @*<GridColumn Field=@nameof(vM_Inv_GL.Custom_Statement) Visible="false"></GridColumn>
+                                        <GridColumn Field=@nameof(vM_Inv_GL.Custom_Statement) Visible="false"></GridColumn>
+                                        <GridColumn Field=@nameof(vM_Inv_GL.Custom_Statement) Visible="false"></GridColumn>
+                                        <GridColumn Field=@nameof(vM_Inv_GL.Custom_Statement) Visible="false"></GridColumn>
+                                        <GridColumn Field=@nameof(vM_Inv_GL.Custom_Statement) Visible="false"></GridColumn>
+                                        <GridColumn Field=@nameof(vM_Inv_GL.Custom_Statement) Visible="false"></GridColumn>
+                                        <GridColumn Field=@nameof(vM_Inv_GL.Custom_Statement) Visible="false"></GridColumn>
+                                        <GridColumn Field=@nameof(vM_Inv_GL.Custom_Statement) Visible="false"></GridColumn>
+                                        <GridColumn Field=@nameof(vM_Inv_GL.Custom_Statement) Visible="false"></GridColumn>*@
+
+
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </div>
+                                </div>
+                            </div>
+                            @*-----------------------------------------------------------------------------------------------------*@
+                            @*========================================= / Content Tab   ========================================================*@
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                @*========================================= / Tab   ================================================================*@
+
+            </TabItems>
+        </SfTab>
+        @*========================================= All Tabs   ======================================================================*@
+    </div>
+</div>
+@*-------------------- / End Container Page ---------------------------*@
+@*========================================= Toast=====================================================================================*@
+<SfToast ID="Failed_Id_Custom" @ref="Toast_Custom_Failed"
+         TimeOut="5000" Icon="e-error toast-icons" CssClass="e-toast-danger"
+         Title="@languageContainer.Keys["Toast_Title_Failed"]"
+         Content="@ToastContent">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+
+<SfToast ID="Success_Id" @ref="Toast_Success" TimeOut="4000" CssClass="e-toast-success" Icon="e-success toast-icons" Title="@languageContainer.Keys["Toast_Title_Success"]" Content="@languageContainer.Keys["Toast_Content_Success"]">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= / Toast   ==================================================================*@
+
+@*-----------------------------------------------------------------------------------------------------*@
+@*--------------------------------------------  Code --------------------------------------------------*@
+@*-----------------------------------------------------------------------------------------------------*@
+
+@code{
+    #region Glabal_Variables
+    SfGrid<VM_Inv_GL> grd_Invoice_Items , grd_Invoice;
+    SfGrid<VM_Inv_Pre_Purchases> grdPurchaseRequest, grdDirectBuing , Grid3, grdPurchaseInvoice_Items, grdPriceOffer, Grid_PriceOffer_Items , grdPurchasesOrders;
+    SfGrid<VM_Inv_Pre_Purchases_Offers> grdOffersApprovalsItems ;
+    SfGrid<VM_Purshases_Approvals> grdPurchaseRequestApproval;
+    SfDropDownList<string, string> txt_Supplier, txt_Inventory, txtDirectBuing_Supplier, txtDirectBuing_Inventory;
+    SfDropDownList<string, VM_Def_Items> cmbPurchaseRequestItems, cmbDirectBuing_Items;
+    SfNumericTextBox<decimal> txt_UnitPrice;
+    SfButton ref_btn_Add, ref_btn_Add_DirectBuing,ref_btn_Success_Approval, Ref_btnBuyPurchaseInvoice,ref_btn_Cancel_Req_Approval,ref_Save_PriceOffer, ref_btnSavePurchasInvoice, ref_btnSavePurchasRequest, ref_btnSavePurchasOrder;
+
+    bool Allowed = false;
+    bool chkTaxable_DirectBuy;
+    bool chkTaxable;
+
+    string Url_Parm_Req;
+    string Url_Parm_PurchaseInvoice;
+    string Url_Parm_AllRequests;
+    string Url_Parm_Offer;
+    public string DataSource_Acc;
+    string Get_HardCopyCode;
+    string User_Name;
+    string FullName;
+    string txt_Offer_Total;
+    string ItemUnit;
+    string txtPurchaseRequestItemCode;
+    string txtDirectBuing_ItemCode;
+    string Supplier = "الموردين";
+    string[] LightGreen = { "color: #0b7924f0;font-weight:Bold" };
+    string[] Pink = { "color: #dc3545ee;font-weight:Bold" };
+    string ReqPurchase_HardCopyCode;
+    string ReqPurchase_Supplier;
+    decimal sePurchaseRequestQuantity;
+    decimal seDirectBuing_Quantity;
+    decimal sePurchaseRequestUnitPrice;
+    decimal seDirectBuing_UnitPrice;
+    decimal seDirectBuing_Pre = 0;
+    decimal sePre = 0;
+    decimal? SumVat = 0;
+
+
+    int id = 0;
+
+    public long? RowID99 = 0;
+    public string? _Request_Approved_By99 = "";
+    public string? _Canceled_by99 = "";
+    public long? RowID = 0;
+    public long? RowID_Offer = 0;
+    public long? RowID_PurchaseOrder = 0;
+    public long? HardCopyCode_PurchaseOrder = 0;
+    public long? RowID_HardCopyCode_Offer = 0;
+    string _Offer_ApprovedBy;
+    long? Offer_HardCopyCode = 0;
+    public long? RowID_Invoice = 0;
+    public long? RowID_Done_Invoice = 0;
+    string txtPurchaseRequestStatement;
+    string txtDirectBuing_tStatement;
+    string txtPurchaseInvoice;
+    string txtPurchaseRequestBalance;
+    string txtDirectBuing_Balance;
+    string ToastContent;
+    string cmbSupplier = "",OrderApprovedBy;
+
+    DateTime dePurchaseRequestDate = DateTime.Now;
+    DateTime deDirectBuing_Date = DateTime.Now;
+    DateTime dePurchaseInvoice_SupplingDate = DateTime.Now;
+    DateTime dePurchaseRequestExpectedBuyDate = DateTime.Now;
+    DateTime deDirectBuing_ExpectedBuyDate = DateTime.Now;
+    DateTime TimeSatmp = DateTime.Now;
+    DateTime deExpectedDate = DateTime.Now;
+
+
+
+    VM_Inv_Pre_Purchases vM_Pre_Purchases = new VM_Inv_Pre_Purchases();
+    VM_ItemBasicData vM_ItemBasicData = new VM_ItemBasicData();
+    VM_Inv_GL vM_Inv_GL = new VM_Inv_GL();
+    VM_Inv_GL vM_Inv_GL2 = new VM_Inv_GL();
+
+    List<VM_Inv_Pre_Purchases>
+    vM_Pre_PurchasesList = new List<VM_Inv_Pre_Purchases>();
+    List<VM_Inv_Pre_Purchases_Offers>
+        vM_Pre_Purchases_Offer_List = new List<VM_Inv_Pre_Purchases_Offers>
+            ();
+    VM_Inv_Pre_Purchases_Offers vM_Inv_Pre_Purchases_Offers = new VM_Inv_Pre_Purchases_Offers();
+    private List<VM_Def_Items>
+DataSource_Items = new List<VM_Def_Items>
+();
+    private List<String>
+        DataSource_Accounts = new List<string>
+            ();
+    private List<String>
+    DataSource_AvailablerSupplier = new List<string>
+        ();
+    private List<String>
+    DataSource_Inventories = new List<string>
+        ();
+    private List<VM_Inv_Pre_Purchases>
+    DataSource_Pre_Purchases_DirectBuing = new List<VM_Inv_Pre_Purchases>
+        ();
+    private List<VM_Inv_Pre_Purchases>
+    DataSource_Pre_Purchases = new List<VM_Inv_Pre_Purchases>
+        ();
+    private List<VM_Purshases_Approvals>
+        DataSource_Req_Approvals = new List<VM_Purshases_Approvals>
+            ();
+    private List<VM_Inv_Pre_Purchases>
+        DataSource_Offers_Approvals = new List<VM_Inv_Pre_Purchases>
+            ();
+    private List<VM_Inv_Pre_Purchases>
+        DataSource_Selected_Purchases_Approve_req = new List<VM_Inv_Pre_Purchases>
+            ();
+    private List<VM_Inv_Pre_Purchases>
+        DataSource_Selected_Purchases_Approval = new List<VM_Inv_Pre_Purchases>
+            ();
+    private List<VM_Inv_Pre_Purchases_Offers>
+        DataSource_OfferPrices = new List<VM_Inv_Pre_Purchases_Offers>
+            ();
+    private List<VM_Inv_Pre_Purchases>
+    DataSource_PurchasesOrder = new List<VM_Inv_Pre_Purchases>
+        ();
+    private List<VM_Inv_Pre_Purchases_Offers>
+    DataSource_Selected_OffersPrices_Items_For_pproval = new List<VM_Inv_Pre_Purchases_Offers>
+        ();
+    private List<VM_Inv_Pre_Purchases>
+DataSource_Selected_PurchasesOrders = new List<VM_Inv_Pre_Purchases>
+    ();
+    private List<VM_Inv_Pre_Purchases>
+DataSource_Selected_PurchaseInvoice_Items = new List<VM_Inv_Pre_Purchases>
+    ();
+    private List<VM_Inv_GL>
+DataSource_Selected_Done_PurchaseInvoice_Items = new List<VM_Inv_GL>
+    ();
+    private List<VM_Inv_Pre_Purchases>
+DataSource_ParchaseInvoice = new List<VM_Inv_Pre_Purchases>
+();
+    private List<VM_Inv_GL>
+DataSource_Done_ParchaseInvoice = new List<VM_Inv_GL>
+();
+    private List<VM_Inv_GL>
+List_Vats = new List<VM_Inv_GL>
+();
+    //Permissions Permissions_Obj = new Permissions();
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+
+    SfToast Toast_Success;
+    SfToast Toast_Custom_Failed;
+
+    #endregion
+
+    protected override async Task OnInitializedAsync()
+    {
+        DataSource_Req_Approvals = await httpClient.GetJsonAsync<List<VM_Purshases_Approvals>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=select Request_Approved_By,Request_Approved_At,Canceled_By,Canceled_At,Last_At,Issuance_by,Issuance_At,HardCopyCode,count(*) ItemsCount,sum(Value) as 'Total',sum(Unit_Vat) as 'Vats' from Inv_Pre_Purchases_api group by Last_At,Issuance_by,Issuance_At,HardCopyCode,Request_Approved_By,Request_Approved_At,Canceled_By,Canceled_At");
+        DataSource_Offers_Approvals = await httpClient.GetJsonAsync<List<VM_Inv_Pre_Purchases>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=select Request_Approved_By,Request_Approved_At,Canceled_By,Canceled_At,Last_At,Issuance_by,Issuance_At,HardCopyCode,count(*) as 'Items_Count',sum(Value) as 'Total',sum(Unit_Vat) as 'Vats' from Inv_Pre_Purchases_api where Request_Approved_By !='' group by Last_At,Issuance_by,Issuance_At,HardCopyCode,Request_Approved_By,Request_Approved_At,Canceled_By,Canceled_At");
+        DataSource_OfferPrices = await httpClient.GetJsonAsync<List<VM_Inv_Pre_Purchases_Offers>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=select HardCopyCode,Offer_HardCopyCode,Approved_By,Supplier,Inventory,count(*) as 'Items_Count',sum(Value) as 'Total',sum(Vat) as 'Vat' from Inv_Pre_Purchases_Offers_api group by HardCopyCode,Offer_HardCopyCode,Approved_By,Supplier,Inventory");
+        DataSource_PurchasesOrder = await httpClient.GetJsonAsync<List<VM_Inv_Pre_Purchases>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=Select HardCopyCode,Supplier,Order_Approved_By,Order_Approved_At,count(*) as 'Items_Count',sum(Value) as 'Total',sum(Unit_Vat) as 'Vats' from Inv_Pre_Purchases_api where Pricing_Approved_By <>'' And Purchased_By is null  group by HardCopyCode,Supplier,Order_Approved_By,Order_Approved_At");
+        DataSource_ParchaseInvoice = await httpClient.GetJsonAsync<List<VM_Inv_Pre_Purchases>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=select HardCopyCode,Supplier,Pricing_Approved_By,Pricing_Approved_At,Order_Approved_By,Order_Approved_At,count(*) as 'Items_Count',sum(Value) as 'Total',sum(Unit_Vat) as 'Vats' from Inv_Pre_Purchases_api where Purchased_By is null AND Pricing_Approved_By <>'' And Order_Approved_By <>'' group by HardCopyCode,Supplier,Pricing_Approved_By,Pricing_Approved_At,Order_Approved_By,Order_Approved_At");
+        DataSource_Done_ParchaseInvoice = await httpClient.GetJsonAsync<List<VM_Inv_GL>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=select HardCopyCode,Document_ID,CreditAccount,The_Date,Apporoved_By,Approved_At,count(*) as 'ItemsCount',sum(Value) as 'Total',sum(Unit_Vat) as 'Unit_Vat',sum(Value) as 'Total'  from Inv_GL where Type = 'شراء' And Apporoved_By <>'' And (Deleted_By is null or Deleted_By='' ) group by HardCopyCode,Document_ID,CreditAccount,The_Date,Apporoved_By,Approved_At");
+        DataSource_Items = await httpClient.GetJsonAsync<List<VM_Def_Items>>(Configuration.GetValue<string>("Api") + "/api/Items_api");
+        DataSource_Accounts = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select Title From Def_Accounts_api where Type='مورد'&Required_Field=Title");
+        DataSource_Inventories = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select Title From Def_Accounts_api where Type='مخزن'&Required_Field=Title");
+        // Get Max HardCopyCode +1
+        Get_HardCopyCode = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/GetNextHardCopyCode?tbl=Inv_Pre_Purchases_api&Form=Inv_Pre_Purchases_api");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        //Permissions_Obj = await sessionStorage.GetItemAsync<Permissions>("Permissions");
+        //User_Name = Permissions_Obj.UserName;
+        //FullName = Permissions_Obj.Full_Name;
+
+        /////////////////////////////////////////
+        //--Get User Data
+        var user = (await AuthStat).User;
+        User_Name = user.Identity.Name;
+        FullName = user.Identity.Name;
+        /////////////////////////////////////////
+        //Print
+        Url_Parm_Req = Configuration.GetValue<string>("Reports") + "/Print/Reports_Purchases_Request_Form.aspx" + "?The_Footer=" + FullName + "&Signature=" + User_Name + "&HardCopyCode=" + RowID99;
+        Url_Parm_Offer = Configuration.GetValue<string>("Reports") + "/Print/Reports_Purchases_Request_Form.aspx" + "?The_Footer=" + FullName + "&Signature=" + User_Name + "&HardCopyCode=" + RowID;
+        Url_Parm_PurchaseInvoice = Configuration.GetValue<string>("Reports") + "/Print/Reports_Purchase_Invoice_Form.aspx" + "?The_Footer=" + FullName + "&Signature=" + User_Name + "&HardCopyCode=" + RowID_Done_Invoice;
+        Url_Parm_AllRequests = Configuration.GetValue<string>("Reports") + "/Print/Reports__PrePurchases_Form.aspx" + "?The_Footer=" + FullName + "&Signature=" + User_Name;
+
+        //await jsRuntime.InvokeAsync<string>("console.log", "Exception >> " + aaa);
+    }
+
+    public async void Print_Req()
+    {
+        if (RowID99.Value == 0)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Toast_Failed_SelectRow"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        else
+        {
+            await jsRuntime.InvokeAsync<object>("open", new TimeSpan(1,1,1), Url_Parm_Req, "_blank");
+
+        }
+    }
+
+    public async void btnPrint_PurchaseInvoice()
+    {
+        if (RowID_Done_Invoice.Value == 0)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Toast_Failed_SelectRow"];
+            await  this.Toast_Custom_Failed.Show();
+            return;
+        }
+        else
+        {
+            await jsRuntime.InvokeAsync<object>("open", new TimeSpan(1,1,1), Url_Parm_PurchaseInvoice, "_blank");
+        }
+    }
+
+    public async void btnPrint_AllRequests()
+    {
+        await jsRuntime.InvokeAsync<object>("open", new TimeSpan(1,1,1), Url_Parm_AllRequests, "_blank");
+    }
+
+    public async void Print_Offer()
+    {
+        if (RowID.Value == 0)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Toast_Failed_SelectRow"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        else
+        {
+            await jsRuntime.InvokeAsync<object>("open", new TimeSpan(1,1,1), Url_Parm_Offer, "_blank");
+        }
+    }
+
+    public async void ActionBegin_Del_ReqItem(ActionEventArgs<VM_Inv_Pre_Purchases> args)
+    {
+        if (args.RequestType.ToString() == "Delete")
+        {
+            await httpClient.DeleteAsync(Configuration.GetValue<string>("Api") + "/api/Pre_Purchases_api/" + args.Data.ID);
+            await this.Toast_Success.Show();
+        }
+        else if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+        {
+            if (args.Action == "add")
+            {
+                // (Add) Post Api
+            }
+            else
+            {
+                // (Edit) Put Api
+            }
+        }
+
+    }
+
+    public async void ActionBegin_Del_ReqItem_Added(ActionEventArgs<VM_Inv_Pre_Purchases> args)
+    {
+
+        if (args.RequestType == Syncfusion.Blazor.Grids.Action.Delete)
+        {
+            await grdPurchaseRequest.DeleteRecord(args.Data.ID.ToString());
+            await this.Toast_Success.Show();
+        }
+        else if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+        {
+            if (args.Action == "add")
+            {
+                // (Add) Post Api
+            }
+            else
+            {
+                // (Edit) Put Api
+            }
+        }
+
+    }
+
+    public async void ActionBegin_DirectBuing__Added(ActionEventArgs<VM_Inv_Pre_Purchases> args)
+    {
+
+        if (args.RequestType == Syncfusion.Blazor.Grids.Action.Delete)
+        {
+            await grdDirectBuing.DeleteRecord(args.Data.ID.ToString());
+            await this.Toast_Success.Show();
+        }
+        else if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+        {
+            if (args.Action == "add")
+            {
+                // (Add) Post Api
+            }
+            else
+            {
+                // (Edit) Put Api
+            }
+        }
+
+    }
+
+    protected async void btn_AddItem_DirectBuing()
+    {
+        try
+        {
+            if (seDirectBuing_Quantity != Convert.ToDecimal(vM_ItemBasicData.Seeked_Quantity)
+            && string.IsNullOrEmpty(txtDirectBuing_tStatement) == true)
+            {
+                this.Toast_Custom_Failed.Content = languageContainer.Keys["Statment_IS_Empty"];
+                await this.Toast_Custom_Failed.Show();
+                return;
+            }
+            foreach (var item in grdDirectBuing.DataSource.ToList())
+            {
+                if (item.Item == cmbDirectBuing_Items.Text)
+                {
+                    this.Toast_Custom_Failed.Content = languageContainer.Keys["Missing_Item"];
+                    await this.Toast_Custom_Failed.Show();
+                    return;
+                }
+            }
+
+            if (string.IsNullOrEmpty(txtDirectBuing_Supplier.Text))
+            {
+                this.Toast_Custom_Failed.Content = languageContainer.Keys["Supplier"] + languageContainer.Keys["Empty"];
+                await this.Toast_Custom_Failed.Show();
+                return;
+            }
+
+            if (string.IsNullOrEmpty(txtDirectBuing_Inventory.Text))
+            {
+                this.Toast_Custom_Failed.Content = languageContainer.Keys["Inventory"] + languageContainer.Keys["Empty"];
+                await this.Toast_Custom_Failed.Show();
+                return;
+            }
+
+            id = id + 1;
+            vM_Pre_Purchases.ID = id;
+            vM_Pre_Purchases.HardCopyCode = long.Parse(Get_HardCopyCode);
+            vM_Pre_Purchases.Issuance_At = deDirectBuing_Date;
+            vM_Pre_Purchases.Supplied_Expected_At = deDirectBuing_ExpectedBuyDate;
+            vM_Pre_Purchases.Supplier = txtDirectBuing_Supplier.Value;
+            vM_Pre_Purchases.Inventory = txtDirectBuing_Inventory.Value;
+            vM_Pre_Purchases.Statement = txtDirectBuing_tStatement;
+            vM_Pre_Purchases.Item = cmbDirectBuing_Items.Value;
+            vM_Pre_Purchases.Item_Code = txtDirectBuing_ItemCode;
+            vM_Pre_Purchases.Quantity = seDirectBuing_Quantity;
+            vM_Pre_Purchases.Current_Balance = decimal.Parse(txtDirectBuing_Balance);
+            vM_Pre_Purchases.Unit_Price = seDirectBuing_UnitPrice;
+            vM_Pre_Purchases.Last_At = TimeSatmp;
+            vM_Pre_Purchases.Issuance_by = User_Name;
+            vM_Pre_Purchases.Purchased_By = User_Name;
+            vM_Pre_Purchases.Purchased_At = TimeSatmp;
+            vM_Pre_Purchases.Unit = ItemUnit;
+            vM_Pre_Purchases.Value = (seDirectBuing_Quantity) * (seDirectBuing_UnitPrice);
+
+            if (chkTaxable_DirectBuy == true)
+            {
+                vM_Pre_Purchases.Unit_Vat = ((seDirectBuing_UnitPrice) * Convert.ToDecimal(0.15)) * (seDirectBuing_Quantity) ;
+
+            }
+            else
+            {
+                vM_Pre_Purchases.Unit_Vat = 0;
+            }
+
+            await grdDirectBuing.AddRecord(vM_Pre_Purchases);
+            vM_Pre_PurchasesList = grdDirectBuing.DataSource.ToList();
+
+            seDirectBuing_Quantity = 0;
+            seDirectBuing_UnitPrice = 0;
+            txtDirectBuing_tStatement = "";
+            txtDirectBuing_Balance = "";
+            txtDirectBuing_ItemCode = "";
+            chkTaxable_DirectBuy = false;
+
+
+            StateHasChanged();
+
+        }
+        catch (Exception ex)
+        {
+            ToastContent = ex.Message;
+            await this.Toast_Custom_Failed.Show();
+        }
+
+    }
+
+    protected async void btnPurchaseRequestAddItem()
+    {
+
+        try
+        {
+            if (sePurchaseRequestQuantity != Convert.ToDecimal(vM_ItemBasicData.Seeked_Quantity)
+            && string.IsNullOrEmpty(txtPurchaseRequestStatement) == true)
+            {
+                this.Toast_Custom_Failed.Content = languageContainer.Keys["Statment_IS_Empty"];
+                await this.Toast_Custom_Failed.Show();
+                return;
+            }
+            foreach (var item in grdPurchaseRequest.DataSource.ToList())
+            {
+                if (item.Item == cmbPurchaseRequestItems.Text)
+                {
+                    this.Toast_Custom_Failed.Content = languageContainer.Keys["Toast_Content_Add_Failed"];
+                    await this.Toast_Custom_Failed.Show();
+                    return;
+                }
+            }
+
+            if (string.IsNullOrEmpty(txt_Supplier.Text))
+            {
+                this.Toast_Custom_Failed.Content = languageContainer.Keys["Supplier"] + languageContainer.Keys["Empty"];
+                await this.Toast_Custom_Failed.Show();
+                return;
+            }
+            if (string.IsNullOrEmpty(txt_Inventory.Text))
+            {
+                this.Toast_Custom_Failed.Content = languageContainer.Keys["Inventory"] + languageContainer.Keys["Empty"];
+                await this.Toast_Custom_Failed.Show();
+                return;
+            }
+            id = id + 1;
+            vM_Pre_Purchases.ID = id;
+            vM_Pre_Purchases.HardCopyCode = long.Parse(Get_HardCopyCode);
+            vM_Pre_Purchases.Issuance_At = dePurchaseRequestDate;
+            vM_Pre_Purchases.Supplied_Expected_At = dePurchaseRequestExpectedBuyDate;
+            vM_Pre_Purchases.Supplier = txt_Supplier.Value;
+            vM_Pre_Purchases.Inventory = txt_Inventory.Value;
+            vM_Pre_Purchases.Statement = txtPurchaseRequestStatement;
+            vM_Pre_Purchases.Item = cmbPurchaseRequestItems.Value;
+            vM_Pre_Purchases.Item_Code = txtPurchaseRequestItemCode;
+            vM_Pre_Purchases.Quantity = sePurchaseRequestQuantity;
+            vM_Pre_Purchases.Current_Balance = decimal.Parse(txtPurchaseRequestBalance);
+            vM_Pre_Purchases.Unit_Price = sePurchaseRequestUnitPrice;
+            vM_Pre_Purchases.Last_At = TimeSatmp;
+            vM_Pre_Purchases.Issuance_by = User_Name;
+            vM_Pre_Purchases.Unit = ItemUnit;
+
+            vM_Pre_Purchases.Value = (sePurchaseRequestQuantity) * (sePurchaseRequestUnitPrice);
+
+            if (chkTaxable == true)
+            {
+                vM_Pre_Purchases.Unit_Vat = ((sePurchaseRequestUnitPrice) * Convert.ToDecimal(0.15)) * (sePurchaseRequestQuantity);
+
+            }
+            else
+            {
+                vM_Pre_Purchases.Unit_Vat = 0;
+            }
+
+            await grdPurchaseRequest.AddRecord(vM_Pre_Purchases);
+            vM_Pre_PurchasesList = grdPurchaseRequest.DataSource.ToList();
+
+            sePurchaseRequestQuantity = 0;
+            sePurchaseRequestUnitPrice = 0;
+            txtPurchaseRequestStatement = "";
+            txtPurchaseRequestBalance = "";
+            txtPurchaseRequestItemCode = "";
+            chkTaxable = false;
+
+            StateHasChanged();
+
+        }
+        catch (Exception ex)
+        {
+            ToastContent = ex.Message;
+            await this.Toast_Custom_Failed.Show();
+        }
+    }
+
+    protected async Task GetItemDetails()
+    {
+        vM_ItemBasicData = await httpClient.GetJsonAsync<VM_ItemBasicData>(Configuration.GetValue<string>("Api") + "/api/Services/ReadItemBasicData?Item_Title_Ar=" + cmbPurchaseRequestItems.Text);
+        ItemUnit = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select * from Def_Items_api where Item_Title_Ar = '" + cmbPurchaseRequestItems.Value + "'&Required_Field=Item_Unit");
+        ItemUnit = ItemUnit.Replace("\"", "");
+        txtPurchaseRequestItemCode = vM_ItemBasicData.Item_Code;
+        sePurchaseRequestQuantity = Convert.ToDecimal(vM_ItemBasicData.Seeked_Quantity);
+        sePurchaseRequestUnitPrice = Convert.ToDecimal(vM_ItemBasicData.Last_In_Unit_Price);
+        txtPurchaseRequestBalance = vM_ItemBasicData.Current_Quantity.ToString();
+    }
+
+    protected async Task GetItemDetails_DirectBuing()
+    {
+        vM_ItemBasicData = await httpClient.GetJsonAsync<VM_ItemBasicData>(Configuration.GetValue<string>("Api") + "/api/Services/ReadItemBasicData?Item_Title_Ar=" + cmbDirectBuing_Items.Text);
+        ItemUnit = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select * from Def_Items_api where Item_Title_Ar = '" + cmbDirectBuing_Items.Text + "'&Required_Field=Item_Unit");
+        ItemUnit = ItemUnit.Replace("\"", "");
+        txtDirectBuing_ItemCode = vM_ItemBasicData.Item_Code;
+        seDirectBuing_Quantity = Convert.ToDecimal(vM_ItemBasicData.Seeked_Quantity);
+        seDirectBuing_UnitPrice = Convert.ToDecimal(vM_ItemBasicData.Last_In_Unit_Price);
+        txtDirectBuing_Balance = vM_ItemBasicData.Current_Quantity.ToString();
+    }
+
+    protected async void btnSavePurchasInvoice()
+    {
+
+        string _Purchase_ApprovedAt = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+        string Error_Message = "";
+        DateTime dt;
+        if (grdDirectBuing.TotalItemCount == 0)
+        {
+            Error_Message = Error_Message + languageContainer.Keys["Not_Found_Elements"] + Environment.NewLine;
+        }
+        if (DateTime.TryParse(deDirectBuing_Date.ToString(), out dt) == false)
+        {
+            Error_Message = Error_Message + languageContainer.Keys["NOt_Found_Date"] + Environment.NewLine;
+        }
+        if (DateTime.TryParse(deDirectBuing_ExpectedBuyDate.ToString(), out dt) == false)
+        {
+            Error_Message = Error_Message + languageContainer.Keys["NOt_Found_ExpectedBuyDate"] + Environment.NewLine;
+        }
+        if (string.IsNullOrEmpty(txtDirectBuing_Supplier.Text) == true)
+        {
+            Error_Message = Error_Message + languageContainer.Keys["NOt_Found_Supplier"] + Environment.NewLine;
+        }
+        if (string.IsNullOrEmpty(txtDirectBuing_Inventory.Text) == true)
+        {
+            Error_Message = Error_Message + languageContainer.Keys["NOt_Found_Inventory"] + Environment.NewLine;
+        }
+        foreach (var item in grdDirectBuing.DataSource.ToList())
+        {
+            if (item.Unit_Price <= 0)
+            {
+                Error_Message = Error_Message + languageContainer.Keys["NOt_Found_Prices"] + Environment.NewLine;
+            }
+        }
+        if (Error_Message != "")
+        {
+            this.Toast_Custom_Failed.Content = Error_Message;
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+
+        ref_btn_Add_DirectBuing.Disabled = true;
+
+        //Save Items in Parchases Table 
+        foreach (VM_Inv_Pre_Purchases Obj_Container in grdDirectBuing.DataSource.ToList())
+        {
+            await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Pre_Purchases_api", Obj_Container);
+        }
+
+        await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_Pre_Purchases_api set Items_Count = '" + grdDirectBuing.TotalItemCount + "' where HardCopyCode = '" + Get_HardCopyCode + "'", vM_Pre_Purchases);
+
+        string _Custom_HardCopyCode = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/GetNextHardCopyCode?tbl=Inv_GL&Form=Inv_Pre_Purchases_api&Type=شراء");
+
+        //  عمل قيد جي إل أسعار الأصناف
+
+        foreach (var item in grdDirectBuing.DataSource.ToList())
+        {
+            vM_Inv_GL.Type = "شراء";
+            vM_Inv_GL.The_User = User_Name;
+            vM_Inv_GL.Apporoved_By = User_Name;
+            vM_Inv_GL.Approved_At = TimeSatmp;
+            vM_Inv_GL.HardCopyCode = int.Parse(_Custom_HardCopyCode);
+            vM_Inv_GL.Document_ID = item.HardCopyCode.ToString();
+            vM_Inv_GL.ProccessID = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ProccessID");
+            vM_Inv_GL.The_Date = deDirectBuing_ExpectedBuyDate;
+            vM_Inv_GL.DebitAccount = item.Inventory;
+            vM_Inv_GL.CreditAccount = item.Supplier;
+            vM_Inv_GL.To_Inventory = item.Inventory;
+            vM_Inv_GL.Auto_Statement = "عملية شراء رقم '" + _Custom_HardCopyCode + "' بناءا على أمر الشراء رقم '" + item.HardCopyCode + "'   من المورد '" + item.Supplier + "'  لعدد أصناف '" + item.Items_Count +"'";
+            vM_Inv_GL.Custom_Statement = item.Statement;
+            vM_Inv_GL.Item = item.Item;
+            vM_Inv_GL.Item_Unit = item.Unit;
+            vM_Inv_GL.Unit_Price = item.Unit_Price;
+            vM_Inv_GL.Unit_Vat = item.Unit_Vat;
+            vM_Inv_GL.Quantity = item.Quantity;
+            vM_Inv_GL.Item_Cost = item.Value;
+            vM_Inv_GL.Value = item.Value;
+            vM_Inv_GL.Currency = "ريال سعودي";
+            vM_Inv_GL.Item_Code = item.Item_Code;
+            // api Post (Insert)
+            await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Inv_GL_api", vM_Inv_GL);
+
+            SumVat = SumVat + item.Unit_Vat;
+
+        }
+
+        //---------------------------
+        //  عمل قيد جي إل ضرائب الأصناف
+
+        vM_Inv_GL2.Type = "ضرائب";
+        vM_Inv_GL2.The_User = User_Name;
+        vM_Inv_GL2.Apporoved_By = User_Name;
+        vM_Inv_GL2.Approved_At = TimeSatmp;
+        vM_Inv_GL2.HardCopyCode = int.Parse(_Custom_HardCopyCode);
+        vM_Inv_GL2.Document_ID = Get_HardCopyCode;
+        vM_Inv_GL2.ProccessID = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ProccessID");
+        vM_Inv_GL2.The_Date = TimeSatmp;
+        vM_Inv_GL2.DebitAccount = "ضريبة القيمة المضافة";
+        vM_Inv_GL2.CreditAccount = txtDirectBuing_Supplier.Value;
+        vM_Inv_GL2.Auto_Statement = "عملية دفع ضريبة القيمة المضافة رقم '" + vM_Inv_GL.HardCopyCode + "' بناءا على طلب الشراء رقم '" + Get_HardCopyCode + "'   من المورد '" + txtDirectBuing_Supplier.Value + "'  لعدد أصناف '" + grdDirectBuing.TotalItemCount + "'";
+        vM_Inv_GL2.Value = SumVat;
+        vM_Inv_GL2.Currency = "ريال سعودي";
+
+        // api Post (Insert)
+        await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Inv_GL_api", vM_Inv_GL2);
+        //---------------------------
+        ref_btnSavePurchasInvoice.Disabled = true;
+        await OnInitializedAsync();
+        StateHasChanged();
+        await this.Toast_Success.Show();
+    }
+
+    protected async void btnSavePurchasOrder()
+    {
+        string _Order_ApprovedAt = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+        string Error_Message = "";
+        DateTime dt;
+        if (grdPurchaseRequest.TotalItemCount == 0)
+        {
+            Error_Message = Error_Message + languageContainer.Keys["Not_Found_Elements"] + Environment.NewLine;
+        }
+        if (DateTime.TryParse(dePurchaseRequestDate.ToString(), out dt) == false)
+        {
+            Error_Message = Error_Message + languageContainer.Keys["NOt_Found_Date"] + Environment.NewLine;
+        }
+        if (DateTime.TryParse(dePurchaseRequestExpectedBuyDate.ToString(), out dt) == false)
+        {
+            Error_Message = Error_Message + languageContainer.Keys["NOt_Found_ExpectedBuyDate"] + Environment.NewLine;
+        }
+        if (string.IsNullOrEmpty(txt_Supplier.Text) == true)
+        {
+            Error_Message = Error_Message + languageContainer.Keys["NOt_Found_Supplier"] + Environment.NewLine;
+        }
+        if (string.IsNullOrEmpty(txt_Inventory.Text) == true)
+        {
+            Error_Message = Error_Message + languageContainer.Keys["NOt_Found_Inventory"] + Environment.NewLine;
+        }
+        foreach (var item in grdPurchaseRequest.DataSource.ToList())
+        {
+            if (item.Unit_Price <= 0)
+            {
+                Error_Message = Error_Message + languageContainer.Keys["NOt_Found_Prices"] + Environment.NewLine;
+            }
+        }
+        if (Error_Message != "")
+        {
+            this.Toast_Custom_Failed.Content = Error_Message;
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        //Save code
+        foreach (VM_Inv_Pre_Purchases Object_Container2 in grdPurchaseRequest.DataSource.ToList())
+        {
+            await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Pre_Purchases_api", Object_Container2);  //getdate()
+        }
+
+        //await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_Pre_Purchases_api set Items_Count = '" + grdPurchaseRequest.TotalItemCount + "' , Order_Approved_By = '" + User_Name + "' , Order_Approved_At = '" + TimeSatmp + "' , Pricing_Approved_By = '" + User_Name + "', Pricing_Approved_At = '" + TimeSatmp + "' where HardCopyCode = '" + Get_HardCopyCode + "'", vM_Pre_Purchases);
+        await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_Pre_Purchases_api set Items_Count = '" + grdPurchaseRequest.TotalItemCount + "' , Order_Approved_By = '" + User_Name + "' , Order_Approved_At = getdate() , Pricing_Approved_By = '" + User_Name + "', Pricing_Approved_At = getdate()  where HardCopyCode = '" + Get_HardCopyCode + "'", vM_Pre_Purchases);
+        ref_btnSavePurchasRequest.Disabled = true;
+        ref_btnSavePurchasOrder.Disabled = true;
+        await OnInitializedAsync();
+        StateHasChanged();
+        await this.Toast_Success.Show();
+    }
+
+    protected async void btnSavePurchasRequest()
+    {
+        ref_btn_Add.Disabled = true;
+        if (string.IsNullOrEmpty(dePurchaseRequestDate.ToString()))
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Cant_Do_this_Operation"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        foreach (VM_Inv_Pre_Purchases Obj_Container in grdPurchaseRequest.DataSource.ToList())
+        {
+            await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Pre_Purchases_api", Obj_Container);
+        }
+        await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_Pre_Purchases_api set Items_Count = '" + grdPurchaseRequest.TotalItemCount + "' where HardCopyCode = '" + Get_HardCopyCode + "'", vM_Pre_Purchases);
+        ref_btnSavePurchasRequest.Disabled = true;
+        ref_btnSavePurchasOrder.Disabled = true;
+        await OnInitializedAsync();
+        StateHasChanged();
+        await this.Toast_Success.Show();
+        return;
+    }
+
+    protected async void btn_Success_Approval()
+    {
+        if (RowID99.Value == 0)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Toast_Failed_SelectRow"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        else if (!string.IsNullOrEmpty(_Request_Approved_By99) || !string.IsNullOrEmpty(_Canceled_by99))
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Cant_Do_this_Operation"];
+            await this.Toast_Custom_Failed.Show();
+        }
+        else
+        {
+            await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_Pre_Purchases_api set Request_Approved_By = '" + User_Name + "' , Request_Approved_At = getdate() where HardCopyCode = '" + RowID99 + "'", vM_Pre_Purchases);
+
+            await this.Toast_Success.Show();
+        }
+        await OnInitializedAsync();
+        StateHasChanged();
+    }
+
+    protected async void btn_Cancel_Req_Approval()
+    {
+        if (RowID99.Value == 0)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Toast_Failed_SelectRow"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        else if (!string.IsNullOrEmpty(_Request_Approved_By99) || !string.IsNullOrEmpty(_Canceled_by99))
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Cant_Do_this_Operation"];
+            await this.Toast_Custom_Failed.Show();
+        }
+        else
+        {
+            await httpClient.PutJsonAsync(Configuration.GetValue<string>
+                ("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_Pre_Purchases_api set Canceled_By = '" + User_Name + "' , Canceled_At = getdate() where HardCopyCode = '" + RowID99 + "'", vM_Pre_Purchases);
+            //StateHasChanged();
+            await this.Toast_Success.Show();
+        }
+        await OnInitializedAsync();
+        StateHasChanged();
+    }
+
+    public void CellColor_Grid_Approvals_Req(QueryCellInfoEventArgs<VM_Purshases_Approvals> args)
+    {
+        if (!string.IsNullOrEmpty(args.Data.Request_Approved_By))
+        {
+            args.Cell.AddStyle(LightGreen);
+        }
+        else if (!string.IsNullOrEmpty(args.Data.Canceled_By))
+        {
+            args.Cell.AddStyle(Pink);
+        }
+    }
+
+    public void CellColor_Grid_Offers(QueryCellInfoEventArgs<VM_Inv_Pre_Purchases_Offers> args)
+    {
+        if (!string.IsNullOrEmpty(args.Data.Approved_By))
+        {
+            args.Cell.AddStyle(LightGreen);
+        }
+
+    }
+
+    public void CellColor_PurchasesOrders(QueryCellInfoEventArgs<VM_Inv_Pre_Purchases> args)
+    {
+        if (!string.IsNullOrEmpty(args.Data.Order_Approved_By))
+        {
+            args.Cell.AddStyle(LightGreen);
+        }
+
+    }
+    public async void RowSelecthandle_Req99(RowSelectEventArgs<VM_Purshases_Approvals> Args)
+    {
+        RowID99 = Args.Data.HardCopyCode;
+        _Request_Approved_By99 = Args.Data.Request_Approved_By;
+        _Canceled_by99 = Args.Data.Canceled_By;
+        this.DataSource_Selected_Purchases_Approve_req = await httpClient.GetJsonAsync<List<VM_Inv_Pre_Purchases>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=select * From Inv_Pre_Purchases_api Where HardCopyCode = '" + RowID99 + "'");
+        StateHasChanged();
+    }
+
+    public async void RowSelecthandler(RowSelectEventArgs<VM_Inv_Pre_Purchases> Args)
+    {
+        string QueryString = "";
+        //----------------------------
+        RowID = Args.Data.HardCopyCode;
+        this.DataSource_Selected_Purchases_Approval = await httpClient.GetJsonAsync<List<VM_Inv_Pre_Purchases>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=select * From Inv_Pre_Purchases_api Where HardCopyCode = '" + RowID + "'");
+        DataSource_AvailablerSupplier = null;
+        QueryString = "QueryString=select Title From Def_Accounts_api where Type = 'مورد' And Title not in (select supplier from Inv_Pre_Purchases_Offers_api where HardCopyCode = '" + RowID + "')&Required_Field=Title";
+        this.DataSource_AvailablerSupplier = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?" + QueryString);
+        StateHasChanged();
+    }
+
+    protected async void btnSavePriceOffer()
+    {
+        ////await CheckPermissions("dsdsddsd");
+        //if (Allowed == false)
+        //{
+        //    return;
+        //}
+        if (grdPriceOffer.TotalItemCount == 0 || string.IsNullOrEmpty(cmbSupplier) == true)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Cant_Do_this_Operation"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+
+        vM_Pre_PurchasesList = Grid_PriceOffer_Items.DataSource.ToList();
+        string _Offer_HardCopyCode;
+
+        _Offer_HardCopyCode = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/GetNextHardCopyCode__Pricing_Offers_Only");
+
+        foreach (var item in vM_Pre_PurchasesList)
+        {
+            if (vM_Inv_Pre_Purchases_Offers.Unit_Price <= 0)
+            {
+                this.Toast_Custom_Failed.Content = languageContainer.Keys["Cant_Do_this_Operation"];
+                await this.Toast_Custom_Failed.Show();
+                return;
+            }
+        }
+
+        foreach (var item in vM_Pre_PurchasesList)
+        {
+            vM_Inv_Pre_Purchases_Offers.HardCopyCode = item.HardCopyCode;
+            vM_Inv_Pre_Purchases_Offers.Item = item.Item;
+            vM_Inv_Pre_Purchases_Offers.Quantity = item.Quantity;
+            vM_Inv_Pre_Purchases_Offers.Unit_Price = item.Unit_Price;
+            vM_Inv_Pre_Purchases_Offers.Vat = item.Unit_Vat;
+            vM_Inv_Pre_Purchases_Offers.Value = item.Value;
+            vM_Inv_Pre_Purchases_Offers.Inventory = item.Inventory;
+            vM_Inv_Pre_Purchases_Offers.Items_Count = item.Items_Count;
+            vM_Inv_Pre_Purchases_Offers.Supplier = cmbSupplier;
+            vM_Inv_Pre_Purchases_Offers.Pre_Value = sePre;
+            vM_Inv_Pre_Purchases_Offers.Supplied_Expected_At = deExpectedDate;
+            vM_Inv_Pre_Purchases_Offers.Offer_HardCopyCode = long.Parse(_Offer_HardCopyCode);
+
+
+            await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Pre_Purchases_Offers_api", vM_Inv_Pre_Purchases_Offers);
+        }
+        await OnInitializedAsync();
+        StateHasChanged();
+        await this.Toast_Success.Show();
+        return;
+    }
+
+    public void ActionBegin_OfferItem(ActionEventArgs<VM_Inv_Pre_Purchases> args)
+    {
+        if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+        {
+            if (args.Action == "add")
+            {
+                // (Add) Post Api
+            }
+            else
+            {
+                // (Edit) Put Api
+
+                args.Data.Value = (args.Data.Unit_Price) * (args.Data.Quantity);
+
+                if (args.Data.VatIncluded == true )
+                {
+                    args.Data.Unit_Vat= Convert.ToDecimal(0.15) * (args.Data.Value);
+                }
+                else
+                {
+                    args.Data.Unit_Vat = 0;
+                }
+            }
+        }
+
+    }
+
+    public async void ActionBegin_Invoice(ActionEventArgs<VM_Inv_GL> args)
+    {
+
+        if (args.RequestType.ToString() == "Delete")
+        {
+            if (grd_Invoice_Items.TotalItemCount == 1)
+            {
+                this.Toast_Custom_Failed.Content = languageContainer.Keys["Cant_Delete_All_Grid_Items"] ;
+                await this.Toast_Custom_Failed.Show();
+                return;
+            }
+            else
+            {
+                await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_GL set Deleted_By = '" + User_Name + "' , Deleted_At = getdate() where ID = '" + args.Data.ID + "'", vM_Inv_GL);
+                await this.Toast_Success.Show();
+            }
+        }
+        else if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+        {
+
+            if (args.Action == "add")
+            {
+                // (Add) Post Api
+
+                vM_Inv_GL.Item = args.Data.Item;
+                //vM_Inv_GL.Item_Code = args.Data.Item_Code;
+                //vM_Inv_GL.Item_Unit = args.Data.Item_Unit;
+                vM_Inv_GL.Unit_Price = args.Data.Unit_Price;
+                vM_Inv_GL.Quantity = args.Data.Quantity;
+                vM_Inv_GL.Value = args.Data.Value;
+                vM_Inv_GL.Unit_Vat = args.Data.Unit_Vat;
+                vM_Inv_GL.To_Inventory = args.Data.To_Inventory;
+                vM_Inv_GL.Custom_Statement = args.Data.Custom_Statement;
+
+                //args.Data.Item_Unit = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select * from Def_Items_api where Item_Title_Ar = '" + args.Data.Item + "'&Required_Field=Item_Unit");
+                //vM_Inv_GL.Item_Unit = args.Data.Item_Unit;
+                //vM_Inv_GL.Item_Unit = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select * from Def_Items_api where Item_Title_Ar = '" + args.Data.Item + "'&Required_Field=Item_Unit");
+
+                //await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Inv_GL_api", vM_Inv_GL);
+                //await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_GL set Edited_By = '" + User_Name + "' , Edited_At = getdate() where ID = '" + args.Data.ID + "'", vM_Inv_GL);
+
+            }
+            else
+            {
+                // (Edit) Put Api   
+
+                await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_GL set Edited_By = '" + User_Name + "' , Edited_At = getdate()" +
+                ",Unit_Price = '" + args.Data.Unit_Price + "' " +
+                ",Quantity = '" + args.Data.Quantity + "' " +
+                ",Item_Cost = '" + args.Data.Value + "' " +
+                ",Value = '" + args.Data.Value + "' " +
+                ",Unit_Vat = '" + args.Data.Unit_Vat + "' " +
+                ",To_Inventory = '" + args.Data.To_Inventory + "' " +
+                ",Custom_Statement = '" + args.Data.Custom_Statement + "' " +
+                " where ID = '" + args.Data.ID + "'", vM_Inv_GL2);
+
+                await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "update Inv_GL set Edited_By = '" + User_Name + "' , Edited_At = getdate(), Value=( select sum(Unit_Vat) from Inv_GL where HardCopyCode='" + args.Data.HardCopyCode + "') where HardCopyCode='" + args.Data.HardCopyCode + "' And Type='ضرائب'", vM_Inv_GL);
+                await this.Toast_Success.Show();
+            }
+        }
+    }
+
+    public async void RowSeleced_OfferPrices(RowSelectEventArgs<VM_Inv_Pre_Purchases_Offers>Args)
+    {
+        try
+        {
+            RowID_Offer = Args.Data.HardCopyCode;
+            Offer_HardCopyCode = Args.Data.Offer_HardCopyCode;
+            _Offer_ApprovedBy = Args.Data.Approved_By;
+            RowID_HardCopyCode_Offer = Args.Data.Offer_HardCopyCode;
+
+            this.DataSource_Selected_OffersPrices_Items_For_pproval = await httpClient.GetJsonAsync<List<VM_Inv_Pre_Purchases_Offers>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=select * From Inv_Pre_Purchases_Offers_api Where HardCopyCode ='" + RowID_Offer + "' And Offer_HardCopyCode='" + Offer_HardCopyCode + "'");
+            StateHasChanged();
+
+        }
+        catch (Exception ex)
+        {
+
+            ToastContent = ex.Message;
+            await this.Toast_Custom_Failed.Show();
+        }
+    }
+
+    public async void RowSeleced_PurchasesOrders(RowSelectEventArgs<VM_Inv_Pre_Purchases> Args)
+    {
+        try
+        {
+            RowID_PurchaseOrder = Args.Data.HardCopyCode;
+            OrderApprovedBy = Args.Data.Order_Approved_By;
+            //HardCopyCode_PurchaseOrder = Args.Data.Offer_HardCopyCode;
+
+
+            this.DataSource_Selected_PurchasesOrders = await httpClient.GetJsonAsync<List<VM_Inv_Pre_Purchases>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=select * From Inv_Pre_Purchases_api Where HardCopyCode ='" + RowID_PurchaseOrder +"'");
+            StateHasChanged();
+
+        }
+        catch (Exception ex)
+        {
+
+            ToastContent = ex.Message;
+            await this.Toast_Custom_Failed.Show();
+        }
+    }
+
+    protected async void Approve_PurchasesOrders()
+    {
+        if (RowID_PurchaseOrder.Value == 0)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Toast_Failed_SelectRow"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        else if (!string.IsNullOrEmpty( OrderApprovedBy))
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Cant_Do_this_Operation"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        else
+        {
+            string _PurchaseOrder_ApprovedAt = DateTime.Now.ToString("yyy/MM/dd HH:mm:00:000");
+
+            foreach (var item in grdPurchasesOrders.DataSource.ToList())
+            {
+                await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_Pre_Purchases_api set Order_Approved_By = '" + User_Name + "' , Order_Approved_At = '" + _PurchaseOrder_ApprovedAt + "' where Item = '" + item.Item + "' And HardCopyCode = '" + RowID_PurchaseOrder.Value + "'", vM_Pre_Purchases);
+            }
+            await OnInitializedAsync();
+            StateHasChanged();
+
+            await this.Toast_Success.Show();
+        }
+    }
+
+    protected async void Approve_PriceOffer()
+    {
+        if (RowID_Offer.Value == 0)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Toast_Failed_SelectRow"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        else if (!string.IsNullOrEmpty(_Offer_ApprovedBy))
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Cant_Do_this_Operation"];
+            await this.Toast_Custom_Failed.Show();
+        }
+        else
+        {
+            //string _Pricing_ApprovedAt = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+
+            foreach (var item in grdOffersApprovalsItems.DataSource.ToList())
+            {
+                await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_Pre_Purchases_api set Pricing_Approved_By = '" + User_Name + "' , Pricing_Approved_At = getdate() , Supplier = '" + item.Supplier + "' , Quantity = '" + item.Quantity + "' , Unit_Price ='" + item.Unit_Price + "' ,Unit_Vat ='" + item.Vat + "', Value = '" + item.Value + "' , Inventory = '" + item.Inventory + "' , Offer_HardCopyCode = '" + item.Offer_HardCopyCode + "', Supplied_Expected_At = '" + Convert.ToDateTime(item.Supplied_Expected_At).ToString("yyy/MM/dd HH:mm:00:000") + "' where Item = '" + item.Item + "' And HardCopyCode = '" + RowID_Offer + "'", vM_Pre_Purchases);
+            }
+
+            await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_Pre_Purchases_Offers_api set Approved_By = '" + User_Name + "' where HardCopyCode = '" + RowID_Offer + "' And Offer_HardCopyCode= '" + Offer_HardCopyCode + "'", vM_Inv_Pre_Purchases_Offers);
+            await this.Toast_Success.Show();
+        }
+        await OnInitializedAsync();
+        StateHasChanged();
+
+    }
+
+    protected async void btnOfferDelete()
+    {
+        if (RowID_Offer.Value == 0)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Toast_Failed_SelectRow"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        else if (!string.IsNullOrEmpty(_Offer_ApprovedBy))
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Cant_Do_this_Operation"];
+            await this.Toast_Custom_Failed.Show();
+        }
+        else
+        {
+
+            await httpClient.DeleteAsync(Configuration.GetValue<string>("Api") + "/api/Services/Delete_Offer?Offer_HardCopyCode=" + RowID_HardCopyCode_Offer);
+            await OnInitializedAsync();
+            StateHasChanged();
+            await this.Toast_Success.Show();
+        }
+    }
+
+    public async void RowSeleced_Purchase_Invoices(RowSelectEventArgs<VM_Inv_Pre_Purchases> Args)
+    {
+        try
+        {
+            RowID_Invoice = Args.Data.HardCopyCode;
+            this.DataSource_Selected_PurchaseInvoice_Items = await httpClient.GetJsonAsync<List<VM_Inv_Pre_Purchases>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=select * From Inv_Pre_Purchases_api Where HardCopyCode ='" + RowID_Invoice + "'");
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            ToastContent = ex.Message;
+            await this.Toast_Custom_Failed.Show();
+        }
+    }
+
+    public async void RowSeleced_Done_Purchase_Invoices(RowSelectEventArgs<VM_Inv_GL> Args)
+    {
+        try
+        {
+            RowID_Done_Invoice = Args.Data.HardCopyCode;
+            this.DataSource_Selected_Done_PurchaseInvoice_Items = await httpClient.GetJsonAsync<List<VM_Inv_GL>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString=select * From Inv_GL Where HardCopyCode ='" + RowID_Done_Invoice + "' And Type='شراء' ");
+            this.DataSource_Selected_Done_PurchaseInvoice_Items.RemoveAll(a => a.Deleted_At != null);
+
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            ToastContent = ex.Message;
+            await this.Toast_Custom_Failed.Show();
+        }
+    }
+
+    protected async void btnBuyPurchaseInvoice()
+    {
+        //مراجعة البيانات ||
+
+        string _Custom_HardCopyCode = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/GetNextHardCopyCode?tbl=Inv_GL&Form=Inv_Pre_Purchases_api&Type=شراء");
+
+        if (RowID_Invoice == 0)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Toast_Failed_SelectRow"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+
+        if (grdPurchaseInvoice_Items.TotalItemCount == 0)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Cant_Do_this_Operation"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+
+        Ref_btnBuyPurchaseInvoice.Disabled = true;
+
+        //string _GL_ApprovedAt = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+
+        foreach (var item in grdPurchaseInvoice_Items.DataSource.ToList())
+        {
+            vM_Inv_GL.Type = "شراء";
+            vM_Inv_GL.The_User = User_Name;
+            vM_Inv_GL.Apporoved_By = User_Name;
+            vM_Inv_GL.Approved_At = TimeSatmp;
+            vM_Inv_GL.HardCopyCode = int.Parse(_Custom_HardCopyCode);
+            vM_Inv_GL.Document_ID = item.HardCopyCode.ToString();
+            vM_Inv_GL.ProccessID = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ProccessID");
+            vM_Inv_GL.The_Date = dePurchaseInvoice_SupplingDate;
+            vM_Inv_GL.DebitAccount = item.Inventory;
+            vM_Inv_GL.CreditAccount = item.Supplier;
+            vM_Inv_GL.To_Inventory = item.Inventory;
+            vM_Inv_GL.Auto_Statement = "عملية شراء رقم '" + _Custom_HardCopyCode + "' بناءا على أمر الشراء رقم '" + item.HardCopyCode + "'   من المورد '" + item.Supplier + "'  لعدد أصناف '" + item.Items_Count ;
+            vM_Inv_GL.Custom_Statement = txtPurchaseInvoice;
+            vM_Inv_GL.Item = item.Item;
+            vM_Inv_GL.Item_Unit = item.Unit;
+            vM_Inv_GL.Unit_Price = item.Unit_Price;
+            vM_Inv_GL.Unit_Vat = item.Unit_Vat;
+            vM_Inv_GL.Quantity = item.Quantity;
+            vM_Inv_GL.Item_Cost = item.Value;
+            vM_Inv_GL.Value = item.Value;
+            vM_Inv_GL.Currency = "ريال سعودي";
+            vM_Inv_GL.Item_Code = item.Item_Code;
+            // api Post (Insert)
+            await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Inv_GL_api", vM_Inv_GL);
+            SumVat = SumVat + item.Unit_Vat;
+            ReqPurchase_HardCopyCode = item.HardCopyCode.ToString();
+            ReqPurchase_Supplier = item.Supplier;
+        }
+        await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?QueryString=" + "Update Inv_Pre_Purchases_api set Purchased_By = '" + User_Name + "' , Purchased_At = getdate() where HardCopyCode = '" + RowID_Invoice + "'", vM_Pre_Purchases);
+        //---------------------------
+        //  عمل قيد جي إل ضرائب الأصناف
+
+        vM_Inv_GL2.Type = "ضرائب";
+        vM_Inv_GL2.The_User = User_Name;
+        vM_Inv_GL2.Apporoved_By = User_Name;
+        vM_Inv_GL2.Approved_At = TimeSatmp;
+        vM_Inv_GL2.HardCopyCode = int.Parse(_Custom_HardCopyCode);
+        vM_Inv_GL2.Document_ID = ReqPurchase_HardCopyCode;
+        vM_Inv_GL2.ProccessID = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ProccessID");
+        vM_Inv_GL2.The_Date = TimeSatmp;
+        vM_Inv_GL2.DebitAccount = "ضريبة القيمة المضافة";
+        vM_Inv_GL2.CreditAccount = ReqPurchase_Supplier;
+        vM_Inv_GL2.Auto_Statement = "عملية دفع ضريبة القيمة المضافة رقم '" + vM_Inv_GL.HardCopyCode + "' بناءا على طلب الشراء رقم '" + ReqPurchase_HardCopyCode + "'   من المورد '" + ReqPurchase_Supplier + "'  لعدد أصناف '" + grdPurchaseInvoice_Items.TotalItemCount + "'";
+        vM_Inv_GL2.Value = SumVat;
+        vM_Inv_GL2.Currency = "ريال سعودي";
+
+        // api Post (Insert)
+        await httpClient.PostJsonAsync(Configuration.GetValue<string>("Api") + "/api/Inv_GL_api", vM_Inv_GL2);
+        //---------------------------
+        await OnInitializedAsync();
+        StateHasChanged();
+        await this.Toast_Success.Show();
+    }
+
+    //async Task CheckPermissions(string Current_Button)
+    //{
+
+    //    try
+    //    {
+    //        Debug.WriteLine("AAAAAAAAAAAAA 111111111111111111");
+    //        string qqq = "";
+    //        qqq = "Current_User=" + "ccc" + "&Current_Page=" + "yyyyyyyyyyyy" + "&Current_Button=" + Current_Button;
+    //        Debug.WriteLine("++++++++++++++" + qqq);
+    //        string xxx = (await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/CheckPermissions?" + qqq)).ToString();
+    //        Debug.WriteLine("++++++++++++++" + xxx);
+    //        Allowed = Convert.ToBoolean(xxx);
+    //        //ToString heeeeeeeeeeeeeeeeeeee//
+    //        if (Allowed == false)
+    //        {
+    //            this.Toast_Custom_Failed.Content = languageContainer.Keys["Statment_IS_Empty"];
+    //            await this.Toast_Custom_Failed.Show();
+    //            return;
+    //        }
+    //    }
+    //    catch (Exception ex)
+    //    {
+
+    //        Debug.WriteLine("Error = " + ex.Message);
+    //    }
+    //}
+
+
+}

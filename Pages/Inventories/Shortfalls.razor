@@ -1,0 +1,386 @@
+﻿@page "/Shortfalls"
+@layout MainLayout_Inventory
+@inject HttpClient httpClient
+@inject NavigationManager UriHelper
+@inject IJSRuntime jsRuntime
+@inject IConfiguration Configuration
+
+@using AjaTech_Blazor.Data.ViewModels;
+@using System.Threading.Tasks;
+@using Microsoft.Extensions.Configuration;
+@using AjaTech_Blazor.Data.IServices;
+@using System.Diagnostics;
+
+<div class="col-lg-12 control-section">
+    <div class="content-wrapper">
+        <div class="row">
+            <SfTab ShowCloseButton="true">
+                <TabItems>
+                    @*=================================================================================================*@
+                    @*=========================================  كارتة صنف ===========================================*@
+                    <TabItem>
+                        <ChildContent>
+                            <TabHeader Text=@languageContainer.Keys["purchases_ItemCard"]></TabHeader>
+                        </ChildContent>
+                        <ContentTemplate>
+                            <div class="tab-content">
+                                <div class="col-lg-12 text-center font-weight-bold"
+                                     style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">
+                                    @languageContainer.Keys["purchases_ItemCard"]
+                                </div>
+                                @*<SfDropDownList ShowClearButton="true" @ref="txt_Supplier" AllowFiltering="true"
+                                                                      DataSource="DataSource_Accounts" TValue="string"
+                                                                      TItem="string" Placeholder='@languageContainer.Keys["Supplier"]' FloatLabelType="@FloatLabelType.Always">
+                                                          <DropDownListFieldSettings Text="Title" Value="Title"></DropDownListFieldSettings>
+                                                      </SfDropDownList>
+                                                      SfDropDownList<string, string> txt_Supplier, txt_Inventory;
+                                                      DataSource_Accounts = new List<string>();
+                                    DataSource_Accounts = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select Title From Def_Accounts_api where Type='مورد'&Required_Field=Title");
+                                *@
+                                <div class="col-lg-6 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                                    <SfDropDownList @ref="cmbItems" ValueChanged="ItemSelected" AllowFiltering="true"
+                                                    DataSource="Item_Title_Ar" TValue="string"
+                                                    TItem="string" Placeholder='@languageContainer.Keys["Change_Item"]' FloatLabelType="@FloatLabelType.Always">
+                                        <DropDownListFieldSettings Text="string" Value="string"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                </div>
+                                <SfGrid @ref="grdItemCard" EnableRtl="true" DataSource="itemCard" AllowFiltering="true" AllowSorting="true"
+                                        AllowPdfExport="true" AllowReordering="true" AllowTextWrap="true" ShowColumnChooser="true"
+                                        AllowResizing="true" Width="100%" AllowPaging="true">
+                                    @*<GridEditSettings AllowAdding="true" AllowEditOnDblClick="true"
+                                        ShowDeleteConfirmDialog="true" ShowConfirmDialog="true"
+                                        AllowEditing="true" AllowDeleting="true"
+                                        Mode="@Syncfusion.Blazor.Grids.EditMode.Normal"></GridEditSettings>*@
+                                    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                                    <GridEvents OnToolbarClick="SaveForPrinting" TValue="ItemCard"></GridEvents>
+                                    <GridColumns>
+                                        <GridColumn Field=@nameof(ItemCard.ID) Visible="false" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(ItemCard.HardCopyCode) HeaderText="@languageContainer.Keys["HardCopyCode"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(ItemCard.Type) HeaderText="@languageContainer.Keys["Type"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                        <GridColumn Field=@nameof(ItemCard.The_User) HeaderText="@languageContainer.Keys["Employees_User_Name"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(ItemCard.The_Date ) HeaderText="@languageContainer.Keys["Date"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                        <GridColumn Field=@nameof(ItemCard.DebitAccount) HeaderText="@languageContainer.Keys["Debit"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(ItemCard.CreditAccount) HeaderText="@languageContainer.Keys["Credit"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(ItemCard.TO_Quantity) HeaderText="@languageContainer.Keys["Quantity"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        @*<GridColumn Field=@nameof(ItemCard.From_Quantity) HeaderText="@languageContainer.Keys["From_Quantity"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>*@
+                                        @*<GridColumn Field=@nameof(ItemCard.Balance) HeaderText="@languageContainer.Keys["Balance"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>*@
+                                        <GridColumn Visible="@ItemCardColumnVisibility" Field=@nameof(ItemCard.Unit_Price) HeaderText="@languageContainer.Keys["Unit_Price"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Visible="@ItemCardColumnVisibility" Field=@nameof(ItemCard.In_Value) HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        @*<GridColumn Visible="@ItemCardColumnVisibility" Field=@nameof(ItemCard.Out_Value) HeaderText="@languageContainer.Keys["From_Value"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>*@
+                                        @*<GridColumn Visible="@ItemCardColumnVisibility" Field=@nameof(ItemCard.Total) HeaderText="@languageContainer.Keys["Total_Value"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>*@
+                                        @*<GridColumn Field=@nameof(ItemCard.BatchNumber) HeaderText="@languageContainer.Keys["BatchNumber"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>*@
+                                        @*<GridColumn Field=@nameof(ItemCard.Validation_Date) HeaderText="@languageContainer.Keys["ValidationDate"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>*@
+                                        <GridColumn Field=@nameof(ItemCard.Custom_Statement) HeaderText="@languageContainer.Keys["Statement"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                    </GridColumns>
+                                </SfGrid>
+                                @*--------------------------------------------------  Buttons  -----------------------------------------------------*@
+                                <div class="col-lg-12 control-section form-group m-3">
+                                    <div class="row">
+
+                                        <div class="col-lg-4"></div>
+                                        @* زر طباعة العرض *@
+                                        <SfButton OnClick="btn_Print" CssClass="col-lg-4 e-btn font-weight-bold e-normal e-primary" IconCss="e-icons e-print-icon">. @languageContainer.Keys["Print"]</SfButton>
+                                        <div class="col-lg-4"></div>
+
+                                    </div>
+                                </div>
+
+                                @*------------------------------------------------------------------------------------------------------------------*@
+                            </div>
+                        </ContentTemplate>
+                    </TabItem>
+                    @*=================================================================================================*@
+                    @*=================================================================================================*@
+                    @*=========================================  أصناف قاربت النفاذ==================================*@
+                    <TabItem>
+                        <ChildContent>
+                            <TabHeader Text="@languageContainer.Keys["purchases_Shortfalls"]"></TabHeader>
+                        </ChildContent>
+                        <ContentTemplate>
+                            <div class="tab-content">
+                                <div class="col-lg-12 text-center font-weight-bold"
+                                     style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">
+                                    @languageContainer.Keys["purchases_Shortfalls"]
+                                </div>
+                                <SfGrid @ref="The_Grid" EnableRtl="true" DataSource="vM_ItemBasicData" AllowFiltering="true" AllowSorting="true"
+                                        AllowPdfExport="true" AllowReordering="true" AllowTextWrap="true" ShowColumnChooser="true"
+                                        AllowResizing="true" Width="100%" AllowPaging="true"
+                                        Toolbar="@(new string[] { @languageContainer.Keys["Print"], "ColumnChooser", "Search" })">
+                                    @*<GridEditSettings AllowAdding="true" AllowEditOnDblClick="true"
+                                        ShowDeleteConfirmDialog="true" ShowConfirmDialog="true"
+                                        AllowEditing="true" AllowDeleting="true"
+                                        Mode="@Syncfusion.Blazor.Grids.EditMode.Normal"></GridEditSettings>*@
+                                    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                                    <GridEvents OnToolbarClick="SaveForPrinting" TValue="VM_ItemBasicData"></GridEvents>
+                                    <GridColumns>
+                                        <GridColumn Field=@nameof(VM_ItemBasicData.ID) HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(VM_ItemBasicData.Item) HeaderText="@languageContainer.Keys["Item"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(VM_ItemBasicData.Item_Code) HeaderText="@languageContainer.Keys["Items_Item_Code"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(VM_ItemBasicData.Item_Group) HeaderText="@languageContainer.Keys["Items_Item_Group"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                        <GridColumn Field=@nameof(VM_ItemBasicData.Item_Unit) HeaderText="@languageContainer.Keys["Unit"]" TextAlign="TextAlign.Center" Width="150"></GridColumn>
+                                        <GridColumn Field=@nameof(VM_ItemBasicData.Last_In_Date) HeaderText="@languageContainer.Keys["Last_In_Date"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(VM_ItemBasicData.Last_In_Quantity) HeaderText="@languageContainer.Keys["Last_In_Quantity"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(VM_ItemBasicData.Last_In_Unit_Price) HeaderText="@languageContainer.Keys["Last_In_Unit_Price"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(VM_ItemBasicData.Current_Quantity) HeaderText="@languageContainer.Keys["Current_Quantity"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(VM_ItemBasicData.Seeked_Quantity) HeaderText="@languageContainer.Keys["Seeked_Quantity"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(VM_ItemBasicData.To_Inventory_Minimum_Stock) HeaderText="@languageContainer.Keys["To_Inventory_Minimum_Stock"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(VM_ItemBasicData.To_Inventory_Maximum_Stock) HeaderText="@languageContainer.Keys["To_Inventory_Maximum_Stock"]" TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                                    </GridColumns>
+                                </SfGrid>
+                            </div>
+                            @*========================================= / Tab   ========================================================*@
+                        </ContentTemplate>
+                    </TabItem>
+                    @*=================================================================================================*@
+                </TabItems>
+            </SfTab>
+        </div>
+    </div>
+</div>
+
+@*----------------------------------------------------------------------------------------------------------------------*@
+@*----------------------------------------------------------------------------------------------------------------------*@
+
+@code {
+
+    #region Glabal Varuiables
+    string Url_Parm, ToastContent, Url_Items;
+    string QueryString;
+    SfGrid<VM_ItemBasicData> The_Grid;
+    SfGrid<ItemCard> grdItemCard;
+    //List<string> DataSource_Items=new List<string>();
+    SfDropDownList<string, string> cmbItems;
+    List<VM_ItemBasicData> vM_ItemBasicData = new List<VM_ItemBasicData>();
+    List<ItemCard> itemCard = new List<ItemCard>();
+    //List<String> The_Items = new List<String>();
+    List<string> Item_Title_Ar;
+    //Permissions Permissions_Obj = new Permissions();
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+
+    string User_Name;
+    string Full_Name;
+    bool ItemCardColumnVisibility = true;
+
+    class ItemCard
+    {
+        public int ID { get; set; }
+        public string The_User { get; set; }
+        public int HardCopyCode { get; set; }
+        public string The_Date { get; set; }
+        public string Type { get; set; }
+        public string DebitAccount { get; set; }
+        public string CreditAccount { get; set; }
+        public Double TO_Quantity { get; set; }
+        public Double From_Quantity { get; set; }
+        public string Balance { get; set; }
+        public Double Unit_Price { get; set; }
+        public Double In_Value { get; set; }
+        public Double Out_Value { get; set; }
+        public Double Total { get; set; }
+        public string BatchNumber { get; set; }
+        public string Validation_Date { get; set; }
+        public string Custom_Statement { get; set; }
+    }
+
+    #endregion
+
+    protected override async Task OnInitializedAsync()
+    {
+        //int tmp = 0;
+        try
+        {
+            Item_Title_Ar = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=Select Item_Title_Ar From Def_items_Api&Required_Field=Item_Title_Ar");
+            for (int Counter = 0; Counter < Item_Title_Ar.Count; Counter++)
+            {
+                //tmp = Counter;
+                //System.Diagnostics.Debug.Write(Counter + ":" + Item_Title_Ar[Counter]);
+                vM_ItemBasicData.Add(await httpClient.GetJsonAsync<VM_ItemBasicData>(Configuration.GetValue<string>("Api") + "/api/Services/ReadItemBasicData?Item_Title_Ar=" + Item_Title_Ar[Counter]));
+            }
+            vM_ItemBasicData = vM_ItemBasicData.OrderByDescending(x => x.Seeked_Quantity).ToList();
+            StateHasChanged();
+            The_Grid.Refresh();
+
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("Exception >> " + ex.Message);
+        }
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        //Permissions_Obj = await sessionStorage.GetItemAsync<Permissions>("Permissions");
+        //User_Name = Permissions_Obj.UserName;
+        //Full_Name = Permissions_Obj.Full_Name;
+        /////////////////////////////////////////
+        //--Get User Data
+        var user = (await AuthStat).User;
+        User_Name = user.Identity.Name;
+        Full_Name = user.Identity.Name;
+        /////////////////////////////////////////
+
+        //await jsRuntime.InvokeAsync<string>("console.log", "Query  >> " + Full_Name);
+        Url_Parm = Configuration.GetValue<string>("Reports") + "/Print/Reports_Items_Shortfalls_Form.aspx" + "?The_Footer=" + Full_Name + "&Signature=" + User_Name;
+        //Print
+
+    }
+
+    protected async Task ItemSelected()
+    {
+        try
+        {
+            //Debug.WriteLine("**********************" + cmbItems.Value + " * " + cmbItems.Text + "******************");
+            string QueryString = "/api/Services/GetItemCard?Item_Title_Ar=" + cmbItems.Text;
+            itemCard = await httpClient.GetJsonAsync<List<ItemCard>>(Configuration.GetValue<string>("Api") + QueryString);
+            StateHasChanged();
+
+            //Debug.WriteLine("******************************************************");
+            //Debug.WriteLine("******************************************************");
+            foreach (var roro in grdItemCard.DataSource.ToList())
+            {
+                roro.The_Date = Convert.ToDateTime(roro.The_Date).ToString("d/M/yyyy");
+                //Debug.Write(roro.The_Date + ",");
+                //Debug.Write(roro.Balance + ",");
+                //Debug.Write(roro.DebitAccount + ",");
+                //Debug.Write(roro.CreditAccount + ",");
+                //Debug.Write(roro.TO_Quantity + ",");
+                //Debug.Write(roro.From_Quantity + ",");
+                //Debug.WriteLine("");
+                //Debug.WriteLine("******************************************************");
+            }
+            //Debug.WriteLine("******************************************************");
+            //Debug.WriteLine("******************************************************");
+            //  foreach (var roro in itemCard.ToList())
+            //   {
+            //Debug.Write(roro.ID + ",");
+            //Debug.Write(roro.Balance + ",");
+            //Debug.Write(roro.DebitAccount + ",");
+            //Debug.Write(roro.CreditAccount + ",");
+            //Debug.Write(roro.TO_Quantity + ",");
+            //Debug.Write(roro.From_Quantity + ",");
+            //Debug.WriteLine("");
+            //Debug.WriteLine("******************************************************");
+            //}
+            //Debug.WriteLine("////////////////////////////////////////////////////////////////////");
+
+            //await jsRuntime.InvokeAsync<string>("console.log", "QueryString >> " + QueryString);
+
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("Error >>> " + ex.Message);
+        }
+    }
+
+    protected async void SaveForPrinting(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+    {
+        string The_QueryString = "";
+        List<VM_ItemBasicData> vM_ItemBasicData = new List<VM_ItemBasicData>();
+        DateTime tmp = new DateTime();
+        //-----------------------------
+        if (args.Item.Text != @languageContainer.Keys["Print"])
+        {
+            return;
+        }
+        vM_ItemBasicData = The_Grid.DataSource.ToList();
+        The_QueryString = "QueryString=Delete From Printing_Items_Shortfalls";
+        await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?" + The_QueryString, vM_ItemBasicData);
+
+        for (int Counter = 0; Counter < vM_ItemBasicData.Count; Counter++)
+        {
+            The_QueryString = "";
+            The_QueryString = The_QueryString + "INSERT INTO [dbo].[Printing_Items_Shortfalls]([ID],[Item],[Item_Code],[Item_Group]";
+            The_QueryString = The_QueryString + ",[Item_Unit],[To_Inventory_Inventory],[Is_Service],[To_Inventory_Minimum_Stock]";
+            The_QueryString = The_QueryString + ",[To_Inventory_Maximum_Stock],[Quantity_In],[Quantity_Out],[Current_Quantity]";
+            The_QueryString = The_QueryString + ",[Seeked_Quantity],[Last_In_Date],[Last_In_Type],[Last_In_User],[Last_In_Quantity]";
+            The_QueryString = The_QueryString + ",[Last_In_Unit_Price],[Last_Out_Date],[Last_Out_Type],[Last_Out_User],[Last_Out_Quantity]";
+            The_QueryString = The_QueryString + ",[Last_Out_Unit_Price],[Value_In],[Value_Out],[Current_Value],[Sales_Profit_Absolute],[Sales_Profit_Percentage]) VALUES ";
+            The_QueryString = The_QueryString + "('" + vM_ItemBasicData[Counter].ID + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Item + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Item_Code + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Item_Group + "',";
+
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Item_Unit + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].To_Inventory_Inventory + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Is_Service + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].To_Inventory_Minimum_Stock + "',";
+
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].To_Inventory_Maximum_Stock + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Quantity_In + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Quantity_Out + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Current_Quantity + "',";
+
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Seeked_Quantity + "',";
+            //Debug.WriteLine("@@@@@@@" + vM_ItemBasicData[Counter].Last_In_Date);
+            if (string.IsNullOrEmpty(vM_ItemBasicData[Counter].Last_In_Date) == false)
+            {
+                The_QueryString = The_QueryString + "'" + Convert.ToDateTime(vM_ItemBasicData[Counter].Last_In_Date).ToString("dd/MM/yyyy") + "',";
+                //Debug.WriteLine("********" + Convert.ToDateTime(vM_ItemBasicData[Counter].Last_In_Date).ToString("dd/MM/yyyy"));
+            }
+            else
+            {
+                The_QueryString = The_QueryString + "'" + "" + "',";
+            }
+            //The_QueryString = The_QueryString + "'" + (vM_ItemBasicData[Counter].Last_In_Date) + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Last_In_Type + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Last_In_User + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Last_In_Quantity + "',";
+
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Last_In_Unit_Price + "',";
+            if (string.IsNullOrEmpty(vM_ItemBasicData[Counter].Last_Out_Date) == false)
+            {
+                The_QueryString = The_QueryString + "'" + Convert.ToDateTime(vM_ItemBasicData[Counter].Last_Out_Date).ToString("dd/MM/yyyy") + "',";
+            }
+            else
+            {
+                The_QueryString = The_QueryString + "'" + "" + "',";
+            }
+            //The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Last_Out_Date + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Last_Out_Type + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Last_Out_User + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Last_Out_Quantity + "',";
+
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Last_Out_Unit_Price + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Value_In + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Value_Out + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Current_Value + "',";
+
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Sales_Profit_Absolute + "',";
+            The_QueryString = The_QueryString + "'" + vM_ItemBasicData[Counter].Sales_Profit_Percentage + "')";
+            The_QueryString = "QueryString=" + The_QueryString;
+            await httpClient.PutJsonAsync(Configuration.GetValue<string>("Api") + "/api/Services/UpdateField?" + The_QueryString, vM_ItemBasicData);
+        }
+        Url_Parm = Configuration.GetValue<string>("Reports") + "/Print/Reports_Items_Shortfalls_Form.aspx" + "?The_Footer=" + Full_Name + "&Signature=" + User_Name;
+        //UriHelper.NavigateTo(Url_Parm);
+        await jsRuntime.InvokeAsync<object>("open", new TimeSpan(1, 1, 1), Url_Parm, "_blank");
+
+    }
+    SfToast Toast_Custom_Failed;
+
+    // زر الطباعة
+    public async void btn_Print()
+    {
+        if (string.IsNullOrEmpty(cmbItems.Text))
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Change_Item"];
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        else
+        {
+            Url_Items = Configuration.GetValue<string>("Reports") + "/Print/Reports_ItemCard.aspx" + "?The_Footer=" + User_Name + "&Signature=" + User_Name + "&P_Item=" + cmbItems.Text.ToString();
+
+            await jsRuntime.InvokeAsync<object>("open", new TimeSpan(1, 1, 1), Url_Items, "_blank");
+        }
+    }
+}
+
+@*========================================= Toast Custom   Code ============================================================*@
+<SfToast ID="Failed_Id_Custom" @ref="Toast_Custom_Failed"
+         TimeOut="5000" Icon="e-error toast-icons" CssClass="e-toast-danger"
+         Title="@languageContainer.Keys["Toast_Title_Failed"]"
+         Content="@ToastContent">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*========================================= / Toast Custom   Code ==========================================================*@

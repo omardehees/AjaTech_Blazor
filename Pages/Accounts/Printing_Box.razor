@@ -1,0 +1,341 @@
+﻿@page "/Printing_Box"
+@layout MainLayout_Accounts
+
+@using AjaTech_Blazor.Data.ViewModels;
+@using Microsoft.Extensions.Configuration;
+
+@inject HttpClient httpClient
+@inject NavigationManager UriHelper
+@inject IJSRuntime jsRuntime
+@inject IConfiguration Configuration
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@*-------------------------------------------------------------------------------------------------------------------------*@
+
+<div class="container card-container">
+    <div class="row">
+        @*=========================================   Page Content Interface ===============================================*@
+
+        @*------------------------------------------  تصفية علي قيد دفع/قبض نقدي    -------------------------------------*@
+        <div class="col-lg-12 control-section">
+            <div class="content-wrapper">
+                <div class="row" style="direction:@languageContainer.Keys["Text_Direction"]">
+                    @*----------------------------------------------------------------------------------------------------------------*@
+                    <div class="col-lg-12 text-center font-weight-bold" style="border:#e8e11f 1px solid;background-color:#868218;color:white;margin-top:20px;font-size:x-large;border-radius:5px">@languageContainer.Keys["Account_Statement"]</div>
+                    @*----------------------------------------------------------------------------------------------------------------*@
+
+                    <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDatePicker @bind-Value="de_From_date" TValue="DateTime" Format="d/M/yyyy" Placeholder='@languageContainer.Keys["From_Date"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfDatePicker>
+                    </div>
+
+                    <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDatePicker @bind-Value="de_To_date" TValue="DateTime" Format="d/M/yyyy" Placeholder='@languageContainer.Keys["To_Date"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfDatePicker>
+                    </div>
+
+                    <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" @ref="cmb_EntryType" AllowFiltering="true" CssClass="pr-1 pl-1"
+                                        DataSource="DataSource_Entry_Type" TValue="string"
+                                        TItem="string" Placeholder='@languageContainer.Keys["Entry_Type"]'
+                                        FloatLabelType="@FloatLabelType.Always">
+                            <DropDownListFieldSettings Text="Type" Value="Type"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+
+                    <div class="col-lg-2 font-weight-bold form-group" style="margin-top:auto">
+                        <SfCheckBox @bind-Checked="chk_Items" CssClass="font-weight-bold" Label="@languageContainer.Keys["Visible_Iem"]"></SfCheckBox>
+                    </div>
+
+                    <div class="col-lg-4 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" @ref="cmb_Account" AllowFiltering="true" DataSource="DataSource_Account" TValue="string" CssClass="pr-1 pl-1"
+                                        TItem="string" Placeholder='@languageContainer.Keys["account"]' FloatLabelType="@FloatLabelType.Always">
+                            <DropDownListFieldSettings Text="HardCopyCode" Value="HardCopyCode"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+
+                    @*نوع التعاقد *@
+                    <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" ValueChanged="Changed_ContractType" @ref="cmb_ContractType" AllowFiltering="true" CssClass="pr-1 pl-1"
+                                        DataSource="DataSource_ContractType" TValue="string"
+                                        TItem="string" Placeholder='@languageContainer.Keys["Contract_Type"]'
+                                        FloatLabelType="@FloatLabelType.Always">
+                        </SfDropDownList>
+                    </div>
+                    @*كود التعاقد *@
+                    <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfDropDownList ShowClearButton="true" @ref="cmb_ContractCode" AllowFiltering="true" CssClass="pr-1 pl-1"
+                                        DataSource="DataSource_ContractCode" TValue="string"
+                                        TItem="string" Placeholder='@languageContainer.Keys["Contract_Code"]'
+                                        FloatLabelType="@FloatLabelType.Always">
+                        </SfDropDownList>
+                    </div>
+
+                    <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @ref="txtStatment" Placeholder='@languageContainer.Keys["Statement_Includ"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+                    <div class="col-lg-2 font-weight-bold form-group" style="text-align:@languageContainer.Keys["Style_Text_Align"]">
+                        <SfTextBox @ref="txtAddress" Placeholder='@languageContainer.Keys["Account_Statement_Address"]' FloatLabelType="@FloatLabelType.Always" CssClass='form-control'></SfTextBox>
+                    </div>
+
+                    <div class="col-lg-2 font-weight-bold form-group" style="margin-top:auto">
+                        <SfButton Type="button" OnClick="View_DataSource" CssClass="e-btn e-normal e-warning form-control font-weight-bold">@languageContainer.Keys["View"]</SfButton>
+                    </div>
+                    <div class="col-lg-2  form-group " style="margin-top:auto">
+                        <SfButton @onclick="PrintRep" Type="button" CssClass="e-btn f e-normal e-primary form-control font-weight-bold" IconCss="e-icons e-print-icon">. @languageContainer.Keys["Print"]</SfButton>
+                    </div>
+
+
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-8 font-weight-bold ">
+                        <SfTextBox @ref="txtAddress_Lable" Enabled="false" FloatLabelType="@FloatLabelType.Always" CssClass="text-center font-weight-bold"></SfTextBox>
+                    </div>
+                    <div class="col-lg-2"></div>
+
+
+                    @*---------------------------------------------------------------------------------------------------------------------------*@
+
+                </div>
+            </div>
+        </div>
+        @*------------------------------------------/ تصفية علي قيد دفع/قبض نقدي    -------------------------------------*@
+
+        @*------------------------------------------  شبكةعرض دفع/قبض نقدي    --------------------------------------------*@
+        <div class="col-lg-12 control-section">
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-lg-12 text-center font-weight-bold" style="border:gray 1px solid;background-color:#1b809e;margin-top:20px;font-size:x-large;border-radius:5px;color:white">@languageContainer.Keys["Account_Statement_Items"]</div>
+                    <SfGrid @ref="grdEntry" DataSource="DataSource_grdEntry" EnableRtl="true" AllowResizing="true" Width="100%" AllowPaging="true" Toolbar="@(new string[] { "Search", "Print" })">
+                        @*<GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>--- AllowFiltering="true" ---*@
+                        <GridColumns>
+                            <GridColumn Field="@nameof(VM_Inv_GL.ID)" Visible="false" IsPrimaryKey="true" IsIdentity="true" DefaultValue="1" HeaderText="@languageContainer.Keys["ID"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_GL.HardCopyCode)" Visible="false" HeaderText="@languageContainer.Keys["Entry_Code"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_GL.The_Date)" EditType="EditType.DatePickerEdit" Format="d/M/yyyy" Type="ColumnType.DateTime" HeaderText="@languageContainer.Keys["Date"]" TextAlign="TextAlign.Center" Width="120"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_GL.Type)" HeaderText="@languageContainer.Keys["Entry_Type"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_GL.CreditAccount)" HeaderText="@languageContainer.Keys["Credit"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_GL.DebitAccount)" HeaderText="@languageContainer.Keys["Debit"]" TextAlign="TextAlign.Center"></GridColumn>
+
+                            <GridColumn Field="@nameof(VM_Inv_GL.Item)" Visible="Visible_Item" HeaderText="@languageContainer.Keys["Item"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_GL.Quantity)" Visible="Visible_Item" HeaderText="@languageContainer.Keys["Quantity"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_GL.Item_Unit)" Visible="Visible_Item" HeaderText="@languageContainer.Keys["Unit"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_GL.Unit_Price)" Visible="Visible_Item" HeaderText="@languageContainer.Keys["Unit_Price"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_GL.Unit_Vat)" Visible="Visible_Item" HeaderText="@languageContainer.Keys["Items_VAT"]" TextAlign="TextAlign.Center"></GridColumn>
+
+                            <GridColumn Field="@nameof(VM_Inv_GL.Value)" HeaderText="@languageContainer.Keys["Value"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_GL.Contract_Type)" HeaderText="@languageContainer.Keys["Contract_Type"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_GL.Contract_Code)" HeaderText="@languageContainer.Keys["Contract_Code"]" TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field="@nameof(VM_Inv_GL.Auto_Statement)" HeaderText="@languageContainer.Keys["Statement"]" TextAlign="TextAlign.Center"></GridColumn>
+                        </GridColumns>
+                    </SfGrid>
+                </div>
+            </div>
+        </div>
+        @*------------------------------------------  شبكة عرض دفع/قبض نقدي    -------------------------------------------*@
+
+        @*========================================= / Page Content Interface ================================================*@
+    </div>
+</div>
+
+
+@*============================================    Toast   ===================================================================*@
+<SfToast ID="Failed_Id_Custom" @ref="Toast_Custom_Failed"
+         TimeOut="5000" Icon="e-error toast-icons" CssClass="e-toast-danger"
+         Title="@languageContainer.Keys["Toast_Title_Failed"]"
+         Content="@ToastContent">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+@*============================================  / Toast   ===================================================================*@
+
+
+@*===========================================================================================================================*@
+@*====================================================   Code  ==============================================================*@
+@*===========================================================================================================================*@
+
+@code {
+
+    // المتغيرات
+    #region
+
+    bool chk_Items = false, Visible_Item = false;
+    string ToastContent = "", UserName, QueryString, Url_Parm;
+    DateTime de_From_date = DateTime.Now, de_To_date = DateTime.Now;
+    SfDropDownList<string, string> cmb_Account, cmb_EntryType, cmb_ContractType, cmb_ContractCode;
+    SfTextBox txtStatment, txtAddress, txtAddress_Lable;
+    SfGrid<VM_Inv_GL> grdEntry;
+    SfToast Toast_Custom_Failed;
+
+    List<string> DataSource_Account, DataSource_ContractCode, DataSource_Entry_Type = new List<string>();
+    List<string> DataSource_ContractType = new List<string>();
+    List<VM_Inv_GL> DataSource_grdEntry = new List<VM_Inv_GL>();
+    Permissions Permissions_Obj = new Permissions();
+    VM_Inv_GL vM_Inv_GL = new VM_Inv_GL();
+
+    #endregion
+
+    //تهيئة الصفحة
+    protected override async Task OnInitializedAsync()
+    {
+        DataSource_ContractType.Add("تركيبات");
+        DataSource_ContractType.Add("صيانة");
+
+        DataSource_Account = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString= select Title FROM [AjaTech].[dbo].[Def_Accounts_api] where title not in (select parentaccount from [Def_Accounts_api] ) &Required_Field=Title");
+        //DataSource_AccountType = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=select Type from Def_Accounts_api group by Type  order by Type desc&Required_Field=Type");
+        DataSource_Entry_Type = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=select Type from Inv_GL group by Type&Required_Field=Type");
+    }
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        //Permissions_Obj = await sessionStorage.GetItemAsync<Permissions>("Permissions");
+        //UserName = Permissions_Obj.UserName;
+
+        var user = (await AuthStat).User;
+        UserName = user.Identity.Name;
+
+    }
+
+    // الفلترة والعرض
+    protected async void View_DataSource()
+    {
+        try
+        {
+            //     ظهور بيانات الصنف********************************************
+
+            if (chk_Items == true)
+            {
+                Visible_Item = true;
+            }
+            else
+            {
+                Visible_Item = false;
+            }
+
+
+            //**********************************************************************
+
+            if (string.IsNullOrEmpty(cmb_Account.Text))
+            {
+                this.Toast_Custom_Failed.Content = languageContainer.Keys["account"] + languageContainer.Keys["Empty"];
+                await this.Toast_Custom_Failed.Show();
+                return;
+            }
+
+            string QueryString = "select * From Inv_GL Where 1=1 ";
+
+            if (!string.IsNullOrEmpty(de_From_date.ToString()))
+            {
+                QueryString = QueryString + " and The_Date >= '" + de_From_date.ToString("yyyy/MM/dd") + "' ";
+            }
+
+            if (!string.IsNullOrEmpty(de_To_date.ToString()))
+            {
+                QueryString = QueryString + " and The_Date <= '" + de_To_date.ToString("yyyy/MM/dd") + "' ";
+            }
+
+            if (!string.IsNullOrEmpty(cmb_EntryType.Value))
+            {
+                QueryString = QueryString + " and Type = '" + cmb_EntryType.Value + "' ";
+            }
+
+            if (!string.IsNullOrEmpty(cmb_Account.Value))
+            {
+                QueryString = QueryString + " and (CreditAccount = '" + cmb_Account.Value + "' or DebitAccount = '" + cmb_Account.Value + "') ";
+            }
+
+            if (!string.IsNullOrEmpty(cmb_ContractType.Value))
+            {
+                QueryString = QueryString + " and  Contract_Type = '" + cmb_ContractType.Value + "' ";
+            }
+
+            if (!string.IsNullOrEmpty(cmb_ContractCode.Value))
+            {
+                QueryString = QueryString + " and  Contract_Code = '" + cmb_ContractCode.Value + "' ";
+            }
+
+            if (!string.IsNullOrEmpty(txtStatment.Value))
+            {
+                QueryString = QueryString + " and Auto_Statement like '%" + txtStatment.Value + "%' ";
+            }
+            string Lable_Content = " نشاط حساب ";
+            // Address
+            if (!string.IsNullOrEmpty(txtAddress.Value))
+            {
+                if (de_From_date.Date == de_To_date.Date)
+                {
+                    Lable_Content = Lable_Content + txtAddress.Value + "  يوم : " + de_To_date.ToString("d/M/yyyy");
+                }
+                if (de_From_date.Date != de_To_date.Date)
+                {
+                    Lable_Content = Lable_Content + txtAddress.Value + "  من يوم : " + de_From_date.ToString("d/M/yyyy") + "  إلي يوم : " + de_To_date.ToString("d/M/yyyy");
+                }
+                txtAddress_Lable.Value = Lable_Content;
+            }
+
+            if (string.IsNullOrEmpty(txtAddress.Value))
+            {
+
+                if (!string.IsNullOrEmpty(cmb_Account.Value))
+                {
+                    Lable_Content = Lable_Content + " : " + cmb_Account.Value;
+                }
+                if (!string.IsNullOrEmpty(cmb_EntryType.Value))
+                {
+                    Lable_Content = Lable_Content + " عن قيد : " + cmb_EntryType.Value;
+                }
+                if (!string.IsNullOrEmpty(cmb_ContractCode.Value))
+                {
+                    Lable_Content = Lable_Content + "  عن تعاقد : " + cmb_ContractType.Value + "  رقم : " + cmb_ContractCode.Value;
+                }
+                if (de_From_date.Date == de_To_date.Date)
+                {
+                    Lable_Content = Lable_Content + txtAddress.Value + "  يوم : " + de_To_date.ToString("d/M/yyyy");
+                }
+                if (de_From_date.Date != de_To_date.Date)
+                {
+                    Lable_Content = Lable_Content + txtAddress.Value + "  من يوم : " + de_From_date.ToString("d/M/yyyy") + "  إلي يوم : " + de_To_date.ToString("d/M/yyyy");
+                }
+
+                txtAddress_Lable.Value = Lable_Content;
+            }
+
+            //await jsRuntime.InvokeAsync<string>("console.log", " " + QueryString);
+            //System.Diagnostics.Debug.WriteLine(">> " + QueryString);
+            Url_Parm = Configuration.GetValue<string>("Reports") + "/Print/ReportAccountStatement_Forrm.aspx" + "?P_Querystring=" + QueryString + "&P_Report_Address=" + Lable_Content + "&P_User=" + UserName;
+
+
+            DataSource_grdEntry = await httpClient.GetJsonAsync<List<VM_Inv_GL>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadTable?QueryString= " + QueryString);
+
+            StateHasChanged();
+
+        }
+        catch (Exception ex)
+        {
+
+            System.Diagnostics.Debug.WriteLine("Exception >> " + ex.Message);
+        }
+    }
+
+    // جلب كود التعاقد
+    protected async void Changed_ContractType()
+    {
+        if (cmb_ContractType.Text == "تركيبات")
+        {
+            this.DataSource_ContractCode = await httpClient.GetJsonAsync<List<string>>(Configuration.GetValue<string>("Api") + "/api/Services/ReadColumn?QueryString=" + "select HardCopyCode From Inv_Contracts &Required_Field=HardCopyCode");
+        }
+        StateHasChanged();
+    }
+
+    // الطباعة
+    private async void PrintRep()
+    {
+        if (grdEntry.TotalItemCount == 0)
+        {
+            this.Toast_Custom_Failed.Content = languageContainer.Keys["Not_Found_Result_Search"] ;
+            await this.Toast_Custom_Failed.Show();
+            return;
+        }
+        else
+        {
+            await jsRuntime.InvokeAsync<object>("open", new TimeSpan(1,1,1), Url_Parm, "_blank");
+        }
+    }
+
+}

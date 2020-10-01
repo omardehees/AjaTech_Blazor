@@ -1,0 +1,668 @@
+﻿Admin : Admin
+login_ajatech : AjaTech
+login_logout : LogOut
+login_login : LogIn
+login_password : Password
+login_username : UserName
+login_remember : Remember 
+login_textalign : left
+login_direction : ltr
+login_language : عربي
+login_pic : css/Images/logo.jpg
+login_forget_btn : forget login data
+logIn_invalid_login_toast_title : Invalid LogIn
+logIn_invalid_login_toast_content : Can not log in using supplied credentials . Try logged.
+forget_header : To Retrieve Login Data
+forget_emai : Email
+sent : Sent
+cancel : Cancel
+Edit : Edit
+Save : Save
+Clear : Clear
+Add : Add
+Delete : Delete
+
+Def_Enabled : Enabled
+Def_Archived : Archived
+Def_Deleted : Deleted
+Def_Notes : Notes
+Def_Activity : Activity
+Def_Image : Image
+Def_Description : Description
+Def_Title_Ar : Title-Ar
+Def_Title_En : Title-En
+
+read_more : Read More
+sales : Sales
+inventories : Inventories
+accounts : accounts
+account : account
+manufacturing : manufacturing
+treasury : treasry
+maintenance_and_warranty : Maintenance And Warranty
+reports : Reports
+inventory: Inventory
+Settings : Setting
+index_Control_Panel_Card : css/Images/Logo_Color_Small.jpg
+index_Card_summery : Module functionality summary
+menu_page_Title : Application Menu
+help_support : help_support
+Text_Align : text-left
+Text_Direction : ltr
+Style_Text_Align : left
+
+Company_HeadOffice_AR : Head Office-AR
+Company_HeadOffice_EN : Head Office-EN
+Company_Factory_AR : Factory-AR
+Company_Factory_EN : Factory-EN
+Company_Inventory_AR : Inventory-AR
+Company_Inventory_EN : Inventory-EN
+
+Company_Mobile_A : Mobile-A
+Company_Mobile_B : Mobile-B
+Company_Mobile_C : Mobile-C
+Company_Mobile_D : Mobile-D
+Company_Phone_A : Phone-A
+Company_Phone_B : Phone-B
+Company_Phone_C : Phone-C
+Company_Phone_D : Phone-D
+Company_Suggestions_Complains_Phone : Suggestions And Complains
+
+
+Company_Owners : The Owners
+Company_Owner_Main : Main Owner
+Company_Owner_A : Partner-A
+Company_Owner_B : Partner-B
+Company_Owner_C : Partner-C
+Company_Owner_D : Partner-D
+
+
+Company_Managers : The Managers
+Company_Executive_Manager_Name_Ar : Executive Manager Name-AR
+Company_Executive_Manager_Name_En : Executive Manager Name-EN
+Company_Executive_Manager_Phone : Executive Manager Phone
+Company_Executive_Manager_Signature : Executive Manager Signature
+Company_Accountancy_Manager_Name_Ar : Accountancy Manager Name-AR
+Company_Accountancy_Manager_Name_En : Accountancy Manager Name-EN
+Company_Accountancy_Manager_Phone : Accountancy Manager Phone
+Company_Accountancy_Manager_Signature : Accountancy Manager Signature
+Company_HR_Manager_Name_Ar : HR Manager Name-AR
+Company_HR_Manager_Name_En : HR Manager Name-EN
+Company_HR_Manager_Phone : HR Manager Phone
+Company_HR_Manager_Signature : HR Manager Signature
+Company_Sales_Manager_Name_Ar : Sales Manager Name-AR
+Company_Sales_Manager_Name_En : Sales Manager Name-EN
+Company_Sales_Manager_Phone : Sales Manager Phone
+Company_Sales_Manager_Name_Signature : Sales Manager Signature
+
+Company_Operating_Licences : Operating Licences
+Company_Licence_Title_Ar : Licence Title-AR
+Company_Licence_Title_En : Licence Title-EN
+Company_Licence_Issuer_Ar : Licence Issuer-AR
+Company_Licence_Issuer_En : Licence Issuer-EN
+Company_Licence_Renewal_Fees : Renewal Fees
+Company_Licence_From : From Date
+Company_Licence_To : To Date
+Company_Licence_Renew_Date : Renewal Date
+Company_Licence_Renew_Fine : Renewal Fine
+
+Company_Class_And_Tax : Class And Tax No
+Company_Class : Corporation Class
+Company_Tax_Registration_Number : Tax Registration Number
+Company_Notes_Ar : Notes-Ar
+Company_Notes_En : Notes-En
+
+Company_Logos_And_Banners : Logos And Banners
+Company_Logo_Color_Big : Logo Color Big
+Company_Logo_Color_Small : Logo Color Small
+Company_Logo_Print_Big : Logo Print Big
+Company_Logo_Print_Small : Logo Print Small
+Company_Banner_Big : Banner Big
+Company_Banner_small : Banner Small
+
+Print_Technical : Logo Big Technical 
+Print_Financial : Logo Big Financial
+Print_Managing : Print Managing
+Print_Inventory : Logo Big Inventory
+Print_Purchases : Logo Big Purchases
+Print_Sales : Logo Big Sales
+
+Company_Corporation_Definition : Corporation Definition
+Company_Title_Ar : Title-Ar
+Company_Title_En : Title-En
+Company_Slogan_A_Ar : Slogan A-Ar
+Company_Slogan_A_En : Slogan A-En
+Company_Slogan_B_Ar : Slogan B-Ar
+Company_Slogan_B_En : Slogan B-En
+Company_Activities_Ar : Activities-Ar
+Company_Activities_En : Activities-En
+
+Company_Branches_Grid : Branches Grid
+Company_Branches_Name_Ar : Branches Name-Ar
+Company_Branches_Name_En : Branches Name-En
+Company_Branches_Address_Ar : Branches Address-Ar
+Company_Branches_Address_En : Branches Address-En
+Company_Branches_Manager_Ar : Branches Manager-Ar
+Company_Branches_Manager_En : Branches Manager-En
+
+Company_Department_Grid : Department Grid
+Company_Corporation_Name : Corporation Name
+Company_Corporation_Branch : Corporation Branch
+Company_Department_Name_Ar : Department Name-Ar
+Company_Department_Name_En : Department Name-En
+Company_Department_Address_Ar : Department Address-Ar
+Company_Department_Address_En : Department Address-En
+Company_Department_Manager_Ar : Department Manager-Ar
+Company_Department_Manager_En : Department Manager-En
+Company_Department_Manager_Mobile : Department Manager Mobile 
+
+Employees_Jobs_Grid : Jobs Grid
+Employees_Job_Type_Ar : Job Type-Ar
+Employees_Job_Type_En : Job Type-En
+Employees_Job_Title_Ar : Job Title-Ar
+Employees_Job_Title_En : Job Title-En
+Employees_Job_Description_Ar : Job Description-Ar
+Employees_Job_Description_En : Job Description-En
+Employees_Note_Ar : Note-Ar
+Employees_Note_En : Note Job-En
+Employees_Job_Department : Job Department
+
+Employees_Grid : Employees Grid
+Employees_Details_Grid : Employees Details Grid
+Employees_Parent_ID : Parent ID
+Employees_Name_Ar : Name-Ar
+Employees_Name_En : Name-En
+Employees_Tree_Code : Tree Code
+Employees_Boss_Name : Boss Name
+Employees_Boss_Code : Boss Code
+Employees_Peer_Name : Peer Name
+Employees_Peer_Code : Peer Code
+Employees_Alias : Alias
+Employees_User_Name : User Name
+Employees_Password : Password
+Employees_Is_Super_Admin : Is Super Admin
+Employees_Job : Job
+Employees_Job_Description : Job Description
+Employees_Department : Department
+Employees_Branch : Branch
+Employees_Job_Number : Job Number
+Employees_Image_Path : Image
+Employees_Evaluation : Evaluation
+Employees_Evaluation_Icon_Path : Evaluation Icon
+Employees_BirthDate : BirthDate
+Employees_Religon : Religon
+Language : Language
+Employees_ID_Type : ID Type
+Employees_ID_Number : ID Number
+Employees_Country : Country
+Employees_City : City
+Employees_Address : Address
+Employees_Job_Address : Job Address
+Employees_Job_From : Job From
+Employees_Job_Sallary : Job Sallary
+
+Toast_Title_Success : Success !
+Toast_Title_Failed : Failed !
+Toast_Content_Success : The Operation Done
+Toast_Content_Add_Failed : The operation failed to duplicate the object 
+Toast_Content_Delete_Failed : The operation failed to be associated with other elements
+Toast_Content_Permission_Failed : The operation failed because there is no validity for User
+Toast_Failed_Little_Letters_Length : The operation failed because Little Letters Length
+Toast_Failed_Reload : The operation failed Please Reload Page and ReTry 
+Toast_Failed_SelectRow : Please Select Row
+
+Items_Grid : Items Grid
+Items_Item_Title_Ar : Title-Ar 
+Items_Item_Title_En : Title-En
+Items_Item_Group : Group
+Unit : Unit
+Items_Item_Code : Code
+Items_VAT : Vat
+Items_URL : URL
+Items_Description : Description
+Items_Length : Length/cm
+Items_Width : Width/cm
+Items_Height : Height/cm
+Items_Weight : Weight/kg
+Items_Thickness : Thickness/cm
+Items_Volume : Volume/cm³
+Items_Validation_Period : Validation Period/year
+Items_Preparation_Period : Preparation Period/day
+Items_Garantee_Period : Garantee Period/year
+Items_Packaging : Packaging
+Items_Material : Material
+Items_Preservation : Preservation
+Items_To_Inventory_allow_Buy : allow Buy To Inventory
+Items_To_Inventory_allow_Fractions : allow Fractions To Inventory
+Items_To_Inventory_allow_Frabrications : allow Frabrications To Inventory
+Items_To_Inventory_allow_Rebounds : allow Rebounds To Inventory
+Items_To_Inventory_allow_Free_Samples : allow Free Samples To Inventory
+Items_To_Inventory_Maximum_Stock : Maximum Stock To Inventory
+Items_To_Inventory_Inventory : Inventory To Inventory
+Items_To_Inventory_Supplier : Inventory Supplier
+Items_To_Inventory_Buy_Price : Buy Price To Inventory
+Items_To_Inventory_BOP : The beginning of the store
+Items_From_Inventory_allow_Sell : allow Sell From Inventory
+Items_From_Inventory_allow_Fractions : allow Fractions From Inventory
+Items_From_Inventory_allow_term_sales : allow term sales From Inventory
+Items_From_Inventory_allow_Frabrications : allow Frabrications From Inventory
+Items_From_Inventory_allow_Rebounds : allow Rebounds From Inventory
+Items_From_Inventory_allow_Free_Samples : allow Free Samples From Inventory
+Items_From_Inventory_Sell_Price : Sell Price From Inventory
+Items_From_Inventory_SemiWholeSales_Price : SemiWhole Sales Price From Inventory
+Items_From_Inventory_WholeSales_Price : Whole Sales Price From Inventory
+Items_From_Inventory_Term_Sell_Price : Term Sell Price From Inventory
+Items_From_Inventory_Inventory : Inventory From Inventory
+Items_From_Inventory_Customer : Customer Inventory
+Items_From_Inventory_Sales_Representative : Sales Representative From Inventory
+Items_From_Inventory_Sales_Representative_Commession : Sales Representative Commession From Inventory
+Items_From_Inventory_allow_Discount : allow Discount From Inventory
+Items_Code_At_Supplier : Code At Supplier
+Items_Supplier_Country : Supplier Country
+Items_Ampere : Ampere
+Items_Volt : Volt
+Items_Power : Power
+Items_Persons : Members
+Items_Color_r : Color_r
+Items_Color_g : Color_g
+Items_Color_b : Color_b
+Items_Touch : Touch
+Items_Transperancy : Transperancy
+Items_Shining : Shining
+Items_Diameter : Diameter/cm
+Items_Nature : Nature
+Items_Main_Property : Main Property
+Items_Class : Class
+Items_Parent_Group : Parent Group
+Items_Pre_Validation_End_Warning_Period : Pre Validation End Warning Period
+Items_First_Balance : First Balance
+Debit_Balance : Debit_Balance
+Credit_Balance : Credit_Balance
+Items_Current_Balance : Current Balance 
+Items_Certificate : Certificate
+
+Items_Certificates_Grid : Certificates Grid 
+Items_Certificates_Title_Ar : Title-Ar 
+Items_Certificates_Title_En : Title-En 
+Items_Certificates_Issuer_Ar : Issuer-Ar 
+Items_Certificates_Issuer_En : Issuer-En
+Items_Certificates_Issuer_Country_Ar : Issuer Country-Ar
+Items_Certificates_Issuer_Country_En : Issuer Country-En
+Items_Certificates_Description_Ar : Description-Ar
+Items_Certificates_Description_En : Description-En
+Items_Certificates_Image : Certificate Image
+
+Items_Descriptions_Grid : Descriptions Grid
+Items_Descriptions_Title_Ar : Title-Ar
+Items_Descriptions_Title_En : Title-En
+Items_Descriptions_Issuer_Ar : Descriptions-Ar
+Items_Descriptions_Issuer_En : Descriptions-En
+
+Items_Units_Grid : Units Grid
+Items_Unit_Title_Ar : Title-Ar
+Items_Unit_Title_En : Title-En
+Items_Unit_Abbreviation_Ar : Abbreviation-Ar
+Items_Unit_Abbreviation_En : Abbreviation-En
+Items_Unit_Type : Unit Type
+
+Items_Groups_Grid : Groups Grid
+Items_Groups_Prefix : Prefix
+Items_Groups_Parents : Parents
+
+Items_Images_Grid : Images Grid
+Items_Print_Item : Print Item
+Print : Print
+
+
+purchases : purchases
+purchases_Shortfalls : Shortfalls
+Purchase_Purchases_Order : Purchases Order
+purchases_Supply_Order : Supply Order
+purchases_Receipt_Order : Receipt Order
+Done_Purchase_Invoice : Purchas Invoices
+purchases_Creat_Purchase_Order : Creat Purchase Order
+
+HardCopyCode : Serial
+Date : Date
+Supplier : Supplier
+Expected_Buy_Date : Expected Buy Date
+Item : Item
+Quantity : Quantity
+Unit_Price : Unit Price
+Value : Value
+Items_Count : Items Count
+Issuance_By : Issuance By
+Issuance_Date : Issuance Date
+Last_At : Real Issuance Date
+Approval : Approval
+The_Approvals : The Approval
+Purchases_Requests : Purchases Requests
+Purchases_Order_Items : Purchases Order Items
+Purchase_Purchases_Orders : Purchase Orders
+
+Code : Code
+Statement : Statement
+Summary : Summary
+Purchases_Save_ParchasesOrder : Save Parchases Order
+Purchases_Save_Req_Order : Save Request Order
+Purchases_Save_PricesOffer : Save Prices Offer
+Approval_Date : Approval Date
+Cancel_Date : Cancel Date
+purchases_Request_Approvals : Request Approvals
+ID : ID
+Last_In_Date : Last In Date
+Last_In_Quantity : Last In Quantity
+Last_In_Unit_Price : Last In Unit Price
+Current_Quantity : Current Quantity
+Seeked_Quantity : Seeked Quantity
+To_Inventory_Minimum_Stock : To Inventory Minimum Stock
+To_Inventory_Maximum_Stock : To Inventory Maximum Stock
+Offers_Prices : Offers Prices
+Offers_Approvals : Offers Approvals
+OffersPrices_Approval : Offers Prices Approval
+Create_PriceOffer : Create Price Offer
+PriceOffer_Items : Price Offer Items
+PriceOffer_Value : Price Offer Value
+Expected_Supplierd_Date : Expected Supplierd Date
+Pre_Value : Pre Value
+Statment_IS_Empty : Statment IS Empty
+Balance : Balance 
+Cant_Do_this_Operation : Cant Do this Operation
+Cant_Delete_All_Grid_Items : Cant Delete All Grid Items
+purchases_Purchase_Invoice_Items : Purchase Invoice Items
+Offer_HardCopyCode : Offer HardCopyCode
+Buy : Buy
+Offer_Approved : Offer Approved
+Buy_Invoice : Buy Invoice
+Not_Found_Elements : Not Found Elements
+NOt_Found_Date : NOt Found Date
+NOt_Found_ExpectedBuyDate : NOt Found Expected Buy Date
+NOt_Found_Supplier : NOt Found Supplier
+NOt_Found_Inventory : NOt Found Inventory
+NOt_Found_Prices : NOt Found Prices
+Order_Approved : Order Approved
+Purchases_Save_PurchaseInvoice : Save Purchase Invoice
+Purchased_Approved : Purchased Approved
+Print_All_Requests : Print All Requests
+purchaseInvoice_No : purchaseInvoice No
+purchaseRequest_No : purchaseRequest No
+Total : Total
+purchaseInvoice_ApprovedBy : purchase Invoice Approve dBy
+Suppling_Date : Suppling Date
+Item_Code : Item Code
+Customers : Customers
+Customer_Name : Customer Name
+Type : Type
+Debit : Debit
+Credit : Credit
+First_Debit : First Debit
+First_Credit : First Credit
+Currency : Currency
+Financial_Center : Financial Center
+Level : Level
+Users : Users
+Sales_Representative : Sales Representative
+Diasbled_By : Diasbled By
+Disabled_At : Disabled At
+Deleted_By : Deleted By
+Deleted_At : Deleted At
+Rating : Rating
+RegDate : RegDate
+Dealing_Worning : Dealing Worning
+Allow_Discount : Allow Discount
+Allow_Term_Selling : Allow Term Selling
+Debit_Limit : Debit Limit
+Pricing_Policy : Pricing Policy
+Religion : Religion
+Nationality : Nationality
+Country : Country
+City : City
+address : address
+MailBox : MailBox
+LandLines : LandLines
+Phones : Phones
+Company_Contact : Contact Data
+Company_WebSite_Url : WebSite Url
+Facebook : Facebook
+Tweeter : Tweeter
+Email : Email
+WhatsApp : WhatsApp
+Contact_From : Contact From
+Contact_To : Contact To
+Sex : Sex
+Social_Status : Social Status
+Car_ID : Car ID
+Qualification : Qualification
+Tax_Number : Tax Number
+Notes : Notes_
+Parent_Code : Parent Code
+Suppliers : Suppliers
+Tab_DirectBuing : Direct Buing
+Tab_PurchaseRequest : Purchase Request>
+Tab_RequestApproval : Request Approval>
+Tab_OffersPrices : OffersPrices>
+Tab_OfferApproval : OfferApproval>
+Tab_PurchaseOrder : Purchase Order>
+Tab_BuyInvoice : BuyInvoice>
+Tab_PurchaseInvoices : PurchaseInvoices
+Creat_DirectBuing : Creat Direct Purchas Invoice
+Purchases_Orders : Purchases Orders
+PurchasesOrder_Items : Purchases Order Items
+Contracting : Contracting
+TheContracting : The Contracting
+TechnicalOffer : Technical Offer
+TechnicalOffer_Approval : Technical Offer Approval
+Create_TechnicalOffer : Create Technical Offer
+ElvTrack : Elevator Track
+OutGatesCount : Out Gates Count
+CabinGatesCount : Cabin Gates Count
+StoreyCount : Storey Count
+SuspensionType : Suspension Type
+CabinRod : Cabin Rod
+CounterWeightRod : CounterWeight Rod
+SensorType : Sensor Type
+DoorType : Door Type
+EmergencyCircle : Emergency Circle
+Dupplicated_Item_Not_Allowed : Dupplicated Item Not Allowed
+EditApproval_TechnicalOffer : Edit Approval Technical Offer
+TechnicalOffers : Technical Offers
+TechnicalOfferDetails : TechnicalOffers Details
+EditApproval_FinancialOffer : Edit Approval Financial Offer
+FinancialOffers : Financial Offers
+FinancialOfferDetails : Financial Offer Details
+Elevator_Type : Elevator Type
+WiresCount : Wires Count
+Persons : Persons
+
+Archive : Archive
+Description : Description	
+Component_Cost : Component Cost
+Extra_Cost : Extra Cost
+Total_Contracting : Total Contracting
+Expire_Period : Expire Period
+Profit : Profit
+Empty : (Empty)
+Wires_Count : Wires Count
+Persons_Count : Persons Count
+Units_Count : Units Count
+Missing_Quantity : Missing Quantity
+Missing_Group : Missing Group
+Missing_Code : Missing Code
+Missing_Item : Missing Item
+Dupplicated_Item_Not_Allowed : Dupplicated Item Not Allowed
+Grid_Is_Empty : Grid Is Empty
+Missing_Elevator_Type : Missing Elevator Type
+Missing_Elevator_Path_length : Missing Elevator Path length
+Missing_Suspension_Type : Missing Suspension Type
+Missing_Wires_Count : Missing Wires Count
+Missing_Doors_Types : Missing Doors Types
+Missing_Doors_Sensors : Missing Doors Sensors
+Missing_Exterior_Doors_Count : Missing Exterior Doors Count
+Missing_Cabin_Doors_Count : Missing Cabin Doors Count
+Missing_Levels_Count : Missing Levels Count
+Missing_Persons_Count : Missing Persons Count
+Missing_Units_Count : Missing Units Count
+Reset : Reset
+FinancialOffer_Data : Financial Offer Data
+TechnicalOffer_Code : Technical Offer Code
+FinancialOffer_Code : Financial Offer Code
+validTo : valid To
+TechnicalOffer_Total : Technical Offer Total
+GranteeIncluded : Grantee Included
+Garantee_Cost : Garantee Cost
+Garantee_Month : Garantee Period/Month
+Maintanance_Visit_Includedncluded : Maintanance Includedncluded
+Maintanance_Visit_Included_Cost : Maintanance Cost
+Maintanance_Visit_Included_Month : Maintanance Period/Month
+Shipping_Chargest : Shipping Chargest
+Lefting_Charges : Lefting Charges
+Transportation_Charges : Transportation Charges
+Preparation_Charges : Preparation Charges
+Subcontractor_Cost : Subcontractor Cost
+Subcontractor_Statment : Subcontractor Statment
+OtherCharges_Cost : OtherCharges Cost
+OtherCharges_Statment : OtherCharges Statment
+TotalCost : Total Cost
+PaymentsAndInstallments : Payments And Installments
+DoneDate : Operation Date
+RequireDate : Require Date
+LegalTerms : Legal Terms
+AllLegalTerms_Corporation : All LegalTerms in Corporation
+LegalTerms_Contracting : Legal Terms in Contract
+Missing : Missing
+Date_NotValid : Date Not Valid
+AddAll : Add All
+PaymentsAndInstallments_FinancialOffer : Payments And Installments Financial Offer
+Create_FinancialOffer : Create Financial Offer
+Last_Purchase_Price : Last Purchase Price
+Default_Price : Default Price
+Average_Purchase_Price : Average Purchase Price
+Vat_Includedncluded : Vat Includedncluded 15 %
+FinancialOffer_VAT : Vat  15 %
+Taxable : Taxable
+ContractCode : Contract Code
+Contracting_By : Contracting By
+Contracting_Job : Contracting Job
+Garantee_End : Garantee End
+Maintanance_End : Maintanance End
+NotApproved : Not Approved Yet
+AlradyContracted : Alrady Contracted
+SupplyingAndInstallation : Supplying And Installation
+ComponentsSupplying : Components Supplying
+ComponentsRecovey : Components Recovey
+Location : Location
+ContractingQuentity : Contracting Quentity
+TotalSuppled : Total Suppled
+SupplyingPercent : Supplying Percent - %
+SuppliedBy : Supplied By
+SuppliedTo : Supplied To
+Work_Tasks : Work Tasks
+Work_Tasks_ApprovalEdit : Approval And Edit Tasks
+Task : Task
+Employees_Count : Employees Count
+Employees_Boss : Employees Boss
+Employees_Phone : Employees Phone
+Transportation_Nature : Transportation Nature
+Transportation_Cost : Transportation Cost
+Car_No : Car No
+Time_Start : Time Start
+Time_End : Time End
+Create_SupplyingOrder : Create Supplying Order
+SupplyingOrder_Component : Supplying Order For Component
+SupplyingOrder_Code : Supplying Order Code
+SupplyingOrder_Items : Supplying Order Items
+RcoveryOrder_Items : Rcovery Order Items
+Create_RecoveryOreder : Create Recovery Oreder
+SupplyingRecovery_Code : Supplying Recovery Code
+SupplyingRecovery_Items : Supplying Recovery Items
+RecoveryBy : Recovery By
+RecoveryTo : Recovery To
+TaskCode : Task Code
+Create_Missions : Create Work Tasks
+Items_Missions : Work Tasks Items
+
+Power : Power / Horse
+Well_type : Well type
+ELevator_Title : ELevator Title in Contract
+Create_SupplyingRecovery_Order : Create Supplying And Recovery Order
+SupplyingRecovery_Items : Supplying And Recovery Items
+OrderType : Order Type
+Inventory_Employee : Inventory Employee
+Contract_Repository : Location Repository
+Contract_Employee : Location Employee
+Stage : Stage
+Remaining_Quantity : Remaining Quantity
+Achievement_Avarege_Befor : Achievement Avarege Befor - %
+Achievement_Avarege_After : Achievement Avarege After - %
+Achievement_Avarege_Statment : Achievement Avarege Statment
+Boss_Notes : Boss Notes
+Customer_Note : Custome Note
+Department_Note : Boss Department
+Financial_Note : Financial Note
+Management_Notes : Management Notes
+Installation : Installation
+Maintanance : Maintanance
+Preview : Preview
+MissionType : MissionType
+Contract_MaintananceCode : Contract/Maintanance Code
+Contract_Code : Operation Code
+Contract_Type : Operation Type
+EditApproval_SupplyRecovery : Edit Approval Supplying And Recovery
+Supplyin_And_Recovery_Orders : Supplyin And Recovery Orders
+order_Details : order Details
+Because_It_Approved : Because It Approved
+Add_Items : Add Items
+Add_Descriptions : Add Descriptions
+TechnicalOffer_Items : Technical Offer Items
+All_DescriptionItems : All Description Items
+DescriptionItems_InContract : Description Items InContract
+Box : The Box
+Create_PayReceive_Entry_Cash : Create Pay/Receive Cash Entry
+‎Monetary_Entry : ‎monetary Entry
+Entry_Code : Entry Code
+Entry_Type : Entry Type
+Pay : Pay
+Receive : Receive
+Operations_PayReceive_Entry_Cash : Operations on Pay/Receive Cash Entry
+Create_PayReceive_Entry_Receipt : Create Pay/Receive Entry Receipt
+Operations_PayReceive_Entry_Receipt : Operations Pay/Receive Entry Receipt
+Receipt_Entry : Receipt Entry
+Issued_Date : Issued Date
+BankAccount : Bank Account
+Check_Number : Check Number
+ChekStatment : CheckStatment
+Visit : Please Visit Payments Tab
+View : View
+From_Date : From_Date
+To_Date : To_Date
+account_Type : account_Type
+Account_Statement : Account Statement
+Account_Statement_Items : Account Statement Items
+Account_Statement_Address : Account Statement Address
+Statement_Includ : Statement Includ
+Visible_Iem : Visible Iem
+Not_Found_Result_Search : Not Found Result Search
+purchases_ItemCard : Item Card
+Change_Item : Change Item
+Error_Page : Sorry! there's nothing at this address.
+ContractingValue_WithoutVat : Contracting Value Without Vat
+SAR : SAR
+Contract : Contract
+Order : Order
+ContracsVatValue : Contracs Vat Value 
+TotalContractsValue : Total Contracts Value
+TotalProfitValue : Total Profit Value
+TotalBoxValue : Total Box Value 
+TotalReceiveEntries : Total Receive Entries
+TotalPayEnteries : Total Pay Enteries
+TotalBuyingOperations : Total Buying Operations
+New_Supplying : New Supplying
+Extra_Supplying : Extra Supplying
+SupplyingToEditContract : Supplying For Edit Contract
+ReceiveExtra : Receive Extra
+ReceiveToEditContract : Receive For Edit Contract
+ReceiveToDepreciations : Receive For Depreciations
+ReceiveManufacturingDefects : Receive Manufacturing Defects
+AddAccount : Add Account
+account_Name : Account Name
+TotalBuyingVat : Total Buying Vat

@@ -1,0 +1,117 @@
+﻿@page "/Staticses"
+@layout MainLayout_DashBoard
+@inject HttpClient httpClient
+@inject NavigationManager UriHelper
+@inject IJSRuntime jsRuntime
+@inject IConfiguration Configuration
+@using AjaTech_Blazor.Data.ViewModels;
+@using Microsoft.Extensions.Configuration;
+
+<div class="container card-container">
+    <div class="row">
+
+        <div class="card text-white bg-primary mb-3 m-3 col-lg-8">
+            <div class="card-header text-center font-weight-bold"> @languageContainer.Keys["TheContracting"] </div>
+            <div class="card-body">
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["Total_Contracting"] </i><i> : </i><i class="font-weight-bolder text-warning">@ContractsCount_Total</i><i> @languageContainer.Keys["Contract"] </i></h5>
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["ContractingValue_WithoutVat"] </i><i> : </i><i class="font-weight-bolder text-warning">@ContractsValue</i><i> @languageContainer.Keys["SAR"] </i></h5>
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["ContracsVatValue"] </i><i> : </i><i class="font-weight-bolder text-warning">@ContractsVat</i><i> @languageContainer.Keys["SAR"] </i></h5>
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["TotalContractsValue"] </i><i> : </i><i class="font-weight-bolder text-warning">@ContractsValue_Total</i><i> @languageContainer.Keys["SAR"] </i></h5>
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["TotalProfitValue"] </i><i> : </i><i class="font-weight-bolder text-warning">@Profit_Value</i><i> @languageContainer.Keys["SAR"] </i></h5>
+            </div>
+        </div>
+
+        <div class="card text-white bg-warning mb-3 m-3 col-lg-8">
+            <div class="card-header text-center font-weight-bold"> @languageContainer.Keys["Box"] </div>
+            <div class="card-body">
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["TotalBoxValue"] </i><i> : </i><i class="font-weight-bolder text-danger">@Box_Total</i><i> @languageContainer.Keys["SAR"] </i></h5>
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["TotalReceiveEntries"] </i><i> : </i><i class="font-weight-bolder text-danger">@Box_Receive</i><i> @languageContainer.Keys["SAR"] </i></h5>
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["TotalPayEnteries"] </i><i> : </i><i class="font-weight-bolder text-danger">@Box_Pay</i><i> @languageContainer.Keys["SAR"] </i></h5>
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["TotalBuyingOperations"] </i><i> : </i><i class="font-weight-bolder text-danger">@Box_Buy</i><i> @languageContainer.Keys["SAR"] </i></h5>
+            </div>
+        </div>
+
+        <div class="card text-white badge-success mb-3 m-3 col-lg-8">
+            <div class="card-header text-center font-weight-bold"> @languageContainer.Keys["Supplyin_And_Recovery_Orders"] </div>
+            <div class="card-body">
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["New_Supplying"] </i><i> : </i><i class="font-weight-bolder text-warning">@New_Supplying</i><i> @languageContainer.Keys["Order"] </i></h5>
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["Extra_Supplying"] </i><i> : </i><i class="font-weight-bolder text-warning">@Extra_Supplying</i><i> @languageContainer.Keys["Order"] </i></h5>
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["SupplyingToEditContract"] </i><i> : </i><i class="font-weight-bolder text-warning">@ContractEdit_Supplying</i><i> @languageContainer.Keys["Order"] </i></h5>
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["ReceiveExtra"] </i><i> : </i><i class="font-weight-bolder text-warning">@Extra_Receive</i><i> @languageContainer.Keys["Order"] </i></h5>
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["ReceiveToEditContract"] </i><i> : </i><i class="font-weight-bolder text-warning">@ContractEdit_Receive</i><i> @languageContainer.Keys["Order"] </i></h5>
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["ReceiveToDepreciations"] </i><i> : </i><i class="font-weight-bolder text-warning">@Depreciations_Receive</i><i> @languageContainer.Keys["Order"] </i></h5>
+                <h5 class="card-title text-right"><i> @languageContainer.Keys["ReceiveManufacturingDefects"] </i><i> : </i><i class="font-weight-bolder text-warning">@ManufacturingDefects_Receive</i><i> @languageContainer.Keys["Order"] </i></h5>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    string ContractsCount_Total, ContractsValue, ContractsValue_Total, Box_Total, Box_Pay, Box_Receive, Box_Buy, ContractsVat, Profit_Value;
+    string New_Supplying, Extra_Supplying, ContractEdit_Supplying, Extra_Receive, ContractEdit_Receive, Depreciations_Receive, ManufacturingDefects_Receive;
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        var user = (await AuthStat).User;
+        if (user.Identity.Name != "admin")
+        {
+            UriHelper.NavigateTo("/");
+        }
+
+        ContractsCount_Total = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select count(*) as 'ContractsCount_Total' from Inv_Contracts&Required_Field=ContractsCount_Total");
+        ContractsCount_Total = ContractsCount_Total.Replace("\"", "");
+
+        ContractsValue = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select sum (Total_Cost) as'ContractsValue' from Inv_Pre_Sales_Financial_Offer &Required_Field=ContractsValue");
+        ContractsValue = ContractsValue.Replace("\"", "");
+
+        ContractsVat = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select sum (Vat) as'ContractsVat' from Inv_Pre_Sales_Financial_Offer&Required_Field=ContractsVat");
+        ContractsVat = ContractsVat.Replace("\"", "");
+
+        ContractsValue_Total = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select sum (Contract_Total) as'ContractsValue_Total' from Inv_Pre_Sales_Financial_Offer&Required_Field=ContractsValue_Total");
+        ContractsValue_Total = ContractsValue_Total.Replace("\"", "");
+
+        Profit_Value = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select sum (Profit_Value) as'Profit_Value' from Inv_Pre_Sales_Financial_Offer&Required_Field=Profit_Value");
+        Profit_Value = Profit_Value.Replace("\"", "");
+
+        Box_Total = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select (select SUM(value)from Inv_GL where Type='قبض')-(select SUM(value)from Inv_GL where Type='دفع' Or Type = 'شراء') as 'Box_Total'&Required_Field=Box_Total");
+        Box_Total = Box_Total.Replace("\"", "");
+
+        Box_Pay = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select SUM(value) as 'Box_Pay' from Inv_GL where Type='دفع'&Required_Field=Box_Pay");
+        Box_Pay = Box_Pay.Replace("\"", "");
+
+        Box_Buy = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select SUM(value)as 'Box_Buy' from Inv_GL where Type='شراء' &Required_Field=Box_Buy");
+        Box_Buy = Box_Buy.Replace("\"", "");
+
+        Box_Buy = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select SUM(value)as 'Box_Buy' from Inv_GL where Type='شراء' &Required_Field=Box_Buy");
+        Box_Buy = Box_Buy.Replace("\"", "");
+
+        Box_Receive = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select SUM(value)as 'Box_Receive' from Inv_GL where Type='قبض' &Required_Field=Box_Receive");
+        Box_Receive = Box_Receive.Replace("\"", "");
+
+        New_Supplying = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select count(*)as'New_Supplying' from SupplyInstall_Items_Transfere where Job_Type='صرف جديد' &Required_Field=New_Supplying");
+        New_Supplying = New_Supplying.Replace("\"", "");
+
+        Extra_Supplying = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select count(*)as'Extra_Supplying' from SupplyInstall_Items_Transfere where Job_Type='صرف زيادة على العرض الفني' &Required_Field=Extra_Supplying");
+        Extra_Supplying = Extra_Supplying.Replace("\"", "");
+
+        ContractEdit_Supplying = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select count(*)as'ContractEdit_Supplying' from SupplyInstall_Items_Transfere where Job_Type='صرف بسبب تعديلات التعاقد' &Required_Field=ContractEdit_Supplying");
+        ContractEdit_Supplying = ContractEdit_Supplying.Replace("\"", "");
+
+        Extra_Receive = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select count(*)as'Extra_Receive' from SupplyInstall_Items_Transfere where Job_Type='إستلام فائض العرض الفني' &Required_Field=Extra_Receive");
+        Extra_Receive = Extra_Receive.Replace("\"", "");
+
+        ContractEdit_Receive = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select count(*)as'ContractEdit_Receive' from SupplyInstall_Items_Transfere where Job_Type='إستلام بسبب تعديلات التعاقد' &Required_Field=ContractEdit_Receive");
+        ContractEdit_Receive = ContractEdit_Receive.Replace("\"", "");
+
+        Depreciations_Receive = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select count(*)as'Depreciations_Receive' from SupplyInstall_Items_Transfere where Job_Type='إستلام هوالك' &Required_Field=Depreciations_Receive");
+        Depreciations_Receive = Depreciations_Receive.Replace("\"", "");
+
+        ManufacturingDefects_Receive = await httpClient.GetStringAsync(Configuration.GetValue<string>("Api") + "/api/Services/ReadField?QueryString=" + "select count(*)as'ManufacturingDefects_Receive' from SupplyInstall_Items_Transfere where Job_Type='إستلام عيوب تصنيع' &Required_Field=ManufacturingDefects_Receive");
+        ManufacturingDefects_Receive = ManufacturingDefects_Receive.Replace("\"", "");
+
+    }
+
+}
